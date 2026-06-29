@@ -20,6 +20,10 @@ import { BluetoothLatencyScreen } from '../screens/BluetoothLatencyScreen';
 import { HelpScreen } from '../screens/HelpScreen';
 import { SectionTypesScreen } from '../screens/SectionTypesScreen';
 import { SectionEditorScreen } from '../screens/SectionEditorScreen';
+import { HistoryScreen } from '../screens/HistoryScreen';
+import { HistoryDetailScreen } from '../screens/HistoryDetailScreen';
+import { AnalysisScreen } from '../screens/AnalysisScreen';
+import { TimelineScreen } from '../screens/TimelineScreen';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,7 +33,6 @@ const STUBS: ReadonlyArray<{ name: keyof RootStackParamList; title: string }> = 
   { name: 'SectionFromPhoto', title: 'Feladat fotóból' },
   { name: 'Practice', title: 'Gyakorló mód' },
   { name: 'Smartwatch', title: 'Okosóra' },
-  { name: 'History', title: 'History' },
 ];
 
 function makeStub(title: string) {
@@ -71,6 +74,10 @@ export function RootNavigator() {
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="SectionTypes" component={SectionTypesScreen} />
         <Stack.Screen name="SectionEditor" component={SectionEditorScreen} />
+        <Stack.Screen name="History" component={HistoryScreen} />
+        <Stack.Screen name="HistoryDetail" component={HistoryDetailScreen} />
+        <Stack.Screen name="Analysis" component={AnalysisScreen} />
+        <Stack.Screen name="Timeline" component={TimelineScreen} />
         {STUB_COMPONENTS.map(s => (
           <Stack.Screen key={s.name} name={s.name} component={s.component} />
         ))}

@@ -16,6 +16,9 @@ export type RootStackParamList = {
   Smartwatch: undefined;
   Help: undefined;
   History: undefined;
+  HistoryDetail: { runId?: string } | undefined;
+  Analysis: { runId?: string } | undefined;
+  Timeline: { runId?: string } | undefined;
   /** Dev-only: the component UI-kit. Remove before release. */
   Demo: undefined;
 };

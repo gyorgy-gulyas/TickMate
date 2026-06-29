@@ -1,6 +1,6 @@
 /** Race detail: audio status + section list. Maps to "Verseny részletei". */
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Icon, Pill, SectionRow } from '../components';
 import { SECTION_TYPE_META, fmtSec, getRace } from '../data/mock';
@@ -35,10 +35,12 @@ export function RaceDetailScreen() {
       gap={10}
       rightActions={<Icon name="question" size={19} color="textSecondary" />}
       footer={footer}>
-      <Pill
-        label={`${race.audioReady ? 'Hang kész' : 'Hang nincs'} · ${race.sections.length} feladat · ${totalSec} mp`}
-        dotColor={race.audioReady ? 'accent' : 'slower'}
-      />
+      <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Timeline')}>
+        <Pill
+          label={`${race.audioReady ? 'Hang kész' : 'Hang nincs'} · ${race.sections.length} feladat · ${totalSec} mp`}
+          dotColor={race.audioReady ? 'accent' : 'slower'}
+        />
+      </Pressable>
       {race.sections.length > 0 ? (
         <View>
           <View style={styles.thead}>

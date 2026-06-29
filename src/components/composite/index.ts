@@ -1,6 +1,7 @@
 export * from './BigNum';
 export * from './BrandLockup';
 export * from './Chevron';
+export * from './Legend';
 export * from './ListRow';
 export * from './MenuCard';
 export * from './NavBar';
