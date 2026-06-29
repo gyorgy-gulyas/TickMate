@@ -1,3 +1,5 @@
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 /** Root stack route list. Run/analysis screens are added as the build progresses. */
 export type RootStackParamList = {
   Home: undefined;
@@ -17,3 +19,6 @@ export type RootStackParamList = {
   /** Dev-only: the component UI-kit. Remove before release. */
   Demo: undefined;
 };
+
+/** Navigation prop for any root screen. */
+export type RootNav = NativeStackNavigationProp<RootStackParamList>;
