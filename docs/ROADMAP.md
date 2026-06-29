@@ -16,10 +16,14 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - ✅ Navigáció (react-navigation) + Főképernyő
 - 🟡 Statikus képernyők: Beállítások, Nyelv, BT késleltetés, Versenyek, Verseny részletei, Gyors feladat, Súgó kész; a többi stub
 
-## 1. UI befejezése — vizualizációk + maradék képernyők ⬜
-Új **viz-komponensek**: TypeSchematic (rajzos séma), Timeline, DivergingBar, WatchFace, ScanView, BTButton (nagy Start), és a futás-nézet elrendezések.
-**Maradék képernyők**: Feladat típusok, Feladat szerkesztő (élő séma-előnézettel + típus-választó), Feladat fotóból, Gyakorló mód (+ almódok), Okosóra, History, History részletek, Elemzés, Idővonal, és a **4 futás-nézet** (készenlét / normál / közös kapu / átfedő).
-**Polish**: világos mód végigvezetése minden képernyőn; üres/töltő/hiba állapotok; érintési célok ≥44; akadálymentesítés.
+## 1. UI befejezése — vizualizációk + maradék képernyők 🟡 (majdnem kész)
+**Kész viz-komponensek:** BrandMark, TypeSchematic, OverlapSchematic, Timeline, DivergingBar, BTButton (+ Legend).
+**Kész képernyők (18):** Főképernyő, Versenyek, Verseny részletei, Feladat típusok, Feladat szerkesztő (élő sémával), Gyors feladat, Gyakorló mód, Beállítások, Nyelv, BT késleltetés, Súgó, History, History részletek, Elemzés, Idővonal, és a **4 futás-nézet** (készenlét / normál / közös kapu / átfedő).
+**Hátralévő polish (később):** világos mód finomhangolás minden képernyőn; üres/töltő/hiba állapotok; érintési célok ≥44; akadálymentesítés.
+
+### Halasztva — későbbi terv (döntés: 2026-06-29) ⏸️
+- **Feladat fotóból (OCR)** — a `ScanView` viz + a képernyő + az on-device OCR (lásd §5). Most „Hamarosan" placeholder.
+- **Okosóra-kísérő** — a `WatchFace` viz + a képernyő + a natív óra-réteg (lásd §5). Most „Hamarosan" placeholder.
 
 ## 2. Adatmodell + állapot + perzisztencia ⬜
 - Valódi adatmodell (Verseny, Feladat, Beállítások) a mock helyett

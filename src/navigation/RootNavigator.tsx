@@ -28,14 +28,16 @@ import { RunStandbyScreen } from '../screens/run/RunStandbyScreen';
 import { RunNormalScreen } from '../screens/run/RunNormalScreen';
 import { RunSharedGateScreen } from '../screens/run/RunSharedGateScreen';
 import { RunOverlapScreen } from '../screens/run/RunOverlapScreen';
+import { PracticeScreen } from '../screens/PracticeScreen';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Stubbed routes (built out screen-by-screen). Titles use the "feladat" wording.
+// Deferred to a later plan (see docs/ROADMAP.md): SectionFromPhoto (OCR),
+// Smartwatch (companion). They stay as "Hamarosan" placeholders for now.
 const STUBS: ReadonlyArray<{ name: keyof RootStackParamList; title: string }> = [
   { name: 'SectionFromPhoto', title: 'Feladat fotóból' },
-  { name: 'Practice', title: 'Gyakorló mód' },
   { name: 'Smartwatch', title: 'Okosóra' },
 ];
 
@@ -76,6 +78,7 @@ export function RootNavigator() {
         <Stack.Screen name="Language" component={LanguageScreen} />
         <Stack.Screen name="BluetoothLatency" component={BluetoothLatencyScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
+        <Stack.Screen name="Practice" component={PracticeScreen} />
         <Stack.Screen name="SectionTypes" component={SectionTypesScreen} />
         <Stack.Screen name="SectionEditor" component={SectionEditorScreen} />
         <Stack.Screen name="History" component={HistoryScreen} />
