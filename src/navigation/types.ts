@@ -26,10 +26,6 @@ export type RootStackParamList = {
   Run:
     | { raceId?: string; quick?: { name?: string; type: SectionType; prepSec: number; segments: Segment[]; secondsTick: boolean } }
     | undefined;
-  RunStandby: { raceId?: string } | undefined;
-  RunNormal: undefined;
-  RunSharedGate: undefined;
-  RunOverlap: undefined;
   /** Dev-only: the component UI-kit. Remove before release. */
   Demo: undefined;
 };

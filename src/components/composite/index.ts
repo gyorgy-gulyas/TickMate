@@ -10,4 +10,5 @@ export * from './ReadyStatusCard';
 export * from './SectionRow';
 export * from './SettingsRow';
 export * from './StatCard';
+export * from './TaskSchematic';
 export * from './UpcomingRow';

@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard } from '../../components';
-import { SECTION_TYPE_META, fmtSec, type Section } from '../../data/mock';
+import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/mock';
+import { isSimultaneous, legWindows, taskDuration } from '../../data/timing';
 import { playTask, stopAudio } from '../../audio';
 import { useRace, useRunByRace, useSettings, useStore } from '../../store/useStore';
 import { useTheme } from '../../theme';
@@ -12,36 +13,11 @@ import { RunFrame, RunHeader, RunStop } from './RunShell';
 import type { RootNav, RootStackParamList } from '../../navigation/types';
 
 type Phase = 'standby' | 'running' | 'done' | 'finished';
-type Leg = { label: string; start: number; end: number };
 
-/** Each leg's [start,end] on the section's timeline (s from button press). */
-function legWindows(section: Section): Leg[] {
-  const P = section.prepSec;
-  const tA = section.segments[0]?.timeSec ?? 0;
-  const b = section.segments[1];
-  if (!b || section.type === 'normal') return [{ label: '', start: P, end: P + tA }];
-  const tB = b.timeSec;
-  if (section.type === 'shared') {
-    return [
-      { label: 'A', start: P, end: P + tA },
-      { label: 'B', start: P + tA, end: P + tA + tB },
-    ];
-  }
-  const bStart = section.type === 'nested' ? P + Math.max(0, (tA - tB) / 2) : P + tA / 2;
-  return [
-    { label: 'A', start: P, end: P + tA },
-    { label: 'B', start: bStart, end: bStart + tB },
-  ];
-}
-
-const sectionDuration = (s: Section) => Math.max(s.prepSec, ...legWindows(s).map(l => l.end));
+const legsOf = (s: Section) => legWindows(s.type, s.prepSec, s.segments.map(g => g.timeSec));
+const durationOf = (s: Section) => taskDuration(s.type, s.prepSec, s.segments.map(g => g.timeSec));
 const legName = (s: Section, li: number) => (s.segments.length > 1 ? `Szakasz ${li === 0 ? 'A' : 'B'}` : 'Idő');
 const counter = (v: number) => Math.max(0, v).toFixed(2);
-
-const toNum = (s: string) => {
-  const n = parseFloat(s.replace(',', '.'));
-  return Number.isFinite(n) ? n : 0;
-};
 
 const styles = StyleSheet.create({
   body: { flex: 1, justifyContent: 'center', gap: 16 },
@@ -66,7 +42,7 @@ const styles = StyleSheet.create({
 /** Live full-section timeline (multi-leg): leg bars + a moving playhead. */
 function RunLegsBar({ section, duration, elapsed }: { section: Section; duration: number; elapsed: number }) {
   const theme = useTheme();
-  const legs = legWindows(section);
+  const legs = legsOf(section);
   const head = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
   const headStyle = { left: `${head * 100}%` as const, backgroundColor: theme.colors.textPrimary };
   const trackBg = { backgroundColor: theme.colors.railAlt };
@@ -125,7 +101,7 @@ export function RunScreen() {
     : race.sections;
   const tick = quick ? quick.secondsTick : settingsTick;
   const section = sections[si];
-  const duration = section ? sectionDuration(section) : 0;
+  const duration = section ? durationOf(section) : 0;
 
   useEffect(() => {
     if (phase !== 'running' || !section) return;
@@ -229,10 +205,10 @@ export function RunScreen() {
   // --- Running ---
   if (phase === 'running') {
     const inPrep = elapsed < section.prepSec;
-    const legs = legWindows(section);
+    const legs = legsOf(section);
     const isMulti = section.segments.length > 1;
     // "two times at once" = nested/overlap. Shared is sequential.
-    const simultaneous = section.type === 'nested' || section.type === 'overlap';
+    const simultaneous = isSimultaneous(section.type);
 
     const seqActive = legs.filter(l => elapsed >= l.start && elapsed < l.end)[0];
     const primary = simultaneous ? legs[0] : seqActive;

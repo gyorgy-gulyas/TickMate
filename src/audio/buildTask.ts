@@ -6,6 +6,7 @@
  *  - an accelerating countdown ending at EVERY gate (Start, Közös, A-cél, B-cél, Cél)
  */
 import { SAMPLE_RATE, renderClick, renderFinalClick, renderStart } from './synth';
+import { gateTimes } from '../data/timing';
 import type { SectionType } from '../data/mock';
 
 export type TaskSpec = {
@@ -21,28 +22,8 @@ const COUNTDOWN = [3.0, 2.0, 1.5, 1.0, 0.75, 0.5, 0.35, 0.25, 0.15, 0.08, 0.0];
 
 const MAX_SEC = 120;
 
-/** Gate times (s from button) for a task. Multi-leg B offset is approximate
- *  (the data model has durations, not B's start) — nested centres B in A,
- *  overlap starts B at A's midpoint. */
-export function gateTimes(spec: TaskSpec): number[] {
-  const P = Math.max(0, spec.prepSec || 0);
-  const tA = Math.max(0, spec.legs[0] || 0);
-  const tB = spec.legs.length > 1 ? Math.max(0, spec.legs[1] || 0) : null;
-
-  if (tB == null || spec.type === 'normal') return [P, P + tA];
-  if (spec.type === 'shared') return [P, P + tA, P + tA + tB];
-
-  if (spec.type === 'nested') {
-    const bStart = P + Math.max(0, (tA - tB) / 2);
-    return [P, bStart, bStart + tB, P + tA].sort((a, b) => a - b);
-  }
-  // overlap (crossing)
-  const bStart = P + tA / 2;
-  return [P, bStart, P + tA, bStart + tB].sort((a, b) => a - b);
-}
-
 export function buildTaskPCM(spec: TaskSpec): Float32Array {
-  const gates = gateTimes(spec);
+  const gates = gateTimes(spec.type, spec.prepSec, spec.legs);
   const lastGate = gates.length ? gates[gates.length - 1] : Math.max(0, spec.prepSec || 0);
   const totalSec = Math.min(MAX_SEC, lastGate + 0.5);
 

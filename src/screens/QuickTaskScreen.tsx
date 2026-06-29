@@ -6,40 +6,25 @@ import {
   AppText,
   AudioPreview,
   Button,
-  Card,
   Field,
   Icon,
-  OverlapSchematic,
   SegmentedControl,
   SettingsRow,
+  TASK_TYPE_OPTIONS,
+  TaskSchematic,
   Toggle,
-  TypeSchematic,
-  buildSchematic,
-  buildSharedSchematic,
 } from '../components';
-import { SECTION_TYPE_META, fmtSec, type SectionType } from '../data/mock';
+import { fmtSec, toNum, type SectionType } from '../data/mock';
 import { playTask } from '../audio';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';
-
-const TYPE_OPTIONS = (['normal', 'shared', 'nested', 'overlap'] as SectionType[]).map(t => ({
-  key: t,
-  label: SECTION_TYPE_META[t].short,
-  icon: <Icon name={SECTION_TYPE_META[t].icon} size={15} color="textSecondary" />,
-}));
 
 const styles = StyleSheet.create({
   intro: { lineHeight: 20 },
   row: { flexDirection: 'row', gap: 8 },
   group: { gap: 7 },
   flex1: { flex: 1, minWidth: 0 },
-  preview: { gap: 0 },
 });
-
-const toNum = (s: string) => {
-  const n = parseFloat(s.replace(',', '.'));
-  return Number.isFinite(n) ? n : 0;
-};
 
 export function QuickTaskScreen() {
   const navigation = useNavigation<RootNav>();
@@ -74,17 +59,6 @@ export function QuickTaskScreen() {
 
   const totalSec = toNum(prep) + toNum(timeA) + (isMulti ? toNum(timeB) : 0);
 
-  const overlapTracks =
-    type === 'nested'
-      ? [
-          { label: 'A', startPct: 20, endPct: 94, variant: 'primary' as const, timeLabel: `${fmtSec(toNum(timeA))} mp` },
-          { label: 'B', startPct: 42, endPct: 70, variant: 'secondary' as const, timeLabel: `${fmtSec(toNum(timeB))} mp` },
-        ]
-      : [
-          { label: 'A', startPct: 20, endPct: 62, variant: 'primary' as const, timeLabel: `${fmtSec(toNum(timeA))} mp` },
-          { label: 'B', startPct: 44, endPct: 94, variant: 'secondary' as const, timeLabel: `${fmtSec(toNum(timeB))} mp` },
-        ];
-
   const segments = isMulti
     ? [
         { distanceM: toNum(distA), timeSec: toNum(timeA) },
@@ -115,7 +89,7 @@ export function QuickTaskScreen() {
         <AppText preset="label" color="textSecondary">
           Típus
         </AppText>
-        <SegmentedControl options={TYPE_OPTIONS} value={type} onChange={changeType} />
+        <SegmentedControl options={TASK_TYPE_OPTIONS} value={type} onChange={changeType} />
       </View>
 
       <Field label="Előkészítés" value={prep} onChangeText={changePrep} unit="mp" keyboardType="decimal-pad" />
@@ -142,18 +116,7 @@ export function QuickTaskScreen() {
         </View>
       ) : null}
 
-      <Card style={styles.preview}>
-        <AppText preset="label" color="textSecondary">
-          Előnézet · {SECTION_TYPE_META[type].label}
-        </AppText>
-        {type === 'nested' || type === 'overlap' ? (
-          <OverlapSchematic showGomb tracks={overlapTracks} />
-        ) : type === 'shared' ? (
-          <TypeSchematic {...buildSharedSchematic(toNum(prep), toNum(timeA), toNum(timeB))} />
-        ) : (
-          <TypeSchematic {...buildSchematic(toNum(prep), toNum(timeA))} />
-        )}
-      </Card>
+      <TaskSchematic type={type} prepSec={toNum(prep)} timeA={toNum(timeA)} timeB={toNum(timeB)} />
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">

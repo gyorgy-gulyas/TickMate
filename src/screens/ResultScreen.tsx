@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Field, Icon } from '../components';
-import { SECTION_TYPE_META, fmtDelta, fmtSec, legDelta } from '../data/mock';
+import { SECTION_TYPE_META, fmtDelta, fmtSec, legDelta, toNum } from '../data/mock';
 import { useRunById, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootStackParamList } from '../navigation/types';
@@ -13,11 +13,6 @@ const styles = StyleSheet.create({
   secHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   empty: { paddingVertical: 18 },
 });
-
-const toNum = (s: string) => {
-  const n = parseFloat(s.replace(',', '.'));
-  return Number.isFinite(n) ? n : 0;
-};
 
 export function ResultScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'Result'>>();

@@ -99,6 +99,12 @@ export type Language = (typeof LANGUAGES)[number];
 
 export const fmtSec = (n: number): string => (Number.isInteger(n) ? `${n}` : n.toFixed(1));
 
+/** Parse a user-typed number (accepts comma decimals); 0 when invalid. */
+export const toNum = (s: string): number => {
+  const n = parseFloat(s.replace(',', '.'));
+  return Number.isFinite(n) ? n : 0;
+};
+
 /** Signed delta with a real minus sign, e.g. "+0.3" / "−0.4". */
 export const fmtDelta = (n: number): string => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`;
 

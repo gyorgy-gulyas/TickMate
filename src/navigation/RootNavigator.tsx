@@ -26,10 +26,6 @@ import { AnalysisScreen } from '../screens/AnalysisScreen';
 import { TimelineScreen } from '../screens/TimelineScreen';
 import { ResultScreen } from '../screens/ResultScreen';
 import { RunScreen } from '../screens/run/RunScreen';
-import { RunStandbyScreen } from '../screens/run/RunStandbyScreen';
-import { RunNormalScreen } from '../screens/run/RunNormalScreen';
-import { RunSharedGateScreen } from '../screens/run/RunSharedGateScreen';
-import { RunOverlapScreen } from '../screens/run/RunOverlapScreen';
 import { PracticeScreen } from '../screens/PracticeScreen';
 import type { RootStackParamList } from './types';
 
@@ -89,10 +85,6 @@ export function RootNavigator() {
         <Stack.Screen name="Timeline" component={TimelineScreen} />
         <Stack.Screen name="Result" component={ResultScreen} />
         <Stack.Screen name="Run" component={RunScreen} />
-        <Stack.Screen name="RunStandby" component={RunStandbyScreen} />
-        <Stack.Screen name="RunNormal" component={RunNormalScreen} />
-        <Stack.Screen name="RunSharedGate" component={RunSharedGateScreen} />
-        <Stack.Screen name="RunOverlap" component={RunOverlapScreen} />
         {STUB_COMPONENTS.map(s => (
           <Stack.Screen key={s.name} name={s.name} component={s.component} />
         ))}
