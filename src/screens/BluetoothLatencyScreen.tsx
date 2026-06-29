@@ -1,8 +1,11 @@
-/** BT audio latency calibration. Maps to "Bluetooth késleltetés". */
+/** BT audio latency calibration. Maps to "Bluetooth késleltetés". Persisted. */
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { AppText, Button, Icon, StatCard, Stepper } from '../components';
+import { useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
+import type { RootNav } from '../navigation/types';
 
 const styles = StyleSheet.create({
   intro: { lineHeight: 18 },
@@ -10,12 +13,20 @@ const styles = StyleSheet.create({
 });
 
 export function BluetoothLatencyScreen() {
-  const [latency, setLatency] = useState(120);
+  const navigation = useNavigation<RootNav>();
+  const saved = useSettings().btLatencyMs;
+  const setSetting = useStore(s => s.setSetting);
+  const [latency, setLatency] = useState(saved);
+
+  const save = () => {
+    setSetting('btLatencyMs', latency);
+    navigation.goBack();
+  };
 
   const footer = (
     <>
       <Button label="Automatikus mérés" variant="secondary" icon={<Icon name="arrows-clockwise" size={15} color="textPrimary" />} />
-      <Button label="Mentés" variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} />
+      <Button label="Mentés" variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={save} />
     </>
   );
 

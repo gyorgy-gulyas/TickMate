@@ -4,7 +4,7 @@
  * Default mode is DARK (spec: dark is primary for driving). Components read the
  * resolved theme via `useTheme()` and never import raw palettes directly.
  */
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import {
   colorsByMode,
   radii,
@@ -13,6 +13,7 @@ import {
   type ColorTokens,
   type ThemeMode,
 } from './tokens';
+import { useStore } from '../store/useStore';
 
 export type Theme = {
   mode: ThemeMode;
@@ -43,20 +44,17 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export type ThemeProviderProps = {
   children: React.ReactNode;
-  /** Initial mode; defaults to 'dark'. */
-  initialMode?: ThemeMode;
 };
 
-export function ThemeProvider({ children, initialMode = 'dark' }: ThemeProviderProps) {
-  const [mode, setMode] = useState<ThemeMode>(initialMode);
-
-  const toggleMode = useCallback(() => {
-    setMode(prev => (prev === 'dark' ? 'light' : 'dark'));
-  }, []);
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  // Theme mode is persisted in the store (survives restarts).
+  const mode = useStore(s => s.settings.themeMode);
+  const setMode = useStore(s => s.setThemeMode);
+  const toggleMode = useStore(s => s.toggleThemeMode);
 
   const value = useMemo<ThemeContextValue>(
     () => ({ ...buildTheme(mode), toggleMode, setMode }),
-    [mode, toggleMode],
+    [mode, toggleMode, setMode],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -6,7 +6,7 @@ export type RootStackParamList = {
   Races: undefined;
   RaceDetail: { raceId?: string } | undefined;
   SectionTypes: undefined;
-  SectionEditor: { sectionId?: string } | undefined;
+  SectionEditor: { raceId?: string; sectionId?: string } | undefined;
   SectionFromPhoto: undefined;
   QuickTask: undefined;
   Practice: undefined;

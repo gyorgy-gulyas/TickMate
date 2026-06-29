@@ -1,8 +1,9 @@
-/** Language picker. Maps to "Nyelv". Audio cues are language-independent. */
-import React, { useState } from 'react';
+/** Language picker. Maps to "Nyelv". Persisted; audio cues are language-independent. */
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import { AppText, Icon, SettingsRow } from '../components';
-import { LANGUAGES, type Language } from '../data/mock';
+import { LANGUAGES } from '../data/mock';
+import { useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 
 const styles = StyleSheet.create({
@@ -10,7 +11,8 @@ const styles = StyleSheet.create({
 });
 
 export function LanguageScreen() {
-  const [selected, setSelected] = useState<Language>('Magyar');
+  const selected = useSettings().language;
+  const setSetting = useStore(s => s.setSetting);
 
   return (
     <Screen title="Nyelv" gap={0}>
@@ -21,7 +23,7 @@ export function LanguageScreen() {
         <SettingsRow
           key={lang}
           label={lang}
-          onPress={() => setSelected(lang)}
+          onPress={() => setSetting('language', lang)}
           right={lang === selected ? <Icon name="check" size={19} color="accent" /> : null}
           divider={i < LANGUAGES.length - 1}
         />

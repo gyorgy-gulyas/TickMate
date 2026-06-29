@@ -26,7 +26,7 @@ function Root() {
 function App() {
   return (
     <SafeAreaProvider>
-      <ThemeProvider initialMode="dark">
+      <ThemeProvider>
         <Root />
       </ThemeProvider>
     </SafeAreaProvider>

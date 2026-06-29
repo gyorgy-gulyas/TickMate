@@ -51,6 +51,7 @@ export function Field({ label, value, onChangeText, placeholder, unit, rightAdor
   };
   const valueText: TextStyle = {
     flex: 1,
+    minWidth: 0,
     fontFamily: resolveFont('ui', '600'),
     fontSize: 15,
     color: theme.colors.textPrimary,

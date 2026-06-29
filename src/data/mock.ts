@@ -4,57 +4,95 @@
  */
 import type { IconName } from '../components';
 
-export type SectionType = 'normal' | 'shared' | 'overlap';
+export type SectionType = 'normal' | 'shared' | 'nested' | 'overlap';
+
+/** A single measured leg: a distance and the time to complete it. */
+export type Segment = { distanceM: number; timeSec: number };
 
 export type Section = {
   id: string;
   name: string;
   type: SectionType;
-  distanceM?: number;
+  /** Preparation time (s) before the first measurement — all types. */
   prepSec: number;
-  sectionSec: number;
+  /** Measured legs: 1 for normal, 2 (A, B) for shared / nested / overlap. */
+  segments: Segment[];
+  /** Whether this section's audio (clicks + countdown) has been generated. */
+  audioReady: boolean;
 };
+
+/** Number of measured legs a type uses. */
+export const segmentCount = (type: SectionType): number => (type === 'normal' ? 1 : 2);
+
+/** Total section time = prep + all leg times. */
+export const sectionTotalSec = (s: Section): number => s.prepSec + s.segments.reduce((sum, g) => sum + g.timeSec, 0);
 
 export type Race = {
   id: string;
   name: string;
   date: string;
-  audioReady: boolean;
   sections: Section[];
 };
 
-export const SECTION_TYPE_META: Record<SectionType, { label: string; icon: IconName }> = {
-  normal: { label: 'Normál', icon: 'arrow-right' },
-  shared: { label: 'Követő', icon: 'link-simple' },
-  overlap: { label: 'Átfedő', icon: 'arrows-split' },
+export const SECTION_TYPE_META: Record<SectionType, { label: string; short: string; icon: IconName }> = {
+  normal: { label: 'Normál', short: 'Normál', icon: 'arrow-right' },
+  shared: { label: 'Egymást követő', short: 'Követő', icon: 'link-simple' },
+  nested: { label: 'Egymásba fonódó', short: 'Fonódó', icon: 'intersect' },
+  overlap: { label: 'Átfedő', short: 'Átfedő', icon: 'arrows-split' },
 };
+
+/** Section types that use the single-track schematic (vs the two-track overlap one). */
+export const SINGLE_TRACK_TYPES: SectionType[] = ['normal', 'shared'];
 
 const tavasziSections: Section[] = [
-  { id: 's1', name: 'Rajt szakasz', type: 'normal', distanceM: 20, prepSec: 5, sectionSec: 7 },
-  { id: 's2', name: 'Szlalom', type: 'shared', distanceM: 20, prepSec: 3, sectionSec: 8 },
-  { id: 's3', name: 'Garázs', type: 'overlap', distanceM: 15, prepSec: 4, sectionSec: 5 },
-  { id: 's4', name: 'Tolatás', type: 'normal', distanceM: 30, prepSec: 6, sectionSec: 9 },
-  { id: 's5', name: 'Cikcakk', type: 'shared', distanceM: 25, prepSec: 4, sectionSec: 6 },
+  { id: 's1', name: 'Rajt szakasz', type: 'normal', prepSec: 5, segments: [{ distanceM: 20, timeSec: 7 }], audioReady: true },
+  { id: 's2', name: 'Szlalom', type: 'shared', prepSec: 3, segments: [{ distanceM: 20, timeSec: 8 }, { distanceM: 15, timeSec: 5 }], audioReady: true },
+  { id: 's3', name: 'Garázs', type: 'nested', prepSec: 4, segments: [{ distanceM: 15, timeSec: 9 }, { distanceM: 8, timeSec: 4 }], audioReady: true },
+  { id: 's4', name: 'Tolatás', type: 'overlap', prepSec: 6, segments: [{ distanceM: 30, timeSec: 9 }, { distanceM: 20, timeSec: 7 }], audioReady: true },
+  { id: 's5', name: 'Cikcakk', type: 'shared', prepSec: 4, segments: [{ distanceM: 25, timeSec: 6 }, { distanceM: 18, timeSec: 5 }], audioReady: false },
 ];
 
-export const RACES: Race[] = [
-  { id: 'r1', name: 'Tavaszi Oldtimer Kupa', date: '2026.04.12', audioReady: true, sections: tavasziSections },
-  { id: 'r2', name: 'Balaton Klasszik', date: '2026.05.03', audioReady: false, sections: [] },
-  { id: 'r3', name: 'Őszi Ügyességi', date: '2025.10.19', audioReady: false, sections: [] },
-  { id: 'r4', name: 'Edzés – Mátra', date: '2026.03.30', audioReady: false, sections: [] },
+const balatonSections: Section[] = [
+  { id: 'b1', name: 'Rajt', type: 'normal', prepSec: 5, segments: [{ distanceM: 25, timeSec: 8 }], audioReady: false },
+  { id: 'b2', name: 'Kerülő', type: 'shared', prepSec: 4, segments: [{ distanceM: 40, timeSec: 10 }, { distanceM: 22, timeSec: 7 }], audioReady: false },
+  { id: 'b3', name: 'Mólófej', type: 'normal', prepSec: 3, segments: [{ distanceM: 18, timeSec: 6 }], audioReady: false },
 ];
 
-/** Counts shown in the list (mocked for races with no expanded sections). */
-export const RACE_SECTION_COUNT: Record<string, number> = {
-  r1: 8,
-  r2: 12,
-  r3: 6,
-  r4: 4,
+const matraSections: Section[] = [
+  { id: 'm1', name: 'Start', type: 'normal', prepSec: 5, segments: [{ distanceM: 20, timeSec: 7 }], audioReady: false },
+  { id: 'm2', name: 'Hajtű', type: 'overlap', prepSec: 4, segments: [{ distanceM: 35, timeSec: 9 }, { distanceM: 24, timeSec: 7 }], audioReady: false },
+];
+
+/** Seed races (initial store state). */
+export const INITIAL_RACES: Race[] = [
+  { id: 'r1', name: 'Tavaszi Oldtimer Kupa', date: '2026.04.12', sections: tavasziSections },
+  { id: 'r2', name: 'Balaton Klasszik', date: '2026.05.03', sections: balatonSections },
+  { id: 'r3', name: 'Őszi Ügyességi', date: '2025.10.19', sections: matraSections },
+  { id: 'r4', name: 'Edzés – Mátra', date: '2026.03.30', sections: [] },
+];
+
+// --- Settings ---
+
+export type ThemeMode = 'dark' | 'light';
+
+export type Settings = {
+  themeMode: ThemeMode;
+  language: Language;
+  secondsTick: boolean;
+  /** 0..1 */
+  volume: number;
+  btLatencyMs: number;
+  soundProfile: string;
 };
 
-export function getRace(id?: string): Race {
-  return RACES.find(r => r.id === id) ?? RACES[0];
-}
+export const DEFAULT_SETTINGS: Settings = {
+  themeMode: 'dark',
+  language: 'Magyar',
+  secondsTick: true,
+  volume: 0.72,
+  btLatencyMs: 120,
+  soundProfile: 'Profil v1',
+};
 
 export const LANGUAGES = ['Magyar', 'English', 'Deutsch', 'Slovenčina', 'Italiano'] as const;
 export type Language = (typeof LANGUAGES)[number];

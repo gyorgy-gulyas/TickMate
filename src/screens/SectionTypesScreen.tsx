@@ -9,7 +9,9 @@ import {
   OverlapSchematic,
   TypeSchematic,
   buildSchematic,
+  buildSharedSchematic,
 } from '../components';
+import { SECTION_TYPE_META } from '../data/mock';
 import { Screen } from './Screen';
 
 const styles = StyleSheet.create({
@@ -20,12 +22,12 @@ const styles = StyleSheet.create({
 });
 
 function TypeCard({
-  icon,
+  iconName,
   title,
   subtitle,
   children,
 }: {
-  icon: React.ReactNode;
+  iconName: Parameters<typeof Icon>[0]['name'];
   title: string;
   subtitle: string;
   children: React.ReactNode;
@@ -33,7 +35,7 @@ function TypeCard({
   return (
     <Card style={styles.card}>
       <View style={styles.head}>
-        <IconTile icon={icon} size={34} />
+        <IconTile icon={<Icon name={iconName} size={18} color="accent" />} size={34} />
         <View style={styles.body}>
           <AppText preset="cardTitleSm" color="textPrimary">
             {title}
@@ -52,35 +54,42 @@ export function SectionTypesScreen() {
   return (
     <Screen title="Feladat típusok" gap={11} rightActions={<Icon name="question" size={19} color="textSecondary" />}>
       <AppText preset="muted" color="textSecondary">
-        Háromféleképpen kapcsolódhatnak a feladatok.
+        Négyféleképpen kapcsolódhatnak a feladatok.
       </AppText>
 
-      <TypeCard icon={<Icon name="arrow-right" size={18} color="accent" />} title="Normál feladat" subtitle="Egy feladat, két kapu">
-        <TypeSchematic {...buildSchematic('normal', 5, 7)} />
+      <TypeCard iconName={SECTION_TYPE_META.normal.icon} title="Normál feladat" subtitle="Egy feladat, két kapu">
+        <TypeSchematic {...buildSchematic(5, 7)} />
       </TypeCard>
 
       <TypeCard
-        icon={<Icon name="link-simple" size={18} color="accent" />}
+        iconName={SECTION_TYPE_META.shared.icon}
         title="Egymást követő"
-        subtitle="Közös kapu zárja és indítja a következőt">
-        <TypeSchematic
-          markers={[
-            { pct: 0, kind: 'gate', cap: '1 · Start' },
-            { pct: 50, kind: 'sharedGate', cap: 'Közös' },
-            { pct: 100, kind: 'gate', cap: '2 · Cél' },
-          ]}
-          times={[
-            { pct: 25, label: '7 mp' },
-            { pct: 75, label: '8 mp' },
+        subtitle="A vége = a következő kezdete (közös kapu)">
+        <TypeSchematic {...buildSharedSchematic(5, 7, 8)} />
+      </TypeCard>
+
+      <TypeCard
+        iconName={SECTION_TYPE_META.nested.icon}
+        title="Egymásba fonódó"
+        subtitle="A start → B start → B cél → A cél (B az A-n belül)">
+        <OverlapSchematic
+          showGomb
+          tracks={[
+            { label: 'A', startPct: 20, endPct: 94, variant: 'primary', timeLabel: '9 mp' },
+            { label: 'B', startPct: 42, endPct: 70, variant: 'secondary', timeLabel: '5 mp' },
           ]}
         />
       </TypeCard>
 
-      <TypeCard icon={<Icon name="arrows-split" size={18} color="accent" />} title="Átfedő" subtitle="Két aktív időzítés egyszerre">
+      <TypeCard
+        iconName={SECTION_TYPE_META.overlap.icon}
+        title="Átfedő"
+        subtitle="A start → B start → A cél → B cél (keresztező)">
         <OverlapSchematic
-          rows={[
-            { label: 'A', leftPct: 0, widthPct: 55, variant: 'primary' },
-            { label: 'B', leftPct: 35, widthPct: 65, variant: 'secondary' },
+          showGomb
+          tracks={[
+            { label: 'A', startPct: 20, endPct: 62, variant: 'primary', timeLabel: '6 mp' },
+            { label: 'B', startPct: 44, endPct: 94, variant: 'secondary', timeLabel: '8 mp' },
           ]}
         />
       </TypeCard>

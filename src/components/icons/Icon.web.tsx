@@ -18,6 +18,7 @@ import {
   EnvelopeSimple,
   FlagCheckered,
   GearSix,
+  Intersect,
   Lightning,
   LinkSimple,
   Metronome,
@@ -31,6 +32,7 @@ import {
   Stop,
   Target,
   Timer,
+  Waveform,
   type Icon as PhosphorIcon,
   type IconWeight,
 } from '@phosphor-icons/react';
@@ -51,6 +53,7 @@ const MAP = {
   'envelope-simple': EnvelopeSimple,
   'flag-checkered': FlagCheckered,
   'gear-six': GearSix,
+  intersect: Intersect,
   lightning: Lightning,
   'link-simple': LinkSimple,
   metronome: Metronome,
@@ -64,6 +67,7 @@ const MAP = {
   stop: Stop,
   target: Target,
   timer: Timer,
+  waveform: Waveform,
 } satisfies Record<string, PhosphorIcon>;
 
 export type IconName = keyof typeof MAP;

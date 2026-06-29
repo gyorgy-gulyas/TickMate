@@ -3,7 +3,8 @@ import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Icon, Pill, SectionRow } from '../components';
-import { SECTION_TYPE_META, fmtSec, getRace } from '../data/mock';
+import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/mock';
+import { useRace, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';
 
@@ -15,8 +16,12 @@ const styles = StyleSheet.create({
 export function RaceDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'RaceDetail'>>();
   const navigation = useNavigation<RootNav>();
-  const race = getRace(route.params?.raceId);
-  const totalSec = race.sections.reduce((sum, s) => sum + s.prepSec + s.sectionSec, 0);
+  const race = useRace(route.params?.raceId);
+  const regenerateRaceAudio = useStore(s => s.regenerateRaceAudio);
+  const totalSec = race.sections.reduce((sum, s) => sum + sectionTotalSec(s), 0);
+  const total = race.sections.length;
+  const audioReadyCount = race.sections.filter(s => s.audioReady).length;
+  const allAudioReady = total > 0 && audioReadyCount === total;
 
   const footer = (
     <>
@@ -24,6 +29,7 @@ export function RaceDetailScreen() {
         label="Hang újragenerálása"
         variant="secondary"
         icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />}
+        onPress={() => regenerateRaceAudio(race.id)}
       />
       <Button
         label="Start"
@@ -42,8 +48,8 @@ export function RaceDetailScreen() {
       footer={footer}>
       <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Timeline')}>
         <Pill
-          label={`${race.audioReady ? 'Hang kész' : 'Hang nincs'} · ${race.sections.length} feladat · ${totalSec} mp`}
-          dotColor={race.audioReady ? 'accent' : 'slower'}
+          label={`Hang ${audioReadyCount}/${total} kész · ${total} feladat · ${totalSec} mp`}
+          dotColor={allAudioReady ? 'accent' : 'slower'}
         />
       </Pressable>
       {race.sections.length > 0 ? (
@@ -62,9 +68,10 @@ export function RaceDetailScreen() {
               index={i + 1}
               typeIcon={<Icon name={SECTION_TYPE_META[s.type].icon} size={15} color="textSecondary" />}
               name={s.name}
-              value={`${fmtSec(s.prepSec)} / ${fmtSec(s.sectionSec)} mp`}
+              value={`${fmtSec(s.prepSec)} / ${s.segments.map(g => fmtSec(g.timeSec)).join('+')} mp`}
+              audioReady={s.audioReady}
               divider={i < race.sections.length - 1}
-              onPress={() => navigation.navigate('SectionEditor', { sectionId: s.id })}
+              onPress={() => navigation.navigate('SectionEditor', { raceId: race.id, sectionId: s.id })}
             />
           ))}
         </View>
