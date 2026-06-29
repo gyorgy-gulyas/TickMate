@@ -3,3 +3,7 @@
 export function playPcm(_pcm: Float32Array, _sampleRate: number): void {
   // no-op until the native audio layer is wired
 }
+
+export function stopAudio(): void {
+  // no-op until the native audio layer is wired
+}

@@ -50,7 +50,7 @@ export function RaceDetailScreen() {
         label="Start"
         variant="primary"
         icon={<Icon name="play" size={14} color="onAccent" />}
-        onPress={() => navigation.navigate('RunStandby', { raceId: race.id })}
+        onPress={() => navigation.navigate('Run', { raceId: race.id })}
       />
     </>
   );

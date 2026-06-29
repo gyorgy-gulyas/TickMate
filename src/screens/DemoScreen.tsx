@@ -94,13 +94,6 @@ export function DemoScreen() {
           <Button label="Hang újragenerálása" variant="secondary" icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />} />
         </Section>
 
-        <Section title="Futás-nézetek (dev)">
-          <Button label="Készenlét" variant="secondary" onPress={() => navigation.navigate('RunStandby')} />
-          <Button label="Normál" variant="secondary" onPress={() => navigation.navigate('RunNormal')} />
-          <Button label="Közös kapu" variant="secondary" onPress={() => navigation.navigate('RunSharedGate')} />
-          <Button label="Átfedő" variant="secondary" onPress={() => navigation.navigate('RunOverlap')} />
-        </Section>
-
         <Section title="Menu cards">
           <MenuCard icon={<Icon name="flag-checkered" size={22} color="accent" />} title="Versenyek" subtitle="4 mentett verseny" />
           <MenuCard icon={<Icon name="timer" size={22} color="accent" />} title="Gyors feladat" subtitle="Azonnali időzítés" />

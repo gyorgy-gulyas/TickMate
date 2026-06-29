@@ -1,4 +1,5 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { Segment, SectionType } from '../data/mock';
 
 /** Root stack route list. Run/analysis screens are added as the build progresses. */
 export type RootStackParamList = {
@@ -21,6 +22,10 @@ export type RootStackParamList = {
   Timeline: { runId?: string } | undefined;
   /** Result editor — record actual times for a race's run. */
   Result: { runId?: string } | undefined;
+  /** Live run flow. With `quick`, runs a single unsaved task (Gyors feladat). */
+  Run:
+    | { raceId?: string; quick?: { name?: string; type: SectionType; prepSec: number; segments: Segment[]; secondsTick: boolean } }
+    | undefined;
   RunStandby: { raceId?: string } | undefined;
   RunNormal: undefined;
   RunSharedGate: undefined;

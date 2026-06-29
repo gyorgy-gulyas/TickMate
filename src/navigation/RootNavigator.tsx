@@ -25,6 +25,7 @@ import { HistoryDetailScreen } from '../screens/HistoryDetailScreen';
 import { AnalysisScreen } from '../screens/AnalysisScreen';
 import { TimelineScreen } from '../screens/TimelineScreen';
 import { ResultScreen } from '../screens/ResultScreen';
+import { RunScreen } from '../screens/run/RunScreen';
 import { RunStandbyScreen } from '../screens/run/RunStandbyScreen';
 import { RunNormalScreen } from '../screens/run/RunNormalScreen';
 import { RunSharedGateScreen } from '../screens/run/RunSharedGateScreen';
@@ -87,6 +88,7 @@ export function RootNavigator() {
         <Stack.Screen name="Analysis" component={AnalysisScreen} />
         <Stack.Screen name="Timeline" component={TimelineScreen} />
         <Stack.Screen name="Result" component={ResultScreen} />
+        <Stack.Screen name="Run" component={RunScreen} />
         <Stack.Screen name="RunStandby" component={RunStandbyScreen} />
         <Stack.Screen name="RunNormal" component={RunNormalScreen} />
         <Stack.Screen name="RunSharedGate" component={RunSharedGateScreen} />

@@ -1,6 +1,6 @@
 export * from './synth';
 export * from './buildTask';
-export { playPcm } from './player';
+export { playPcm, stopAudio } from './player';
 
 import { SAMPLE_RATE } from './synth';
 import { buildTaskPCM, type TaskSpec } from './buildTask';

@@ -85,12 +85,19 @@ export function QuickTaskScreen() {
           { label: 'B', startPct: 44, endPct: 94, variant: 'secondary' as const, timeLabel: `${fmtSec(toNum(timeB))} mp` },
         ];
 
+  const segments = isMulti
+    ? [
+        { distanceM: toNum(distA), timeSec: toNum(timeA) },
+        { distanceM: toNum(distB), timeSec: toNum(timeB) },
+      ]
+    : [{ distanceM: toNum(distA), timeSec: toNum(timeA) }];
+
   const footer = (
     <Button
       label="Start"
       variant="primary"
       icon={<Icon name="play" size={14} color="onAccent" />}
-      onPress={() => navigation.navigate('RunStandby')}
+      onPress={() => navigation.navigate('Run', { quick: { type, prepSec: toNum(prep), segments, secondsTick } })}
     />
   );
 
