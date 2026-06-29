@@ -1,11 +1,11 @@
 /** Race detail: audio status + section list. Maps to "Verseny részletei". */
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useRoute, type RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Icon, Pill, SectionRow } from '../components';
 import { SECTION_TYPE_META, fmtSec, getRace } from '../data/mock';
 import { Screen } from './Screen';
-import type { RootStackParamList } from '../navigation/types';
+import type { RootNav, RootStackParamList } from '../navigation/types';
 
 const styles = StyleSheet.create({
   thead: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 1, marginTop: 2 },
@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
 
 export function RaceDetailScreen() {
   const route = useRoute<RouteProp<RootStackParamList, 'RaceDetail'>>();
+  const navigation = useNavigation<RootNav>();
   const race = getRace(route.params?.raceId);
   const totalSec = race.sections.reduce((sum, s) => sum + s.prepSec + s.sectionSec, 0);
 
@@ -56,6 +57,7 @@ export function RaceDetailScreen() {
               name={s.name}
               value={`${fmtSec(s.prepSec)} / ${fmtSec(s.sectionSec)} mp`}
               divider={i < race.sections.length - 1}
+              onPress={() => navigation.navigate('SectionEditor', { sectionId: s.id })}
             />
           ))}
         </View>

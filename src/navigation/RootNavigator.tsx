@@ -18,14 +18,14 @@ import { SettingsScreen } from '../screens/SettingsScreen';
 import { LanguageScreen } from '../screens/LanguageScreen';
 import { BluetoothLatencyScreen } from '../screens/BluetoothLatencyScreen';
 import { HelpScreen } from '../screens/HelpScreen';
+import { SectionTypesScreen } from '../screens/SectionTypesScreen';
+import { SectionEditorScreen } from '../screens/SectionEditorScreen';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Stubbed routes (built out screen-by-screen). Titles use the "feladat" wording.
 const STUBS: ReadonlyArray<{ name: keyof RootStackParamList; title: string }> = [
-  { name: 'SectionTypes', title: 'Feladat típusok' },
-  { name: 'SectionEditor', title: 'Feladat szerkesztő' },
   { name: 'SectionFromPhoto', title: 'Feladat fotóból' },
   { name: 'Practice', title: 'Gyakorló mód' },
   { name: 'Smartwatch', title: 'Okosóra' },
@@ -69,6 +69,8 @@ export function RootNavigator() {
         <Stack.Screen name="Language" component={LanguageScreen} />
         <Stack.Screen name="BluetoothLatency" component={BluetoothLatencyScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
+        <Stack.Screen name="SectionTypes" component={SectionTypesScreen} />
+        <Stack.Screen name="SectionEditor" component={SectionEditorScreen} />
         {STUB_COMPONENTS.map(s => (
           <Stack.Screen key={s.name} name={s.name} component={s.component} />
         ))}

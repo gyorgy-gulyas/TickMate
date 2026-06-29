@@ -1,6 +1,6 @@
 /** Index + type icon + name + mono value. Maps to .srow2. */
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from '../primitives';
 import { useTheme } from '../../theme';
 
@@ -12,6 +12,7 @@ export type SectionRowProps = {
   /** Right mono value, e.g. "5 / 7 mp" or "7.04 mp". */
   value?: string;
   divider?: boolean;
+  onPress?: () => void;
 };
 
 const styles = StyleSheet.create({
@@ -27,11 +28,15 @@ const styles = StyleSheet.create({
   name: { flex: 1 },
 });
 
-export function SectionRow({ index, typeIcon, name, value, divider = true }: SectionRowProps) {
+export function SectionRow({ index, typeIcon, name, value, divider = true, onPress }: SectionRowProps) {
   const theme = useTheme();
   const dividerStyle = { borderBottomColor: divider ? theme.colors.divider : 'transparent' };
   return (
-    <View style={[styles.row, dividerStyle]}>
+    <Pressable
+      accessibilityRole={onPress ? 'button' : undefined}
+      onPress={onPress}
+      disabled={!onPress}
+      style={[styles.row, dividerStyle]}>
       <AppText preset="listNum" color="accentText" style={styles.num}>
         {index}
       </AppText>
@@ -44,7 +49,7 @@ export function SectionRow({ index, typeIcon, name, value, divider = true }: Sec
           {value}
         </AppText>
       ) : null}
-    </View>
+    </Pressable>
   );
 }
 
