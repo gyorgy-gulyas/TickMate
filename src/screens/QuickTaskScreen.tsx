@@ -18,6 +18,7 @@ import {
   buildSharedSchematic,
 } from '../components';
 import { SECTION_TYPE_META, fmtSec, type SectionType } from '../data/mock';
+import { playTask } from '../audio';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';
 
@@ -162,7 +163,13 @@ export function QuickTaskScreen() {
         <AppText preset="label" color="textSecondary">
           Hang
         </AppText>
-        <AudioPreview ready={audioReady} duration={`${fmtSec(totalSec)} mp`} />
+        <AudioPreview
+          ready={audioReady}
+          duration={`${fmtSec(totalSec)} mp`}
+          onPlay={() =>
+            playTask({ type, prepSec: toNum(prep), legs: isMulti ? [toNum(timeA), toNum(timeB)] : [toNum(timeA)], secondsTick })
+          }
+        />
         <Button
           label={audioReady ? 'Hang újragenerálása' : 'Hang generálása'}
           variant="secondary"

@@ -16,7 +16,8 @@ import {
   buildSharedSchematic,
 } from '../components';
 import { SECTION_TYPE_META, fmtSec, type SectionType } from '../data/mock';
-import { useRace, useStore } from '../store/useStore';
+import { playTask } from '../audio';
+import { useRace, useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';
 
@@ -46,6 +47,7 @@ export function SectionEditorScreen() {
   const sectionId = route.params?.sectionId;
   const race = useRace(raceId);
   const updateSection = useStore(s => s.updateSection);
+  const secondsTick = useSettings().secondsTick;
 
   const index = race.sections.findIndex(s => s.id === sectionId);
   const existing = index >= 0 ? race.sections[index] : undefined;
@@ -168,7 +170,11 @@ export function SectionEditorScreen() {
         <AppText preset="label" color="textSecondary">
           Hang
         </AppText>
-        <AudioPreview ready={audioCurrent} duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + g.timeSec, 0))} mp`} />
+        <AudioPreview
+          ready={audioCurrent}
+          duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + g.timeSec, 0))} mp`}
+          onPlay={() => playTask({ type, prepSec: toNum(prep), legs: segments.map(g => g.timeSec), secondsTick })}
+        />
         <Button
           label={audioCurrent ? 'Hang újragenerálása' : 'Hang generálása'}
           variant="secondary"
