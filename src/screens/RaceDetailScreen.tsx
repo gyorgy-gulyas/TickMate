@@ -59,7 +59,7 @@ export function RaceDetailScreen() {
               Feladat
             </AppText>
             <AppText preset="label" color="textSecondary">
-              Elők / szakasz
+              Szakasz idő
             </AppText>
           </View>
           {race.sections.map((s, i) => (
@@ -68,7 +68,8 @@ export function RaceDetailScreen() {
               index={i + 1}
               typeIcon={<Icon name={SECTION_TYPE_META[s.type].icon} size={15} color="textSecondary" />}
               name={s.name}
-              value={`${fmtSec(s.prepSec)} / ${s.segments.map(g => fmtSec(g.timeSec)).join('+')} mp`}
+              meta={SECTION_TYPE_META[s.type].label}
+              value={`${s.segments.map(g => fmtSec(g.timeSec)).join(' + ')} mp`}
               audioReady={s.audioReady}
               divider={i < race.sections.length - 1}
               onPress={() => navigation.navigate('SectionEditor', { raceId: race.id, sectionId: s.id })}

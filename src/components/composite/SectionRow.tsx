@@ -1,7 +1,8 @@
 /** Index + type icon + name + mono value. Maps to .srow2. */
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { AppText, Dot } from '../primitives';
+import { AppText } from '../primitives';
+import { Icon } from '../icons';
 import { useTheme } from '../../theme';
 
 export type SectionRowProps = {
@@ -9,9 +10,11 @@ export type SectionRowProps = {
   /** Type icon node (normal / shared-gate / overlap). */
   typeIcon?: React.ReactNode;
   name: string;
+  /** Small sub-label under the name (e.g. the section type). */
+  meta?: string;
   /** Right mono value, e.g. "5 / 7 mp" or "7.04 mp". */
   value?: string;
-  /** Per-section audio status dot; omit to hide. */
+  /** Show a waveform marker when this section's audio is generated. */
   audioReady?: boolean;
   divider?: boolean;
   onPress?: () => void;
@@ -27,11 +30,12 @@ const styles = StyleSheet.create({
   },
   num: { width: 18 },
   tico: { width: 16, alignItems: 'center' },
-  name: { flex: 1 },
+  nameWrap: { flex: 1 },
+  meta: { marginTop: 2 },
   valueWrap: { flexDirection: 'row', alignItems: 'center', gap: 7 },
 });
 
-export function SectionRow({ index, typeIcon, name, value, audioReady, divider = true, onPress }: SectionRowProps) {
+export function SectionRow({ index, typeIcon, name, meta, value, audioReady, divider = true, onPress }: SectionRowProps) {
   const theme = useTheme();
   const dividerStyle = { borderBottomColor: divider ? theme.colors.divider : 'transparent' };
   return (
@@ -44,11 +48,18 @@ export function SectionRow({ index, typeIcon, name, value, audioReady, divider =
         {index}
       </AppText>
       {typeIcon ? <View style={styles.tico}>{typeIcon}</View> : null}
-      <AppText preset="listName" color="textPrimary" style={styles.name} numberOfLines={1}>
-        {name}
-      </AppText>
+      <View style={styles.nameWrap}>
+        <AppText preset="listName" color="textPrimary" numberOfLines={1}>
+          {name}
+        </AppText>
+        {meta ? (
+          <AppText preset="cardSub" color="textSecondary" style={styles.meta} numberOfLines={1}>
+            {meta}
+          </AppText>
+        ) : null}
+      </View>
       <View style={styles.valueWrap}>
-        {audioReady !== undefined ? <Dot size={7} color={audioReady ? 'accent' : 'railAlt'} /> : null}
+        {audioReady ? <Icon name="waveform" size={15} color="accent" /> : null}
         {value ? (
           <AppText preset="mono" color="monoSecondary">
             {value}
