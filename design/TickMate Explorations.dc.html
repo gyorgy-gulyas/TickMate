@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700;800&family=Barlow+Condensed:wght@600;700;800&family=Space+Grotesk:wght@500;600;700&family=Spectral:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet"><style>
+*{box-sizing:border-box}
+.apptitle{position:absolute;font:700 30px 'Archivo',sans-serif;color:#1c1c1c;letter-spacing:-.01em}
+.appsub{position:absolute;font:500 15px/1.55 'Archivo',sans-serif;color:#6a6a6a}
+.cap{position:absolute;font:600 11px/1 'Archivo',sans-serif;letter-spacing:.16em;color:#7d7d7d;text-transform:uppercase}
+.dtitle{position:absolute;font:700 17px/1.3 'Archivo',sans-serif;color:#222;letter-spacing:.01em}
+.dsub{display:block;font:500 12.5px/1.45 'Archivo',sans-serif;color:#888;margin-top:5px}
+.phone{position:absolute;width:300px;height:640px;border-radius:42px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.28),0 4px 12px rgba(0,0,0,.12)}
+.scr{height:100%;display:flex;flex-direction:column}
+.sb{height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;font:600 12px 'Archivo',sans-serif;flex-shrink:0}
+.body{flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:6px 22px 16px}
+.dot{width:7px;height:7px;border-radius:50%;background:#54c47a;display:inline-block}
+.batt{width:18px;height:9px;border-radius:2px;border:1.5px solid currentColor;opacity:.55}
+.home{width:118px;height:5px;border-radius:3px;margin:0 auto}
+.ringwrap{position:relative;width:204px;height:204px;display:flex;align-items:center;justify-content:center}
+.ringnum{position:absolute;display:flex;align-items:baseline;gap:3px}
+.seg{height:13px;border-radius:3px;flex:1;background:#1d1d22}
+.seg.on{background:#c8f53a}
+.track{height:5px;border-radius:3px;background:#d8d2c6;overflow:hidden}
+.fill{height:100%;background:#2f6b4a;border-radius:3px}
+.rdot{width:6px;height:6px;border-radius:50%;background:#2f6b4a}
+.rdot.off{background:#cdc6b8}
+.pa{background:#1b1712}
+.pa .scr{color:#efe7d9;font-family:'Archivo',sans-serif}
+.pa .sb{color:#c9bda8}
+.pa .chip{font:700 11px 'Archivo';letter-spacing:.12em;background:#2a241b;color:#efe7d9;padding:7px 11px;border-radius:8px}
+.pa .dist{font:700 12px 'JetBrains Mono',monospace;color:#e8a23e;letter-spacing:.02em}
+.pa .phase{font:700 13px 'Archivo';letter-spacing:.24em;color:#e8a23e}
+.pa .ringnum{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:60px;color:#f4ecde;letter-spacing:-.02em}
+.pa .unit{font-size:17px;font-weight:700;color:#9a8d78}
+.pa .gate{font:700 15px 'Archivo';letter-spacing:.16em;color:#efe7d9}
+.pa .muted{color:#9a8d78;font:600 10.5px 'Archivo';letter-spacing:.13em;text-transform:uppercase}
+.pa .statcard{background:#241e16;border-radius:16px;padding:16px;display:flex;align-items:center;gap:8px}
+.pa .statn{font:800 30px 'JetBrains Mono',monospace;color:#f4ecde;display:flex;align-items:baseline}
+.pa .un{font:700 13px 'JetBrains Mono';color:#9a8d78;margin-left:3px}
+.pa .vline{width:1px;align-self:stretch;background:rgba(255,255,255,.1)}
+.pa .btbtn{width:118px;height:118px;border-radius:50%;border:3px solid #e8a23e;display:flex;align-items:center;justify-content:center;font:800 19px 'Archivo';letter-spacing:.14em;color:#e8a23e;box-shadow:0 0 0 8px rgba(232,162,62,.08)}
+.pa .uprow{font:700 15px 'JetBrains Mono',monospace;color:#cfc3ae;padding:9px 0;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center}
+.pa .home{background:rgba(255,255,255,.25)}
+.pb{background:#08080a}
+.pb .scr{color:#f2f2f4;font-family:'Barlow Condensed',sans-serif}
+.pb .sb{color:#9a9aa2;font-family:'Archivo'}
+.pb .chip{font:800 14px 'Barlow Condensed';letter-spacing:.06em;background:#c8f53a;color:#08080a;padding:4px 11px;border-radius:6px}
+.pb .dist{font:700 16px 'Barlow Condensed';color:#c8f53a;letter-spacing:.04em}
+.pb .phase{font:800 38px 'Barlow Condensed';letter-spacing:.02em;color:#c8f53a;line-height:.9}
+.pb .num{font:800 122px 'Barlow Condensed';line-height:.74;color:#f2f2f4;letter-spacing:-.01em}
+.pb .unit{font:700 21px 'Barlow Condensed';color:#76767e}
+.pb .gate{font:800 21px 'Barlow Condensed';letter-spacing:.06em;color:#f2f2f4}
+.pb .muted{color:#76767e;font:600 10.5px 'Archivo';letter-spacing:.14em;text-transform:uppercase}
+.pb .statcard{background:#141418;border-radius:12px;padding:15px;display:flex;align-items:center;gap:8px}
+.pb .statn{font:800 52px 'Barlow Condensed';line-height:.82;color:#f2f2f4;display:flex;align-items:baseline}
+.pb .un{font:700 16px 'Barlow Condensed';color:#76767e;margin-left:3px}
+.pb .vline{width:1px;align-self:stretch;background:rgba(255,255,255,.1)}
+.pb .btbtn{width:100%;padding:20px;border-radius:14px;background:#c8f53a;color:#08080a;font:800 30px 'Barlow Condensed';letter-spacing:.08em;text-align:center}
+.pb .uprow{font:700 22px 'Barlow Condensed';color:#cfcfd4;padding:8px 0;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center}
+.pb .home{background:rgba(255,255,255,.22)}
+.pc{background:#f2eee6}
+.pc .scr{color:#211e18;font-family:'Space Grotesk',sans-serif}
+.pc .sb{color:#7c756a}
+.pc .chip{font:600 12px 'Space Grotesk';letter-spacing:.05em;background:#211e18;color:#f2eee6;padding:6px 11px;border-radius:8px}
+.pc .dist{font:600 13px 'Space Grotesk';color:#2f6b4a;letter-spacing:.02em}
+.pc .phase{font:600 12px 'Space Grotesk';letter-spacing:.26em;color:#2f6b4a;text-transform:uppercase}
+.pc .num{font:600 88px 'Space Grotesk';line-height:.85;color:#211e18;letter-spacing:-.02em}
+.pc .unit{font:600 17px 'Space Grotesk';color:#9a9082}
+.pc .gate{font:500 19px/1.2 'Spectral',serif;font-style:italic;color:#211e18}
+.pc .muted{color:#9a9082;font:600 10px 'Space Grotesk';letter-spacing:.14em;text-transform:uppercase}
+.pc .statcard{background:#fff;border-radius:18px;padding:18px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.pc .statn{font:600 30px 'Space Grotesk';color:#211e18;display:flex;align-items:baseline}
+.pc .un{font:600 13px 'Space Grotesk';color:#9a9082;margin-left:3px}
+.pc .vline{width:1px;align-self:stretch;background:rgba(0,0,0,.08)}
+.pc .btbtn{width:118px;height:118px;border-radius:50%;border:2px solid #2f6b4a;color:#2f6b4a;display:flex;align-items:center;justify-content:center;font:600 17px 'Space Grotesk';letter-spacing:.12em}
+.pc .uprow{font:600 15px 'Space Grotesk';color:#4a463d;padding:9px 0;border-top:1px solid rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center}
+.pc .home{background:rgba(0,0,0,.18)}
+.rdimd{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18)}
+.pal{background:#ece4d6}
+.pal .scr{color:#2a241b;font-family:'Archivo',sans-serif}
+.pal .sb{color:#6b6051}
+.pal .chip{font:700 11px 'Archivo';letter-spacing:.12em;background:#fff;color:#2a241b;padding:7px 11px;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.pal .dist{font:700 12px 'JetBrains Mono',monospace;color:#b06f17;letter-spacing:.02em}
+.pal .phase{font:700 13px 'Archivo';letter-spacing:.24em;color:#b06f17}
+.pal .ringnum{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:60px;color:#2a241b;letter-spacing:-.02em}
+.pal .unit{font-size:17px;font-weight:700;color:#9a8d78}
+.pal .gate{font:700 15px 'Archivo';letter-spacing:.16em;color:#2a241b}
+.pal .muted{color:#9a8d78;font:600 10.5px 'Archivo';letter-spacing:.13em;text-transform:uppercase}
+.pal .home{background:rgba(0,0,0,.2)}
+.pbl{background:#f1f1ef}
+.pbl .scr{color:#111114;font-family:'Barlow Condensed',sans-serif}
+.pbl .sb{color:#777;font-family:'Archivo'}
+.pbl .chip{font:800 14px 'Barlow Condensed';letter-spacing:.06em;background:#c8f53a;color:#08080a;padding:4px 11px;border-radius:6px}
+.pbl .dist{font:700 16px 'Barlow Condensed';color:#3d8a12;letter-spacing:.04em}
+.pbl .phase{font:800 38px 'Barlow Condensed';color:#111114;line-height:.9}
+.pbl .num{font:800 122px 'Barlow Condensed';line-height:.74;color:#111114;letter-spacing:-.01em}
+.pbl .unit{font:700 21px 'Barlow Condensed';color:#9a9aa0}
+.pbl .gate{font:800 21px 'Barlow Condensed';letter-spacing:.06em;color:#111114}
+.pbl .muted{color:#9a9aa0;font:600 10.5px 'Archivo';letter-spacing:.14em;text-transform:uppercase}
+.pbl .seg{background:#d9d9d6}
+.pbl .home{background:rgba(0,0,0,.18)}
+.pcd{background:#191915}
+.pcd .scr{color:#ece9e1;font-family:'Space Grotesk',sans-serif}
+.pcd .sb{color:#9a9488}
+.pcd .chip{font:600 12px 'Space Grotesk';letter-spacing:.05em;background:#ece9e1;color:#191915;padding:6px 11px;border-radius:8px}
+.pcd .dist{font:600 13px 'Space Grotesk';color:#6cc196;letter-spacing:.02em}
+.pcd .phase{font:600 12px 'Space Grotesk';letter-spacing:.26em;color:#6cc196;text-transform:uppercase}
+.pcd .num{font:600 88px 'Space Grotesk';line-height:.85;color:#ece9e1;letter-spacing:-.02em}
+.pcd .unit{font:600 17px 'Space Grotesk';color:#8c8678}
+.pcd .gate{font:500 19px/1.2 'Spectral',serif;font-style:italic;color:#ece9e1}
+.pcd .muted{color:#8c8678;font:600 10px 'Space Grotesk';letter-spacing:.14em;text-transform:uppercase}
+.pcd .track{background:rgba(255,255,255,.12)}
+.pcd .fill{background:#6cc196}
+.pcd .rdot{background:#6cc196}
+.pcd .home{background:rgba(255,255,255,.2)}
+</style></helmet><div class="apptitle" style="left:0;top:0;width:1400px">OldTimer Assistant</div><div class="appsub" style="left:0;top:42px;width:1340px">Hangalapú versenyasszisztens magyar oldtimer ügyességi versenyekhez. Az aktív időzítő képernyő három vizuális irányban — alul mindegyik az ellenkező témában, sötét és világos módban is. A telefon a tartóban marad, a vezérlés egyetlen Bluetooth gombbal, a kommunikáció hangjelzésekkel.</div>
+
+<div class="dtitle" style="left:0;top:108px;width:640px">A · Chronográf<span class="dsub">Meleg, sötét — klasszikus műszerfal. Körkijelzős visszaszámlálás, mono számok.</span></div>
+<div class="cap" style="left:0;top:156px">Aktív futás</div>
+<div class="cap" style="left:340px;top:156px">Készenlét</div>
+<div class="phone pa" style="left:0;top:182px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">FELADAT 12</span><span class="dist">20 m</span></div><div class="fx col ac gap16"><div class="phase">SZAKASZ</div><div class="ringwrap"><svg width="204" height="204" viewBox="0 0 204 204"><circle cx="102" cy="102" r="90" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"></circle><circle cx="102" cy="102" r="90" fill="none" stroke="#e8a23e" stroke-width="10" stroke-linecap="round" stroke-dasharray="565" stroke-dashoffset="215" transform="rotate(-90 102 102)"></circle></svg><div class="ringnum">2.50<span class="unit">mp</span></div></div><div class="gate">CÉL KAPU</div></div><div class="fx col gap10"><div class="fx ac jb"><span class="muted">Következő</span><span class="dist">13 · 3 / 8 mp</span></div><div class="home"></div></div></div></div></div>
+<div class="phone pa" style="left:340px;top:182px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">FELADAT 12</span><span class="dist">20 m</span></div><div class="statcard"><div class="f1 fx col gap4"><span class="muted">Előkészítés</span><span class="statn">5.0<span class="un">mp</span></span></div><div class="vline"></div><div class="f1 fx col gap4"><span class="muted">Szakasz</span><span class="statn">7.0<span class="un">mp</span></span></div></div><div class="fx col ac gap12"><div class="btbtn">START</div><div class="muted tc">Nyomd meg a Bluetooth gombot</div></div><div class="fx col"><div class="muted" style="margin-bottom:4px">Következő feladatok</div><div class="uprow"><span>13</span><span class="dist">3 / 8 mp</span></div><div class="uprow"><span>14</span><span class="dist">4 / 5 mp</span></div><div class="uprow"><span>15</span><span class="dist">6 / 9 mp</span></div><div class="home" style="margin-top:10px"></div></div></div></div></div>
+
+<div class="dtitle" style="left:720px;top:108px;width:640px">B · Signal<span class="dsub">Maximális kontraszt — rally roadbook. Óriás kondenzált szám, szegmens-sáv.</span></div>
+<div class="cap" style="left:720px;top:156px">Aktív futás</div>
+<div class="cap" style="left:1060px;top:156px">Készenlét</div>
+<div class="phone pb" style="left:720px;top:182px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">FELADAT 12</span><span class="dist">20 m</span></div><div class="fx col ac gap4" style="margin-top:2px"><div class="phase">SZAKASZ</div><div class="fx" style="align-items:baseline;gap:4px"><span class="num">2.50</span><span class="unit">mp</span></div><div class="fx gap6 w100" style="margin-top:8px"><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span></div><div class="gate" style="margin-top:12px">→ CÉL KAPU</div></div><div class="fx col gap10"><div class="fx ac jb"><span class="muted">Következő</span><span class="dist">13 · 3 / 8 mp</span></div><div class="home"></div></div></div></div></div>
+<div class="phone pb" style="left:1060px;top:182px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">FELADAT 12</span><span class="dist">20 m</span></div><div class="statcard"><div class="f1 fx col gap2"><span class="muted">Előkészítés</span><span class="statn">5.0<span class="un">mp</span></span></div><div class="vline"></div><div class="f1 fx col gap2"><span class="muted">Szakasz</span><span class="statn">7.0<span class="un">mp</span></span></div></div><div class="fx col gap10"><div class="btbtn">START</div><div class="muted tc">Bluetooth gomb megnyomása</div></div><div class="fx col"><div class="muted" style="margin-bottom:4px">Következő</div><div class="uprow"><span>13</span><span class="dist">3 / 8</span></div><div class="uprow"><span>14</span><span class="dist">4 / 5</span></div><div class="uprow"><span>15</span><span class="dist">6 / 9</span></div><div class="home" style="margin-top:10px"></div></div></div></div></div>
+
+<div class="dtitle" style="left:1440px;top:108px;width:640px">C · Papír<span class="dsub">Világos prémium — nappali fényhez. Vékony sáv, ritmuspontok, serif kapunév.</span></div>
+<div class="cap" style="left:1440px;top:156px">Aktív futás</div>
+<div class="cap" style="left:1780px;top:156px">Készenlét</div>
+<div class="phone pc" style="left:1440px;top:182px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">Feladat 12</span><span class="dist">20 m</span></div><div class="fx col ac gap12" style="margin-top:8px"><div class="phase">Szakasz</div><div class="fx" style="align-items:baseline;gap:4px"><span class="num">2.50</span><span class="unit">mp</span></div><div class="track w100"><div class="fill" style="width:62%"></div></div><div class="fx gap8" style="margin-top:4px"><span class="rdot off"></span><span class="rdot off"></span><span class="rdot off"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span></div><div class="gate" style="margin-top:4px">Cél kapu</div></div><div class="fx col gap10"><div class="fx ac jb"><span class="muted">Következő</span><span class="dist">13 · 3 / 8 mp</span></div><div class="home"></div></div></div></div></div>
+<div class="phone pc" style="left:1780px;top:182px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">Feladat 12</span><span class="dist">20 m</span></div><div class="statcard"><div class="f1 fx col gap4"><span class="muted">Előkészítés</span><span class="statn">5.0<span class="un">mp</span></span></div><div class="vline"></div><div class="f1 fx col gap4"><span class="muted">Szakasz</span><span class="statn">7.0<span class="un">mp</span></span></div></div><div class="fx col ac gap12"><div class="btbtn">Start</div><div class="muted tc">Nyomd meg a Bluetooth gombot</div></div><div class="fx col"><div class="muted" style="margin-bottom:6px">Következő feladatok</div><div class="uprow"><span>13</span><span class="dist">3 / 8 mp</span></div><div class="uprow"><span>14</span><span class="dist">4 / 5 mp</span></div><div class="uprow"><span>15</span><span class="dist">6 / 9 mp</span></div><div class="home" style="margin-top:10px"></div></div></div></div></div>
+
+<div class="dtitle" style="left:0;top:866px;width:1300px">Mindkét mód · ugyanaz a felület az ellenkező témában<span class="dsub">A sötét mód éjszakai / alagúti vezetéshez, a világos mód erős napfényhez. A beállításokban váltható (PRD §10).</span></div>
+<div class="cap" style="left:0;top:914px">A — Világos mód</div>
+<div class="cap" style="left:720px;top:914px">B — Világos mód</div>
+<div class="cap" style="left:1440px;top:914px">C — Sötét mód</div>
+<div class="phone pal" style="left:0;top:940px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">FELADAT 12</span><span class="dist">20 m</span></div><div class="fx col ac gap16"><div class="phase">SZAKASZ</div><div class="ringwrap"><svg width="204" height="204" viewBox="0 0 204 204"><circle cx="102" cy="102" r="90" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="10"></circle><circle cx="102" cy="102" r="90" fill="none" stroke="#c2811f" stroke-width="10" stroke-linecap="round" stroke-dasharray="565" stroke-dashoffset="215" transform="rotate(-90 102 102)"></circle></svg><div class="ringnum">2.50<span class="unit">mp</span></div></div><div class="gate">CÉL KAPU</div></div><div class="fx col gap10"><div class="fx ac jb"><span class="muted">Következő</span><span class="dist">13 · 3 / 8 mp</span></div><div class="home"></div></div></div></div></div>
+<div class="phone pbl" style="left:720px;top:940px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">FELADAT 12</span><span class="dist">20 m</span></div><div class="fx col ac gap4" style="margin-top:2px"><div class="phase">SZAKASZ</div><div class="fx" style="align-items:baseline;gap:4px"><span class="num">2.50</span><span class="unit">mp</span></div><div class="fx gap6 w100" style="margin-top:8px"><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg on"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span></div><div class="gate" style="margin-top:12px">→ CÉL KAPU</div></div><div class="fx col gap10"><div class="fx ac jb"><span class="muted">Következő</span><span class="dist">13 · 3 / 8 mp</span></div><div class="home"></div></div></div></div></div>
+<div class="phone pcd" style="left:1440px;top:940px"><div class="scr"><div class="sb"><span>9:41</span><span class="fx ac gap6"><span class="dot"></span>BT<span class="batt"></span></span></div><div class="body"><div class="fx ac jb"><span class="chip">Feladat 12</span><span class="dist">20 m</span></div><div class="fx col ac gap12" style="margin-top:8px"><div class="phase">Szakasz</div><div class="fx" style="align-items:baseline;gap:4px"><span class="num">2.50</span><span class="unit">mp</span></div><div class="track w100"><div class="fill" style="width:62%"></div></div><div class="fx gap8" style="margin-top:4px"><span class="rdimd"></span><span class="rdimd"></span><span class="rdimd"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span></div><div class="gate" style="margin-top:4px">Cél kapu</div></div><div class="fx col gap10"><div class="fx ac jb"><span class="muted">Következő</span><span class="dist">13 · 3 / 8 mp</span></div><div class="home"></div></div></div></div></div></x-dc>
+</body>
+</html>
