@@ -5,7 +5,7 @@ import { useTheme } from '../../theme';
 import { AppText } from './AppText';
 
 const styles = StyleSheet.create({
-  segLabel: { fontSize: 12, fontWeight: '700', letterSpacing: 0 },
+  segLabel: { fontSize: 12, letterSpacing: 0 },
 });
 
 export type SegmentOption<T extends string> = {
@@ -54,7 +54,7 @@ export function SegmentedControl<T extends string>({ options, value, onChange }:
             style={seg}
             onPress={() => onChange?.(opt.key)}>
             {opt.icon}
-            <AppText preset="cardSub" color={on ? 'onAccent' : 'textSecondary'} style={styles.segLabel}>
+            <AppText preset="cardSub" weight="700" color={on ? 'onAccent' : 'textSecondary'} style={styles.segLabel}>
               {opt.label}
             </AppText>
           </Pressable>

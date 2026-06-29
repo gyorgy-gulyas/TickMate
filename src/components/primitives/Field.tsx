@@ -11,13 +11,13 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import { fonts, useTheme } from '../../theme';
+import { resolveFont, useTheme } from '../../theme';
 import { AppText } from './AppText';
 
 const styles = StyleSheet.create({
   container: { gap: 7 },
   adornments: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  unit: { fontFamily: fonts.mono, fontSize: 13, fontWeight: '600' },
+  unit: { fontFamily: resolveFont('mono', '500'), fontSize: 13 },
 });
 
 export type FieldProps = {
@@ -51,9 +51,8 @@ export function Field({ label, value, onChangeText, placeholder, unit, rightAdor
   };
   const valueText: TextStyle = {
     flex: 1,
-    fontFamily: theme.fonts.ui,
+    fontFamily: resolveFont('ui', '600'),
     fontSize: 15,
-    fontWeight: '600',
     color: theme.colors.textPrimary,
     padding: 0,
   };

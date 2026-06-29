@@ -4,26 +4,28 @@
  */
 import React from 'react';
 import { Text, type TextProps, type TextStyle } from 'react-native';
-import { useTheme } from '../../theme';
-import type { ColorTokens, TextPreset, TypePreset } from '../../theme';
+import { resolveFont, useTheme } from '../../theme';
+import type { ColorTokens, FontWeight, TextPreset, TypePreset } from '../../theme';
 
 export type AppTextProps = TextProps & {
-  /** Typography preset from theme.type (default: cardSub-ish body). */
+  /** Typography preset from theme.type (default: listMeta body). */
   preset?: TypePreset;
   /** Semantic color role, or any raw color string. Default: textPrimary. */
   color?: keyof ColorTokens | (string & {});
+  /** Override the preset weight (re-resolves the bundled font). */
+  weight?: FontWeight;
   children?: React.ReactNode;
 };
 
-export function AppText({ preset = 'listMeta', color = 'textPrimary', style, ...rest }: AppTextProps) {
+export function AppText({ preset = 'listMeta', color = 'textPrimary', weight, style, ...rest }: AppTextProps) {
   const theme = useTheme();
   const p = theme.type[preset] as TextPreset;
   const resolvedColor = color in theme.colors ? theme.colors[color as keyof ColorTokens] : (color as string);
 
+  // Per-weight TTFs: set fontFamily only, never numeric fontWeight.
   const presetStyle: TextStyle = {
-    fontFamily: p.fontFamily,
+    fontFamily: resolveFont(p.family, weight ?? p.fontWeight),
     fontSize: p.fontSize,
-    fontWeight: p.fontWeight,
     letterSpacing: p.letterSpacing,
     lineHeight: p.lineHeight,
     textTransform: p.textTransform,

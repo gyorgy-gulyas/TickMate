@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TickMate · Web preview</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: #0c0d10;
+      }
+      /* Center the app in a phone-width column for a device-like preview. */
+      body {
+        display: flex;
+        justify-content: center;
+      }
+      #root {
+        width: 100%;
+        max-width: 420px;
+        height: 100%;
+        display: flex;
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/web/index.web.tsx"></script>
+  </body>
+</html>

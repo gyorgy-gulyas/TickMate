@@ -1,0 +1,5 @@
+node_modules/
+dist/
+src/web/
+**/*.web.tsx
+vite.config.ts

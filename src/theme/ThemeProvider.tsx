@@ -10,8 +10,6 @@ import {
   radii,
   spacing,
   type,
-  fonts,
-  weights,
   type ColorTokens,
   type ThemeMode,
 } from './tokens';
@@ -22,8 +20,6 @@ export type Theme = {
   spacing: typeof spacing;
   radii: typeof radii;
   type: typeof type;
-  fonts: typeof fonts;
-  weights: typeof weights;
 };
 
 export type ThemeContextValue = Theme & {
@@ -40,8 +36,6 @@ function buildTheme(mode: ThemeMode): Theme {
     spacing,
     radii,
     type,
-    fonts,
-    weights,
   };
 }
 

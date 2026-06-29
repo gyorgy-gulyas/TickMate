@@ -122,28 +122,49 @@ export const radii = {
 } as const;
 
 /**
- * Font families. NOTE: these must be bundled (next build step — expo-font / assets
- * + react-native.config.js). Until linked, RN falls back to the system font.
+ * Fonts. Bundled as per-weight static TTFs (assets/fonts, linked via
+ * react-native.config.js). RN must reference each weight by its exact font
+ * name (PostScript name == file base name on both platforms), NOT a numeric
+ * fontWeight — so we resolve (role, weight) → a single family string and never
+ * set fontWeight on the resulting style.
  */
-export const fonts = {
-  /** UI text — Hanken Grotesk */
-  ui: 'HankenGrotesk',
-  /** Numbers + button labels — JetBrains Mono (tabular feel) */
-  mono: 'JetBrainsMono',
-} as const;
+export type FontRole = 'ui' | 'mono';
+export type FontWeight = '400' | '500' | '600' | '700' | '800';
 
-/** Weight values usable as fontWeight. Hanken: 500/600/700/800, Mono: 500/700/800. */
-export const weights = {
-  medium: '500',
-  semibold: '600',
-  bold: '700',
-  extrabold: '800',
-} as const;
+/** UI = Hanken Grotesk, mono = JetBrains Mono. Values are the linked TTF names. */
+export const fontFamilies: Record<FontRole, Partial<Record<FontWeight, string>>> = {
+  ui: {
+    '400': 'HankenGrotesk-Regular',
+    '500': 'HankenGrotesk-Medium',
+    '600': 'HankenGrotesk-SemiBold',
+    '700': 'HankenGrotesk-Bold',
+    '800': 'HankenGrotesk-ExtraBold',
+  },
+  mono: {
+    '400': 'JetBrainsMono-Regular',
+    '500': 'JetBrainsMono-Medium',
+    '700': 'JetBrainsMono-Bold',
+    '800': 'JetBrainsMono-ExtraBold',
+  },
+};
+
+/** Resolve a bundled font name; falls back to the nearest available weight. */
+export function resolveFont(role: FontRole, weight: FontWeight): string {
+  const table = fontFamilies[role];
+  const exact = table[weight];
+  if (exact) return exact;
+  for (const w of ['700', '800', '600', '500', '400'] as FontWeight[]) {
+    const f = table[w];
+    if (f) return f;
+  }
+  return 'System';
+}
 
 export type TextPreset = {
-  fontFamily: string;
+  family: FontRole;
   fontSize: number;
-  fontWeight: '500' | '600' | '700' | '800';
+  /** Logical weight — resolved to a specific TTF via resolveFont(). */
+  fontWeight: FontWeight;
   letterSpacing?: number;
   lineHeight?: number;
   textTransform?: 'uppercase' | 'none';
@@ -154,32 +175,32 @@ export type TextPreset = {
  * letterSpacing converted from CSS em → dp at the given font size (em × size).
  */
 export const type = {
-  navTitle: { fontFamily: fonts.ui, fontSize: 16, fontWeight: '700' },
-  cardTitle: { fontFamily: fonts.ui, fontSize: 16, fontWeight: '700' },
-  cardTitleSm: { fontFamily: fonts.ui, fontSize: 14, fontWeight: '700' },
-  cardSub: { fontFamily: fonts.ui, fontSize: 11, fontWeight: '600', letterSpacing: 0.2 },
-  listName: { fontFamily: fonts.ui, fontSize: 15, fontWeight: '700' },
-  listMeta: { fontFamily: fonts.ui, fontSize: 12, fontWeight: '600' },
+  navTitle: { family: 'ui', fontSize: 16, fontWeight: '700' },
+  cardTitle: { family: 'ui', fontSize: 16, fontWeight: '700' },
+  cardTitleSm: { family: 'ui', fontSize: 14, fontWeight: '700' },
+  cardSub: { family: 'ui', fontSize: 11, fontWeight: '600', letterSpacing: 0.2 },
+  listName: { family: 'ui', fontSize: 15, fontWeight: '700' },
+  listMeta: { family: 'ui', fontSize: 12, fontWeight: '600' },
   // Field label — 11/700 uppercase +.1em
-  label: { fontFamily: fonts.ui, fontSize: 11, fontWeight: '700', letterSpacing: 1.1, textTransform: 'uppercase' },
-  muted: { fontFamily: fonts.ui, fontSize: 11, fontWeight: '600', letterSpacing: 0.44 },
+  label: { family: 'ui', fontSize: 11, fontWeight: '700', letterSpacing: 1.1, textTransform: 'uppercase' },
+  muted: { family: 'ui', fontSize: 11, fontWeight: '600', letterSpacing: 0.44 },
   // Phase — 13/700 uppercase +.24em (accent color applied by component)
-  phase: { fontFamily: fonts.ui, fontSize: 13, fontWeight: '700', letterSpacing: 3.12, textTransform: 'uppercase' },
-  gate: { fontFamily: fonts.ui, fontSize: 14, fontWeight: '700', letterSpacing: 0.84 },
+  phase: { family: 'ui', fontSize: 13, fontWeight: '700', letterSpacing: 3.12, textTransform: 'uppercase' },
+  gate: { family: 'ui', fontSize: 14, fontWeight: '700', letterSpacing: 0.84 },
   // Button — 13/700 mono uppercase +.09em
-  button: { fontFamily: fonts.mono, fontSize: 13, fontWeight: '700', letterSpacing: 1.17, textTransform: 'uppercase' },
+  button: { family: 'mono', fontSize: 13, fontWeight: '700', letterSpacing: 1.17, textTransform: 'uppercase' },
   // Big run counter — 84/800 mono -.03em
-  bigNum: { fontFamily: fonts.mono, fontSize: 84, fontWeight: '800', letterSpacing: -2.52 },
-  bigUnit: { fontFamily: fonts.mono, fontSize: 22, fontWeight: '700' },
+  bigNum: { family: 'mono', fontSize: 84, fontWeight: '800', letterSpacing: -2.52 },
+  bigUnit: { family: 'mono', fontSize: 22, fontWeight: '700' },
   // Stat number — 30/800 mono
-  statN: { fontFamily: fonts.mono, fontSize: 30, fontWeight: '800' },
-  statUnit: { fontFamily: fonts.mono, fontSize: 13, fontWeight: '700' },
+  statN: { family: 'mono', fontSize: 30, fontWeight: '800' },
+  statUnit: { family: 'mono', fontSize: 13, fontWeight: '700' },
   // Section list mono value
-  mono: { fontFamily: fonts.mono, fontSize: 14, fontWeight: '700' },
+  mono: { family: 'mono', fontSize: 14, fontWeight: '700' },
   // List number (mono, accent)
-  listNum: { fontFamily: fonts.mono, fontSize: 15, fontWeight: '800' },
+  listNum: { family: 'mono', fontSize: 15, fontWeight: '800' },
   // Watch face number — 46/800 mono
-  watchNum: { fontFamily: fonts.mono, fontSize: 46, fontWeight: '800' },
+  watchNum: { family: 'mono', fontSize: 46, fontWeight: '800' },
 } satisfies Record<string, TextPreset>;
 
 export type TypePreset = keyof typeof type;

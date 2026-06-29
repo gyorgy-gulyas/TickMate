@@ -1,45 +1,40 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
+ * TickMate app root.
  * @format
  */
+import React from 'react';
+import { StatusBar, StyleSheet, View } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ThemeProvider, useTheme } from './src/theme';
+import { DemoScreen } from './src/screens/DemoScreen';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
+function Root() {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const containerStyle = { backgroundColor: theme.colors.bg, paddingTop: insets.top };
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
+    <View style={[styles.container, containerStyle]}>
+      <StatusBar
+        barStyle={theme.mode === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={theme.colors.bg}
       />
+      <DemoScreen />
     </View>
   );
 }
 
+function App() {
+  return (
+    <SafeAreaProvider>
+      <ThemeProvider initialMode="dark">
+        <Root />
+      </ThemeProvider>
+    </SafeAreaProvider>
+  );
+}
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
 });
 
 export default App;
