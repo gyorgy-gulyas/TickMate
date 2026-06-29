@@ -11,7 +11,7 @@ import {
   buildSchematic,
   buildSharedSchematic,
 } from '../components';
-import { SECTION_TYPE_META } from '../data/mock';
+import { SECTION_TYPE_META } from '../data/model';
 import { Screen } from './Screen';
 
 const styles = StyleSheet.create({

@@ -12,7 +12,7 @@ import {
   type Section,
   type Settings,
   type ThemeMode,
-} from '../data/mock';
+} from '../data/model';
 
 let idCounter = 0;
 function newId(prefix: string): string {

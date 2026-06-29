@@ -27,24 +27,13 @@ import {
   Slider,
   StatCard,
   Stepper,
+  TASK_TYPE_OPTIONS,
   Toggle,
   UpcomingRow,
   type IconName,
 } from '../components';
 import { useTheme } from '../theme';
-
-type SectionType = 'normal' | 'shared' | 'overlap';
-const TYPE_OPTIONS = [
-  { key: 'normal' as const, label: 'Normál', icon: <Icon name="arrow-right" size={15} color="textSecondary" /> },
-  { key: 'shared' as const, label: 'Követő', icon: <Icon name="link-simple" size={15} color="textSecondary" /> },
-  { key: 'overlap' as const, label: 'Átfedő', icon: <Icon name="arrows-split" size={15} color="textSecondary" /> },
-];
-
-const TYPE_ICON: Record<SectionType, IconName> = {
-  normal: 'arrow-right',
-  shared: 'link-simple',
-  overlap: 'arrows-split',
-};
+import { SECTION_TYPE_META, type SectionType } from '../data/model';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -109,7 +98,7 @@ export function DemoScreen() {
             <SectionRow
               key={t}
               index={i + 1}
-              typeIcon={<Icon name={TYPE_ICON[t]} size={15} color="textSecondary" />}
+              typeIcon={<Icon name={SECTION_TYPE_META[t].icon} size={15} color="textSecondary" />}
               name={t === 'normal' ? 'Rajt feladat' : t === 'shared' ? 'Szlalom' : 'Garázs'}
               value="5 / 7 mp"
               divider={i < 2}
@@ -129,7 +118,7 @@ export function DemoScreen() {
             />
             <Field label="Elők." value="5.0" unit="mp" style={styles.flex1} />
           </View>
-          <SegmentedControl options={TYPE_OPTIONS} value={type} onChange={setType} />
+          <SegmentedControl options={TASK_TYPE_OPTIONS} value={type} onChange={setType} />
         </Section>
 
         <Section title="Controls">

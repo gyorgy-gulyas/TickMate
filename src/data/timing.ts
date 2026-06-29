@@ -6,7 +6,7 @@
  * Multi-leg B offset is approximate (the model has durations, not B's start):
  * nested centres B inside A; overlap starts B at A's midpoint.
  */
-import type { SectionType } from './mock';
+import type { SectionType } from './model';
 
 export type LegWindow = { label: string; start: number; end: number };
 

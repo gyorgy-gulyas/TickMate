@@ -1,5 +1,5 @@
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { Segment, SectionType } from '../data/mock';
+import type { Segment, SectionType } from '../data/model';
 
 /** Root stack route list. Run/analysis screens are added as the build progresses. */
 export type RootStackParamList = {

@@ -2,7 +2,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { AppText, Icon, SettingsRow } from '../components';
-import { LANGUAGES } from '../data/mock';
+import { LANGUAGES } from '../data/model';
 import { useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 

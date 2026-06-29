@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import { AppText, Card } from '../primitives';
 import { Icon } from '../icons';
 import { OverlapSchematic, TypeSchematic, buildSchematic, buildSharedSchematic } from '../viz';
-import { SECTION_TYPE_META, fmtSec, type SectionType } from '../../data/mock';
+import { SECTION_TYPE_META, fmtSec, type SectionType } from '../../data/model';
 
 /** The four section types as SegmentedControl options. */
 export const TASK_TYPE_OPTIONS = (['normal', 'shared', 'nested', 'overlap'] as SectionType[]).map(t => ({

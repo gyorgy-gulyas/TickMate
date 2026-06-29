@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard } from '../../components';
-import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/mock';
+import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/model';
 import { isSimultaneous, legWindows, taskDuration } from '../../data/timing';
 import { playTask, stopAudio } from '../../audio';
 import { useRace, useRunByRace, useSettings, useStore } from '../../store/useStore';

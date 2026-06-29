@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, DivergingBar, Icon, Legend, StatCard } from '../components';
-import { fmtDelta, runDeltas } from '../data/mock';
+import { fmtDelta, runDeltas } from '../data/model';
 import { useRunById } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootStackParamList } from '../navigation/types';

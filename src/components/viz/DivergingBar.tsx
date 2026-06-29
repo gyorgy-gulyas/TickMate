@@ -5,7 +5,7 @@ import React from 'react';
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 import { AppText } from '../primitives';
 import { useTheme } from '../../theme';
-import { fmtDelta } from '../../data/mock';
+import { fmtDelta } from '../../data/model';
 
 export type DivergingItem = {
   name: string;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { AppText, Icon, Legend, Timeline } from '../components';
-import { TAVASZI_TIMELINE } from '../data/mock';
+import { TAVASZI_TIMELINE } from '../data/model';
 import { Screen } from './Screen';
 
 const styles = StyleSheet.create({

@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Field, Icon } from '../components';
-import { SECTION_TYPE_META, fmtDelta, fmtSec, legDelta, toNum } from '../data/mock';
+import { SECTION_TYPE_META, fmtDelta, fmtSec, legDelta, toNum } from '../data/model';
 import { useRunById, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootStackParamList } from '../navigation/types';

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, AudioPreview, Button, Field, Icon, SegmentedControl, TASK_TYPE_OPTIONS, TaskSchematic } from '../components';
-import { fmtSec, toNum, type SectionType } from '../data/mock';
+import { fmtSec, toNum, type SectionType } from '../data/model';
 import { playTask } from '../audio';
 import { useRace, useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';

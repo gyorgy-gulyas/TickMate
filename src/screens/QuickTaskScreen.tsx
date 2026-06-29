@@ -14,7 +14,7 @@ import {
   TaskSchematic,
   Toggle,
 } from '../components';
-import { fmtSec, toNum, type SectionType } from '../data/mock';
+import { fmtSec, toNum, type SectionType } from '../data/model';
 import { playTask } from '../audio';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';

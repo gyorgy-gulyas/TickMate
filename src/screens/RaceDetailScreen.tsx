@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Field, Icon, Pill, SectionRow } from '../components';
-import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/mock';
+import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/model';
 import { useRace, useRunByRace, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';

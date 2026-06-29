@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, type LayoutChangeEvent, type ViewStyle } from 'react-native';
 import { AppText } from '../primitives';
 import { useTheme } from '../../theme';
-import { fmtSec } from '../../data/mock';
+import { fmtSec } from '../../data/model';
 
 export type SchematicMarker = {
   pct: number;

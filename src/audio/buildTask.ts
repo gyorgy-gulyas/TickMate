@@ -7,7 +7,7 @@
  */
 import { SAMPLE_RATE, renderClick, renderFinalClick, renderStart } from './synth';
 import { gateTimes } from '../data/timing';
-import type { SectionType } from '../data/mock';
+import type { SectionType } from '../data/model';
 
 export type TaskSpec = {
   type: SectionType;
