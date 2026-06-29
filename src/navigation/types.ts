@@ -19,6 +19,8 @@ export type RootStackParamList = {
   HistoryDetail: { runId?: string } | undefined;
   Analysis: { runId?: string } | undefined;
   Timeline: { runId?: string } | undefined;
+  /** Result editor — record actual times for a race's run. */
+  Result: { runId?: string } | undefined;
   RunStandby: { raceId?: string } | undefined;
   RunNormal: undefined;
   RunSharedGate: undefined;

@@ -1,6 +1,6 @@
 /** Shared building blocks for the headerless run views. */
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText, Button, Chip, Icon } from '../../components';
 import { useTheme } from '../../theme';
 
@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   content: { flex: 1, justifyContent: 'space-between', padding: 18 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  left: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   dist: { fontSize: 12 },
 });
 
@@ -20,10 +21,27 @@ export function RunFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function RunHeader({ chipLabel, chipIcon, dist }: { chipLabel: string; chipIcon?: React.ReactNode; dist: string }) {
+export function RunHeader({
+  chipLabel,
+  chipIcon,
+  dist,
+  onBack,
+}: {
+  chipLabel: string;
+  chipIcon?: React.ReactNode;
+  dist: string;
+  onBack?: () => void;
+}) {
   return (
     <View style={styles.header}>
-      <Chip label={chipLabel} icon={chipIcon} />
+      <View style={styles.left}>
+        {onBack ? (
+          <Pressable accessibilityRole="button" accessibilityLabel="vissza" hitSlop={8} onPress={onBack}>
+            <Icon name="caret-left" size={22} color="textSecondary" />
+          </Pressable>
+        ) : null}
+        <Chip label={chipLabel} icon={chipIcon} />
+      </View>
       <AppText preset="mono" color="accentText" style={styles.dist}>
         {dist}
       </AppText>

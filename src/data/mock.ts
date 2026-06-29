@@ -102,56 +102,66 @@ export const fmtSec = (n: number): string => (Number.isInteger(n) ? `${n}` : n.t
 /** Signed delta with a real minus sign, e.g. "+0.3" / "−0.4". */
 export const fmtDelta = (n: number): string => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`;
 
-// --- Past runs (History / analysis) ---
+// --- Runs (results of completing a race) — one run per race ---
 
-export type RunResult = {
-  name: string;
-  type: SectionType;
-  /** Measured section time (s). */
-  measuredSec: number;
-  /** Delta vs target (s); + = slower, − = faster. */
-  delta: number;
-};
+export type RunLeg = { targetSec: number; actualSec: number | null };
+export type RunSection = { name: string; type: SectionType; legs: RunLeg[] };
 
-export type RunRecord = {
+export type Run = {
   id: string;
-  raceName: string;
+  raceId: string;
+  raceName: string; // snapshot — survives race rename/delete
   date: string;
-  sectionCount: number;
-  results: RunResult[];
   note: string;
-  avgDelta: number;
-  bestName: string;
-  bestDelta: number;
+  results: RunSection[];
 };
 
-const tavasziResults: RunResult[] = [
-  { name: 'Rajt szakasz', type: 'normal', measuredSec: 7.04, delta: 0.1 },
-  { name: 'Szlalom', type: 'shared', measuredSec: 8.12, delta: -0.2 },
-  { name: 'Garázs', type: 'overlap', measuredSec: 5.03, delta: -0.4 },
-  { name: 'Tolatás', type: 'normal', measuredSec: 9.2, delta: 0.9 },
-];
-
-export const HISTORY: RunRecord[] = [
-  {
-    id: 'h1',
-    raceName: 'Tavaszi Kupa',
-    date: '2026.04.12',
-    sectionCount: 8,
-    results: tavasziResults,
-    note: 'Jó ritmus, a 4. kapunál késtem.',
-    avgDelta: 0.3,
-    bestName: 'Garázs',
-    bestDelta: -0.4,
-  },
-  { id: 'h2', raceName: 'Balaton Klasszik', date: '2026.05.03', sectionCount: 12, results: [], note: '', avgDelta: 0, bestName: '', bestDelta: 0 },
-  { id: 'h3', raceName: 'Edzés – Mátra', date: '2026.03.30', sectionCount: 4, results: [], note: '', avgDelta: 0, bestName: '', bestDelta: 0 },
-  { id: 'h4', raceName: 'Őszi Ügyességi', date: '2025.10.19', sectionCount: 6, results: [], note: '', avgDelta: 0, bestName: '', bestDelta: 0 },
-];
-
-export function getRun(id?: string): RunRecord {
-  return HISTORY.find(r => r.id === id) ?? HISTORY[0];
+/** Snapshot a race's plan into run results (targets set, actuals preserved from prev). */
+export function snapshotResults(race: Race, prev?: Run): RunSection[] {
+  return race.sections.map((s, si) => ({
+    name: s.name,
+    type: s.type,
+    legs: s.segments.map((g, li) => ({
+      targetSec: g.timeSec,
+      actualSec: prev?.results[si]?.legs[li]?.actualSec ?? null,
+    })),
+  }));
 }
+
+/** Per-leg delta = actual − target (null until an actual is entered). */
+export const legDelta = (leg: RunLeg): number | null => (leg.actualSec == null ? null : leg.actualSec - leg.targetSec);
+
+/** Flatten all entered legs to { name, delta } for analysis. */
+export function runDeltas(run: Run): { name: string; delta: number }[] {
+  const out: { name: string; delta: number }[] = [];
+  run.results.forEach(sec => {
+    sec.legs.forEach((leg, li) => {
+      const d = legDelta(leg);
+      if (d != null) out.push({ name: sec.legs.length > 1 ? `${sec.name} ${li === 0 ? 'A' : 'B'}` : sec.name, delta: d });
+    });
+  });
+  return out;
+}
+
+// One seed run so History/Analysis show data on first load.
+const SEED_OFFS = [0.1, -0.2, -0.4, 0.9, 0.2];
+export const INITIAL_RUNS: Run[] = [
+  {
+    id: 'run1',
+    raceId: 'r1',
+    raceName: 'Tavaszi Oldtimer Kupa',
+    date: '2026.04.12',
+    note: 'Jó ritmus, a 4. kapunál késtem.',
+    results: tavasziSections.map((s, si) => ({
+      name: s.name,
+      type: s.type,
+      legs: s.segments.map(g => ({
+        targetSec: g.timeSec,
+        actualSec: Math.round((g.timeSec + SEED_OFFS[si % SEED_OFFS.length]) * 10) / 10,
+      })),
+    })),
+  },
+];
 
 /** Illustrative timeline for the Tavaszi Kupa (shared gate + overlap). */
 export type TimelineBarData = { label: string; leftPct: number; widthPct: number; variant: 'primary' | 'secondary' };

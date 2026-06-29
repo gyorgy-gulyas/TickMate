@@ -39,12 +39,6 @@ export function HomeScreen() {
           onPress={() => navigation.navigate('Races')}
         />
         <MenuCard
-          icon={<Icon name="timer" size={22} color="accent" />}
-          title="Gyors feladat"
-          subtitle="Azonnali időzítés mentés nélkül"
-          onPress={() => navigation.navigate('QuickTask')}
-        />
-        <MenuCard
           icon={<Icon name="target" size={22} color="accent" />}
           title="Gyakorló mód"
           subtitle="Reakció és ritmus"

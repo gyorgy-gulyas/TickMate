@@ -5,7 +5,10 @@ import { storage } from './storage';
 import {
   DEFAULT_SETTINGS,
   INITIAL_RACES,
+  INITIAL_RUNS,
+  snapshotResults,
   type Race,
+  type Run,
   type Section,
   type Settings,
   type ThemeMode,
@@ -23,11 +26,16 @@ export function emptySection(): Section {
 
 type AppState = {
   races: Race[];
+  runs: Run[];
   settings: Settings;
   // race actions
   addRace: () => string;
   updateRace: (id: string, patch: Partial<Race>) => void;
   deleteRace: (id: string) => void;
+  // run (result) actions — one run per race
+  closeRace: (raceId: string) => string;
+  setRunActual: (runId: string, sectionIndex: number, legIndex: number, actualSec: number | null) => void;
+  setRunNote: (runId: string, note: string) => void;
   // section actions
   addSection: (raceId: string) => string;
   updateSection: (raceId: string, sectionId: string, patch: Partial<Section>) => void;
@@ -42,8 +50,9 @@ type AppState = {
 
 export const useStore = create<AppState>()(
   persist(
-    set => ({
+    (set, get) => ({
       races: INITIAL_RACES,
+      runs: INITIAL_RUNS,
       settings: DEFAULT_SETTINGS,
 
       addRace: () => {
@@ -53,7 +62,33 @@ export const useStore = create<AppState>()(
         return id;
       },
       updateRace: (id, patch) => set(s => ({ races: s.races.map(r => (r.id === id ? { ...r, ...patch } : r)) })),
-      deleteRace: id => set(s => ({ races: s.races.filter(r => r.id !== id) })),
+      deleteRace: id =>
+        set(s => ({ races: s.races.filter(r => r.id !== id), runs: s.runs.filter(r => r.raceId !== id) })),
+
+      closeRace: raceId => {
+        const { races, runs } = get();
+        const race = races.find(r => r.id === raceId);
+        if (!race) return '';
+        const prev = runs.find(run => run.raceId === raceId);
+        const id = prev?.id ?? newId('run');
+        const run: Run = { id, raceId, raceName: race.name, date: race.date, note: prev?.note ?? '', results: snapshotResults(race, prev) };
+        set(s => ({ runs: [run, ...s.runs.filter(r => r.id !== id)] }));
+        return id;
+      },
+      setRunActual: (runId, si, li, actualSec) =>
+        set(s => ({
+          runs: s.runs.map(run =>
+            run.id === runId
+              ? {
+                  ...run,
+                  results: run.results.map((sec, i) =>
+                    i === si ? { ...sec, legs: sec.legs.map((leg, j) => (j === li ? { ...leg, actualSec } : leg)) } : sec,
+                  ),
+                }
+              : run,
+          ),
+        })),
+      setRunNote: (runId, note) => set(s => ({ runs: s.runs.map(run => (run.id === runId ? { ...run, note } : run)) })),
 
       addSection: raceId => {
         const sec = emptySection();
@@ -104,3 +139,6 @@ export const useStore = create<AppState>()(
 export const useRaces = () => useStore(s => s.races);
 export const useRace = (id?: string) => useStore(s => s.races.find(r => r.id === id) ?? s.races[0]);
 export const useSettings = () => useStore(s => s.settings);
+export const useRuns = () => useStore(s => s.runs);
+export const useRunById = (id?: string) => useStore(s => s.runs.find(r => r.id === id));
+export const useRunByRace = (raceId?: string) => useStore(s => s.runs.find(r => r.raceId === raceId));
