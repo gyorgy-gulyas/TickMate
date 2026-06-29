@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { RootNav } from '../navigation/types';
 import {
   AppText,
   BigNum,
@@ -58,7 +59,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export function DemoScreen() {
   const theme = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootNav>();
   const [secsOn, setSecsOn] = useState(true);
   const [vol, setVol] = useState(0.72);
   const [latency, setLatency] = useState(120);
@@ -91,6 +92,13 @@ export function DemoScreen() {
         <Section title="Buttons">
           <Button label="Start" variant="primary" icon={<Icon name="play" size={14} color="onAccent" />} />
           <Button label="Hang újragenerálása" variant="secondary" icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />} />
+        </Section>
+
+        <Section title="Futás-nézetek (dev)">
+          <Button label="Készenlét" variant="secondary" onPress={() => navigation.navigate('RunStandby')} />
+          <Button label="Normál" variant="secondary" onPress={() => navigation.navigate('RunNormal')} />
+          <Button label="Közös kapu" variant="secondary" onPress={() => navigation.navigate('RunSharedGate')} />
+          <Button label="Átfedő" variant="secondary" onPress={() => navigation.navigate('RunOverlap')} />
         </Section>
 
         <Section title="Menu cards">

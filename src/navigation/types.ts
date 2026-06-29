@@ -19,6 +19,10 @@ export type RootStackParamList = {
   HistoryDetail: { runId?: string } | undefined;
   Analysis: { runId?: string } | undefined;
   Timeline: { runId?: string } | undefined;
+  RunStandby: { raceId?: string } | undefined;
+  RunNormal: undefined;
+  RunSharedGate: undefined;
+  RunOverlap: undefined;
   /** Dev-only: the component UI-kit. Remove before release. */
   Demo: undefined;
 };

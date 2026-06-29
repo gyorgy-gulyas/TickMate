@@ -25,7 +25,12 @@ export function RaceDetailScreen() {
         variant="secondary"
         icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />}
       />
-      <Button label="Start" variant="primary" icon={<Icon name="play" size={14} color="onAccent" />} />
+      <Button
+        label="Start"
+        variant="primary"
+        icon={<Icon name="play" size={14} color="onAccent" />}
+        onPress={() => navigation.navigate('RunStandby', { raceId: race.id })}
+      />
     </>
   );
 
