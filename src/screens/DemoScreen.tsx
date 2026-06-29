@@ -4,6 +4,7 @@
  */
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import {
   AppText,
   BigNum,
@@ -57,6 +58,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export function DemoScreen() {
   const theme = useTheme();
+  const navigation = useNavigation();
   const [secsOn, setSecsOn] = useState(true);
   const [vol, setVol] = useState(0.72);
   const [latency, setLatency] = useState(120);
@@ -67,6 +69,7 @@ export function DemoScreen() {
     <View style={[styles.fill, { backgroundColor: theme.colors.bg }]}>
       <NavBar
         title="TickMate · UI Kit"
+        onBack={navigation.canGoBack() ? () => navigation.goBack() : undefined}
         right={
           <View style={styles.modeToggle}>
             <AppText preset="cardSub" color="textSecondary">

@@ -1,4 +1,5 @@
 export * from './BigNum';
+export * from './BrandLockup';
 export * from './Chevron';
 export * from './ListRow';
 export * from './MenuCard';

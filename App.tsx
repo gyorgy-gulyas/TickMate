@@ -6,7 +6,7 @@ import React from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from './src/theme';
-import { DemoScreen } from './src/screens/DemoScreen';
+import { RootNavigator } from './src/navigation/RootNavigator';
 
 function Root() {
   const theme = useTheme();
@@ -18,7 +18,7 @@ function Root() {
         barStyle={theme.mode === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor={theme.colors.bg}
       />
-      <DemoScreen />
+      <RootNavigator />
     </View>
   );
 }
