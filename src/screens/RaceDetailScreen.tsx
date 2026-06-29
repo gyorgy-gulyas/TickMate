@@ -2,13 +2,14 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, Button, Icon, Pill, SectionRow } from '../components';
+import { AppText, Button, Field, Icon, Pill, SectionRow } from '../components';
 import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/mock';
 import { useRace, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';
 
 const styles = StyleSheet.create({
+  header: { gap: 11 },
   thead: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 1, marginTop: 2 },
   empty: { paddingVertical: 18 },
 });
@@ -18,6 +19,7 @@ export function RaceDetailScreen() {
   const navigation = useNavigation<RootNav>();
   const race = useRace(route.params?.raceId);
   const regenerateRaceAudio = useStore(s => s.regenerateRaceAudio);
+  const updateRace = useStore(s => s.updateRace);
   const totalSec = race.sections.reduce((sum, s) => sum + sectionTotalSec(s), 0);
   const total = race.sections.length;
   const audioReadyCount = race.sections.filter(s => s.audioReady).length;
@@ -46,6 +48,15 @@ export function RaceDetailScreen() {
       gap={10}
       rightActions={<Icon name="question" size={19} color="textSecondary" />}
       footer={footer}>
+      <View style={styles.header}>
+        <Field label="Név" value={race.name} onChangeText={n => updateRace(race.id, { name: n })} />
+        <Field
+          label="Verseny napja"
+          value={race.date}
+          onChangeText={d => updateRace(race.id, { date: d })}
+          placeholder="ÉÉÉÉ.HH.NN"
+        />
+      </View>
       <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Timeline')}>
         <Pill
           label={`Hang ${audioReadyCount}/${total} kész · ${total} feladat · ${totalSec} mp`}
