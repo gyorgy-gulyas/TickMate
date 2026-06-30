@@ -1,8 +1,8 @@
 /** Race detail: audio status + section list. Maps to "Verseny részletei". */
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, Button, Field, Icon, Pill, SectionRow } from '../components';
+import { AppText, Button, ConfirmDialog, Field, Icon, Pill, SectionRow } from '../components';
 import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/model';
 import { useT, typeKey } from '../i18n';
 import { useRace, useStore } from '../store/useStore';
@@ -22,12 +22,25 @@ export function RaceDetailScreen() {
   const regenerateRaceAudio = useStore(s => s.regenerateRaceAudio);
   const updateRace = useStore(s => s.updateRace);
   const closeRace = useStore(s => s.closeRace);
+  const addSection = useStore(s => s.addSection);
+  const deleteRace = useStore(s => s.deleteRace);
   const t = useT();
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const recordResult = () => {
     const runId = closeRace(race.id);
     if (runId) navigation.navigate('Result', { runId });
   };
+  const addTask = () => {
+    const id = addSection(race.id);
+    navigation.navigate('SectionEditor', { raceId: race.id, sectionId: id });
+  };
+  const removeRace = () => {
+    setConfirmDelete(false);
+    deleteRace(race.id);
+    navigation.goBack();
+  };
+
   const totalSec = race.sections.reduce((sum, s) => sum + sectionTotalSec(s), 0);
   const total = race.sections.length;
   const audioReadyCount = race.sections.filter(s => s.audioReady).length;
@@ -60,7 +73,11 @@ export function RaceDetailScreen() {
     <Screen
       title={race.name}
       gap={10}
-      rightActions={<Icon name="question" size={19} color="textSecondary" />}
+      rightActions={
+        <Pressable accessibilityRole="button" accessibilityLabel={t('race.delete')} onPress={() => setConfirmDelete(true)}>
+          <Icon name="trash" size={19} color="textSecondary" />
+        </Pressable>
+      }
       footer={footer}>
       <View style={styles.header}>
         <Field label={t('field.name')} value={race.name} onChangeText={n => updateRace(race.id, { name: n })} />
@@ -106,6 +123,23 @@ export function RaceDetailScreen() {
           {t('race.empty')}
         </AppText>
       )}
+
+      <Button
+        label={t('race.addTask')}
+        variant="secondary"
+        icon={<Icon name="plus" size={16} color="textPrimary" />}
+        onPress={addTask}
+      />
+
+      <ConfirmDialog
+        visible={confirmDelete}
+        title={t('race.delete')}
+        message={t('race.deleteConfirm')}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={removeRace}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </Screen>
   );
 }

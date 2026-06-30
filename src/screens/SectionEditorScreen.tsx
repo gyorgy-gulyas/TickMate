@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, AudioPreview, Button, Field, Icon, SegmentedControl, TaskSchematic, useTaskTypeOptions } from '../components';
+import { AppText, AudioPreview, Button, ConfirmDialog, Field, Icon, SegmentedControl, TaskSchematic, useTaskTypeOptions } from '../components';
 import { fmtSec, toNum, type SectionType } from '../data/model';
 import { useT } from '../i18n';
 import { playTask } from '../audio';
@@ -24,9 +24,11 @@ export function SectionEditorScreen() {
   const sectionId = route.params?.sectionId;
   const race = useRace(raceId);
   const updateSection = useStore(s => s.updateSection);
+  const deleteSection = useStore(s => s.deleteSection);
   const secondsTick = useSettings().secondsTick;
   const t = useT();
   const typeOptions = useTaskTypeOptions();
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const index = race.sections.findIndex(s => s.id === sectionId);
   const existing = index >= 0 ? race.sections[index] : undefined;
@@ -68,6 +70,12 @@ export function SectionEditorScreen() {
   const generateAudio = () => commit(true);
   const audioCurrent = !!existing?.audioReady && !timingChanged;
 
+  const removeSection = () => {
+    setConfirmDelete(false);
+    if (existing && raceId) deleteSection(raceId, existing.id);
+    navigation.goBack();
+  };
+
   const footer = <Button label={t('common.save')} variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={save} />;
 
   const rightActions = (
@@ -78,6 +86,11 @@ export function SectionEditorScreen() {
       <Pressable accessibilityRole="button" accessibilityLabel={t('a11y.photo')} onPress={() => navigation.navigate('SectionFromPhoto')}>
         <Icon name="camera" size={20} color="accentText" />
       </Pressable>
+      {existing ? (
+        <Pressable accessibilityRole="button" accessibilityLabel={t('section.delete')} onPress={() => setConfirmDelete(true)}>
+          <Icon name="trash" size={19} color="textSecondary" />
+        </Pressable>
+      ) : null}
     </View>
   );
 
@@ -138,6 +151,16 @@ export function SectionEditorScreen() {
           onPress={generateAudio}
         />
       </View>
+
+      <ConfirmDialog
+        visible={confirmDelete}
+        title={t('section.delete')}
+        message={t('section.deleteConfirm')}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={removeSection}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </Screen>
   );
 }

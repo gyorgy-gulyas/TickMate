@@ -1,5 +1,6 @@
 /** Saved races list. Maps to "Versenyek". Reads/creates races from the store. */
 import React from 'react';
+import { Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Button, Icon, ListRow } from '../components';
 import { useT } from '../i18n';
@@ -21,7 +22,15 @@ export function RacesScreen() {
   const footer = <Button label={t('races.new')} variant="primary" icon={<Icon name="plus" size={16} color="onAccent" />} onPress={createRace} />;
 
   return (
-    <Screen title={t('races.title')} gap={0} rightActions={<Icon name="plus" size={22} color="accentText" />} footer={footer}>
+    <Screen
+      title={t('races.title')}
+      gap={0}
+      rightActions={
+        <Pressable accessibilityRole="button" accessibilityLabel={t('races.new')} onPress={createRace}>
+          <Icon name="plus" size={22} color="accentText" />
+        </Pressable>
+      }
+      footer={footer}>
       {races.map((race, i) => (
         <ListRow
           key={race.id}

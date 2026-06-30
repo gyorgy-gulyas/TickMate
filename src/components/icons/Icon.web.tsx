@@ -32,6 +32,7 @@ import {
   Stop,
   Target,
   Timer,
+  Trash,
   Waveform,
   type Icon as PhosphorIcon,
   type IconWeight,
@@ -67,6 +68,7 @@ const MAP = {
   stop: Stop,
   target: Target,
   timer: Timer,
+  trash: Trash,
   waveform: Waveform,
 } satisfies Record<string, PhosphorIcon>;
 
