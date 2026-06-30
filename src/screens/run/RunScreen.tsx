@@ -478,7 +478,7 @@ export function RunScreen() {
 
   return (
     <FinishedView
-      onViewResult={() => (finishedRun ? navigation.navigate('HistoryDetail', { runId: finishedRun.id }) : goHome())}
+      onViewResult={() => (finishedRun ? navigation.navigate('Result', { runId: finishedRun.id }) : goHome())}
       onHome={goHome}
     />
   );

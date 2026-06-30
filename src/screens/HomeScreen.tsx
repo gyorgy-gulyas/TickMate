@@ -45,12 +45,6 @@ export function HomeScreen() {
           onPress={() => navigation.navigate('Practice')}
         />
         <MenuCard
-          icon={<Icon name="clock-counter-clockwise" size={22} color="accent" />}
-          title="History"
-          subtitle="Korábbi futások"
-          onPress={() => navigation.navigate('History')}
-        />
-        <MenuCard
           icon={<Icon name="gear-six" size={22} color="accent" />}
           title="Beállítások"
           subtitle="Bluetooth, hang, mód"

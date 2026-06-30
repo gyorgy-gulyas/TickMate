@@ -16,9 +16,6 @@ export type RootStackParamList = {
   BluetoothLatency: undefined;
   Smartwatch: undefined;
   Help: undefined;
-  History: undefined;
-  HistoryDetail: { runId?: string } | undefined;
-  Analysis: { runId?: string } | undefined;
   Timeline: { runId?: string } | undefined;
   /** Result editor — record actual times for a race's run. */
   Result: { runId?: string } | undefined;

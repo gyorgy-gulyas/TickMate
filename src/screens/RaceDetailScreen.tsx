@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Field, Icon, Pill, SectionRow } from '../components';
 import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/model';
-import { useRace, useRunByRace, useStore } from '../store/useStore';
+import { useRace, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';
 
@@ -21,7 +21,6 @@ export function RaceDetailScreen() {
   const regenerateRaceAudio = useStore(s => s.regenerateRaceAudio);
   const updateRace = useStore(s => s.updateRace);
   const closeRace = useStore(s => s.closeRace);
-  const existingRun = useRunByRace(race.id);
 
   const recordResult = () => {
     const runId = closeRace(race.id);
@@ -41,7 +40,7 @@ export function RaceDetailScreen() {
         onPress={() => regenerateRaceAudio(race.id)}
       />
       <Button
-        label={existingRun ? 'Eredmény szerkesztése' : 'Eredmény rögzítése'}
+        label="Eredmények"
         variant="secondary"
         icon={<Icon name="flag-checkered" size={16} color="textPrimary" />}
         onPress={recordResult}

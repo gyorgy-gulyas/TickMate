@@ -20,9 +20,6 @@ import { BluetoothLatencyScreen } from '../screens/BluetoothLatencyScreen';
 import { HelpScreen } from '../screens/HelpScreen';
 import { SectionTypesScreen } from '../screens/SectionTypesScreen';
 import { SectionEditorScreen } from '../screens/SectionEditorScreen';
-import { HistoryScreen } from '../screens/HistoryScreen';
-import { HistoryDetailScreen } from '../screens/HistoryDetailScreen';
-import { AnalysisScreen } from '../screens/AnalysisScreen';
 import { TimelineScreen } from '../screens/TimelineScreen';
 import { ResultScreen } from '../screens/ResultScreen';
 import { RunScreen } from '../screens/run/RunScreen';
@@ -79,9 +76,6 @@ export function RootNavigator() {
         <Stack.Screen name="Practice" component={PracticeScreen} />
         <Stack.Screen name="SectionTypes" component={SectionTypesScreen} />
         <Stack.Screen name="SectionEditor" component={SectionEditorScreen} />
-        <Stack.Screen name="History" component={HistoryScreen} />
-        <Stack.Screen name="HistoryDetail" component={HistoryDetailScreen} />
-        <Stack.Screen name="Analysis" component={AnalysisScreen} />
         <Stack.Screen name="Timeline" component={TimelineScreen} />
         <Stack.Screen name="Result" component={ResultScreen} />
         <Stack.Screen name="Run" component={RunScreen} />
