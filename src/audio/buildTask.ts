@@ -9,7 +9,7 @@
  */
 import { SAMPLE_RATE, renderClickEx, renderStart } from './synth';
 import { countdownOffsets, gateTimes, isSimultaneous, legWindows } from '../data/timing';
-import type { SectionType, SoundProfile } from '../data/model';
+import type { Segment, SectionType, SoundProfile } from '../data/model';
 
 export type TaskSpec = {
   type: SectionType;
@@ -17,6 +17,13 @@ export type TaskSpec = {
   /** Leg times: [tA] for normal, [tA, tB] otherwise. */
   legs: number[];
 };
+
+/** Build a TaskSpec from a section (or section-shaped form state). */
+export const sectionSpec = (s: { type: SectionType; prepSec: number; segments: Segment[] }): TaskSpec => ({
+  type: s.type,
+  prepSec: s.prepSec,
+  legs: s.segments.map(g => g.timeSec),
+});
 
 const MAX_SEC = 120;
 

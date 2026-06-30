@@ -5,7 +5,7 @@ import { useNavigation, useRoute, type RouteProp } from '@react-navigation/nativ
 import { AppText, Button, ConfirmDialog, Field, Icon, Pill } from '../components';
 import { sectionTotalSec } from '../data/model';
 import { useT } from '../i18n';
-import { prewarmTask } from '../audio';
+import { prewarmTask, sectionSpec } from '../audio';
 import { useRace, useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import { SectionReorderList } from './SectionReorderList';
@@ -32,7 +32,7 @@ export function RaceDetailScreen() {
 
   const regenerate = () => {
     regenerateRaceAudio(race.id);
-    race.sections.forEach(s => prewarmTask({ type: s.type, prepSec: s.prepSec, legs: s.segments.map(g => g.timeSec) }, sound));
+    race.sections.forEach(s => prewarmTask(sectionSpec(s), sound));
   };
 
   const recordResult = () => {

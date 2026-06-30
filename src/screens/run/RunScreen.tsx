@@ -7,7 +7,7 @@ import { useNavigation, useRoute, type RouteProp } from '@react-navigation/nativ
 import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard, StatusView } from '../../components';
 import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/model';
 import { countdownBeats, gateTimes, isSimultaneous, legWindows, taskDuration } from '../../data/timing';
-import { playTask, stopAudio } from '../../audio';
+import { playTask, sectionSpec, stopAudio } from '../../audio';
 import { useRace, useRunByRace, useSettings, useStore } from '../../store/useStore';
 import { useTheme } from '../../theme';
 import { useT, typeKey, type TFunc } from '../../i18n';
@@ -439,7 +439,7 @@ export function RunScreen() {
   const goHome = () => navigation.goBack();
 
   const start = () => {
-    playTask({ type: section.type, prepSec: section.prepSec, legs: section.segments.map(g => g.timeSec) }, playProfile);
+    playTask(sectionSpec(section), playProfile);
     startRef.current = Date.now();
     setElapsed(0);
     setPhase('running');

@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
   secHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   analysis: { gap: 8, marginTop: 2 },
   legendRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  empty: { paddingVertical: 18 },
 });
 
 export function ResultScreen() {

@@ -5,7 +5,7 @@ import { useNavigation, useRoute, type RouteProp } from '@react-navigation/nativ
 import { AppText, AudioPreview, Button, ConfirmDialog, Field, Icon, SegmentedControl, TaskSchematic, useTaskTypeOptions } from '../components';
 import { fmtSec, toNum, type SectionType } from '../data/model';
 import { useT } from '../i18n';
-import { playTask, prewarmTask } from '../audio';
+import { playTask, prewarmTask, sectionSpec } from '../audio';
 import { useRace, useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';
@@ -78,7 +78,7 @@ export function SectionEditorScreen() {
   };
   const generateAudio = () => {
     commit(true);
-    prewarmTask({ type, prepSec: toNum(prep), legs: segments.map(g => g.timeSec) }, sound);
+    prewarmTask(sectionSpec({ type, prepSec: toNum(prep), segments }), sound);
   };
   const audioCurrent = !!existing?.audioReady && !timingChanged;
 
@@ -170,7 +170,7 @@ export function SectionEditorScreen() {
         <AudioPreview
           ready={audioCurrent}
           duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + g.timeSec, 0))} ${t('unit.sec')}`}
-          onPlay={() => playTask({ type, prepSec: toNum(prep), legs: segments.map(g => g.timeSec) }, sound)}
+          onPlay={() => playTask(sectionSpec({ type, prepSec: toNum(prep), segments }), sound)}
         />
         <Button
           label={audioCurrent ? t('audio.regen') : t('audio.gen')}
