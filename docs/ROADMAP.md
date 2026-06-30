@@ -57,8 +57,8 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - i18n keret (i18next), minden felirat HU/EN/DE/SK/IT
 - A hangjelzések nyelvfüggetlenek maradnak
 
-## 7. Platform / build / kiadás ⬜
-- **Android környezet**: SDK + a Studio JBR (JDK) bekötése → valódi build emulátoron/eszközön (folyamatban)
+## 7. Platform / build / kiadás 🟡
+- ✅ **Android környezet**: SDK (C:\Android\Sdk) + a Studio JBR (JDK 21) bekötése → a debug build **megépült és elindult emulátoron** (2026-06-30). Megjegyzés: a `npm run android` Windowson elhasal (`gradlew.bat`), helyette közvetlen `gradlew app:installDebug` — lásd `docs/ANDROID_SETUP.md`.
 - **iOS build**: Mac + Xcode szükséges (CI vagy fizikai Mac)
 - **App-ikonok** bekötése (PNG-k megvannak): iOS app-ikon + Android adaptív ikon + splash
 - Onboarding/engedélykérés (Bluetooth, kamera az OCR-hez)
@@ -75,7 +75,7 @@ Tömeges roadbook-import (CSV/QR/több oldal), feladat-készlet megosztás (QR/l
 2. ✅ **Adatmodell** (2.) — a Versenyek/szerkesztő valódi, perzisztens
 3. ✅ **Hangmotor — szintézis** (4. első fele) — kattanások/visszaszámlálás, web-előnézet
 4. ✅ **Futás-motor** (3.) — a hang idővonalával együtt futó nézetek
-5. ⬜ **Android környezet** (7. eleje) — valódi eszközön fut (SDK/JDK bekötés)
+5. ✅ **Android környezet** (7. eleje) — valódi eszközön fut (megépült + elindult emulátoron, 2026-06-30)
 6. ⬜ **Hangmotor — natív lejátszás** (4. második fele) — alacsony késleltetés + BT-offset, valós eszközön
 7. ⬜ **BT gomb** (5.) — a tényleges vezérlés (csak START)
 8. ⬜ **Lokalizáció** (6.) + **polish/ikonok** (7.)
