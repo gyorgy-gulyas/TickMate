@@ -26,6 +26,7 @@ import { RunScreen } from '../screens/run/RunScreen';
 import { PracticeScreen } from '../screens/PracticeScreen';
 import { ReactionScreen } from '../screens/ReactionScreen';
 import { RhythmScreen } from '../screens/RhythmScreen';
+import type { StringKey } from '../i18n';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,18 +34,18 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 // Stubbed routes (built out screen-by-screen). Titles use the "feladat" wording.
 // Deferred to a later plan (see docs/ROADMAP.md): SectionFromPhoto (OCR),
 // Smartwatch (companion). They stay as "Hamarosan" placeholders for now.
-const STUBS: ReadonlyArray<{ name: keyof RootStackParamList; title: string }> = [
-  { name: 'SectionFromPhoto', title: 'Feladat fotóból' },
-  { name: 'Smartwatch', title: 'Okosóra' },
+const STUBS: ReadonlyArray<{ name: keyof RootStackParamList; titleKey: StringKey }> = [
+  { name: 'SectionFromPhoto', titleKey: 'stub.photo' },
+  { name: 'Smartwatch', titleKey: 'stub.watch' },
 ];
 
-function makeStub(title: string) {
-  const Stub = () => <PlaceholderScreen title={title} />;
-  Stub.displayName = `Stub(${title})`;
+function makeStub(titleKey: StringKey) {
+  const Stub = () => <PlaceholderScreen titleKey={titleKey} />;
+  Stub.displayName = `Stub(${titleKey})`;
   return Stub;
 }
 
-const STUB_COMPONENTS = STUBS.map(s => ({ name: s.name, component: makeStub(s.title) }));
+const STUB_COMPONENTS = STUBS.map(s => ({ name: s.name, component: makeStub(s.titleKey) }));
 
 export function RootNavigator() {
   const theme = useTheme();

@@ -94,7 +94,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundProfile: 'Profil v1',
 };
 
-export const LANGUAGES = ['Magyar', 'English', 'Deutsch', 'Slovenčina', 'Italiano'] as const;
+export const LANGUAGES = ['Magyar', 'English', 'Deutsch', 'Español'] as const;
 export type Language = (typeof LANGUAGES)[number];
 
 export const fmtSec = (n: number): string => (Number.isInteger(n) ? `${n}` : n.toFixed(1));

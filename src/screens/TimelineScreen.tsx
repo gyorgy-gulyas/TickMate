@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { AppText, Icon, Legend, Timeline } from '../components';
 import { TAVASZI_TIMELINE } from '../data/model';
+import { useT } from '../i18n';
 import { Screen } from './Screen';
 
 const styles = StyleSheet.create({
@@ -10,21 +11,21 @@ const styles = StyleSheet.create({
 });
 
 export function TimelineScreen() {
+  const t = useT();
   return (
-    <Screen title="Idővonal" gap={13} rightActions={<Icon name="question" size={19} color="textSecondary" />}>
+    <Screen title={t('timeline.title')} gap={13} rightActions={<Icon name="question" size={19} color="textSecondary" />}>
       <AppText preset="muted" color="textSecondary">
-        Tavaszi Kupa · közös kapu és átfedés
+        {t('timeline.sub')}
       </AppText>
       <Legend
         items={[
-          { color: 'accent', label: 'Szakasz' },
-          { color: 'accentDark', label: 'Átfedő' },
+          { color: 'accent', label: t('timeline.legend.section') },
+          { color: 'accentDark', label: t('timeline.legend.overlap') },
         ]}
       />
-      <Timeline bars={TAVASZI_TIMELINE} guidePct={58} axis={['0', '6', '12 mp']} />
+      <Timeline bars={TAVASZI_TIMELINE} guidePct={58} axis={['0', '6', `12 ${t('unit.sec')}`]} />
       <AppText preset="listMeta" color="textSecondary" style={styles.note}>
-        A 2. feladat a közös kapunál indul (7 mp), ahol az 1. véget ér. A 3. átfed a többivel — az app két aktív
-        időzítést kezel egyszerre.
+        {t('timeline.note')}
       </AppText>
     </Screen>
   );

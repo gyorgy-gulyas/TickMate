@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AppText, BigNum, Button, Chip, Icon, NavBar, StatCard } from '../components';
 import { SAMPLE_RATE, playPcm, renderClick, renderFinalClick, renderStart, stopAudio } from '../audio';
 import { useTheme, type ColorTokens } from '../theme';
+import { useT } from '../i18n';
 import type { RootNav } from '../navigation/types';
 
 type Phase = 'ready' | 'waiting' | 'early' | 'go' | 'result' | 'summary';
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
 export function ReactionScreen() {
   const navigation = useNavigation<RootNav>();
   const theme = useTheme();
+  const t = useT();
 
   const [phase, setPhase] = useState<Phase>('ready');
   const [round, setRound] = useState(0); // 0-based index of the current round
@@ -122,21 +124,21 @@ export function ReactionScreen() {
 
   const root = { backgroundColor: theme.colors.bg };
   const goBg = phase === 'go' ? { backgroundColor: theme.colors.accent } : undefined;
-  const roundChip = `KÖR ${Math.min(round + 1, ROUNDS)} / ${ROUNDS}`;
+  const roundChip = t('round.label', { n: Math.min(round + 1, ROUNDS), total: ROUNDS });
 
   if (phase === 'summary') {
     const avg = attempts.length ? attempts.reduce((s, x) => s + x, 0) / attempts.length : 0;
     const best = attempts.length ? Math.min(...attempts) : 0;
     return (
       <View style={[styles.fill, root]}>
-        <NavBar title="Reakcióidő" onBack={abort} />
+        <NavBar title={t('reaction.title')} onBack={abort} />
         <View style={styles.summary}>
           <AppText preset="phase" color="accentText">
-            SZETT KÉSZ
+            {t('reaction.setDone')}
           </AppText>
           <StatCard
-            left={{ label: 'Átlag', value: String(Math.round(avg)), unit: 'ms', valueSize: 24 }}
-            right={{ label: 'Legjobb', value: String(Math.round(best)), unit: 'ms', valueSize: 24, valueColor: 'accentText' }}
+            left={{ label: t('reaction.avg'), value: String(Math.round(avg)), unit: 'ms', valueSize: 24 }}
+            right={{ label: t('reaction.best'), value: String(Math.round(best)), unit: 'ms', valueSize: 24, valueColor: 'accentText' }}
           />
           <View style={styles.strip}>
             {attempts.map((a, i) => (
@@ -145,12 +147,12 @@ export function ReactionScreen() {
           </View>
           {falseStarts > 0 ? (
             <AppText preset="muted" color="textSecondary" style={styles.hint}>
-              Hibás rajt: {falseStarts}
+              {t('reaction.falseStarts', { n: falseStarts })}
             </AppText>
           ) : null}
           <View style={styles.actions}>
-            <Button label="Újra" variant="primary" icon={<Icon name="arrows-clockwise" size={16} color="onAccent" />} onPress={startSet} />
-            <Button label="Vissza" variant="secondary" icon={<Icon name="caret-left" size={16} color="textPrimary" />} onPress={abort} />
+            <Button label={t('common.again')} variant="primary" icon={<Icon name="arrows-clockwise" size={16} color="onAccent" />} onPress={startSet} />
+            <Button label={t('common.back')} variant="secondary" icon={<Icon name="caret-left" size={16} color="textPrimary" />} onPress={abort} />
           </View>
         </View>
       </View>
@@ -159,21 +161,21 @@ export function ReactionScreen() {
 
   return (
     <View style={[styles.fill, root]}>
-      <NavBar title="Reakcióidő" onBack={abort} />
-      <Pressable accessibilityRole="button" accessibilityLabel="reakció gomb" style={[styles.body, goBg]} onPressIn={press}>
+      <NavBar title={t('reaction.title')} onBack={abort} />
+      <Pressable accessibilityRole="button" accessibilityLabel={t('reaction.title')} style={[styles.body, goBg]} onPressIn={press}>
         {phase !== 'ready' ? <Chip label={roundChip} /> : null}
 
         {phase === 'ready' ? (
           <View style={styles.center}>
             <Icon name="lightning" size={40} color="accent" />
             <AppText preset="phase" color="accentText">
-              REAKCIÓIDŐ
+              {t('reaction.heading')}
             </AppText>
             <AppText preset="muted" color="textSecondary" style={styles.hint}>
-              {ROUNDS} kör. Amint megszólal a jel, nyomd meg a gombot — de ne siesd el!
+              {t('reaction.intro', { n: ROUNDS })}
             </AppText>
             <AppText preset="label" color="textSecondary">
-              Koppints a kezdéshez
+              {t('reaction.tapToStart')}
             </AppText>
           </View>
         ) : null}
@@ -181,10 +183,10 @@ export function ReactionScreen() {
         {phase === 'waiting' ? (
           <View style={styles.center}>
             <AppText preset="phase" color="textSecondary">
-              FIGYELJ…
+              {t('reaction.watch')}
             </AppText>
             <AppText preset="muted" color="textSecondary" style={styles.hint}>
-              Várd meg a jelet
+              {t('reaction.waitCue')}
             </AppText>
           </View>
         ) : null}
@@ -192,17 +194,17 @@ export function ReactionScreen() {
         {phase === 'early' ? (
           <View style={styles.center}>
             <AppText preset="phase" color="slower">
-              TÚL KORAI!
+              {t('reaction.tooEarly')}
             </AppText>
             <AppText preset="muted" color="textSecondary" style={styles.hint}>
-              Várd meg a jelet — újra…
+              {t('reaction.tooEarly.sub')}
             </AppText>
           </View>
         ) : null}
 
         {phase === 'go' ? (
           <AppText preset="bigNum" color="onAccent">
-            MOST!
+            {t('reaction.now')}
           </AppText>
         ) : null}
 
@@ -210,7 +212,7 @@ export function ReactionScreen() {
           <View style={styles.center}>
             <BigNum value={String(Math.round(last))} unit="ms" color={msColor(last)} />
             <AppText preset="muted" color="textSecondary">
-              {round + 1 >= ROUNDS ? 'Utolsó kör' : 'Készülj a következőre'}
+              {round + 1 >= ROUNDS ? t('reaction.lastRound') : t('reaction.getReady')}
             </AppText>
           </View>
         ) : null}

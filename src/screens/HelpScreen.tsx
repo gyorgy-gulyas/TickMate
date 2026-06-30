@@ -2,20 +2,11 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AppText, Card, Icon, ListRow, MenuCard } from '../components';
+import { useT, type StringKey } from '../i18n';
 import { Screen } from './Screen';
 
-const STEPS = [
-  'Párosítsd a Bluetooth gombot és a fülest',
-  'Vidd fel a feladatokat, generáld a hangot',
-  'Indítsd a futást a gombbal — figyeld a hangot',
-];
-
-const FAQ = [
-  'Bluetooth eszközök párosítása',
-  'Mit jelentenek a hangjelzések?',
-  'Feladattípusok magyarázata',
-  'Hang és késleltetés',
-];
+const STEPS: StringKey[] = ['help.step1', 'help.step2', 'help.step3'];
+const FAQ: StringKey[] = ['help.faq1', 'help.faq2', 'help.faq3', 'help.faq4'];
 
 const styles = StyleSheet.create({
   card: { gap: 11 },
@@ -27,20 +18,21 @@ const styles = StyleSheet.create({
 });
 
 export function HelpScreen() {
+  const t = useT();
   return (
-    <Screen title="Súgó" gap={9}>
+    <Screen title={t('help.title')} gap={9}>
       <Card style={styles.card}>
         <AppText preset="label" color="textSecondary">
-          Gyors kezdés
+          {t('help.quickStart')}
         </AppText>
         <View style={styles.steps}>
-          {STEPS.map((text, i) => (
-            <View key={text} style={styles.step}>
+          {STEPS.map((key, i) => (
+            <View key={key} style={styles.step}>
               <AppText preset="listNum" color="accentText" style={styles.num}>
                 {i + 1}
               </AppText>
               <AppText preset="listName" weight="600" color="textPrimary" style={styles.stepText}>
-                {text}
+                {t(key)}
               </AppText>
             </View>
           ))}
@@ -48,15 +40,15 @@ export function HelpScreen() {
       </Card>
 
       <AppText preset="label" color="textSecondary" style={styles.faqLabel}>
-        Gyakori kérdések
+        {t('help.faq')}
       </AppText>
-      {FAQ.map((q, i) => (
-        <ListRow key={q} name={q} divider={i < FAQ.length - 1} />
+      {FAQ.map((key, i) => (
+        <ListRow key={key} name={t(key)} divider={i < FAQ.length - 1} />
       ))}
 
       <MenuCard
         icon={<Icon name="envelope-simple" size={20} color="accent" />}
-        title="Kapcsolat"
+        title={t('help.contact')}
         subtitle="segitseg@tickmate.app"
       />
     </Screen>

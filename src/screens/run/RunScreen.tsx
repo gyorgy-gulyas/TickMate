@@ -10,6 +10,7 @@ import { countdownBeats, gateTimes, isSimultaneous, legWindows, taskDuration } f
 import { playTask, stopAudio } from '../../audio';
 import { useRace, useRunByRace, useSettings, useStore } from '../../store/useStore';
 import { useTheme } from '../../theme';
+import { useT, typeKey, type TFunc } from '../../i18n';
 import { RunFrame, RunHeader, RunStop } from './RunShell';
 import type { RootNav, RootStackParamList } from '../../navigation/types';
 
@@ -18,7 +19,8 @@ type TypeMeta = (typeof SECTION_TYPE_META)[Section['type']];
 
 const legsOf = (s: Section) => legWindows(s.type, s.prepSec, s.segments.map(g => g.timeSec));
 const durationOf = (s: Section) => taskDuration(s.type, s.prepSec, s.segments.map(g => g.timeSec));
-const legName = (s: Section, li: number) => (s.segments.length > 1 ? `Szakasz ${li === 0 ? 'A' : 'B'}` : 'Idő');
+const legName = (t: TFunc, s: Section, li: number) =>
+  s.segments.length > 1 ? t(li === 0 ? 'section.a' : 'section.b') : t('field.time');
 const counter = (v: number) => Math.max(0, v).toFixed(2);
 
 const styles = StyleSheet.create({
@@ -50,6 +52,7 @@ const styles = StyleSheet.create({
 /** Live full-section timeline (multi-leg): leg bars + a moving playhead. */
 function RunLegsBar({ section, duration, elapsed }: { section: Section; duration: number; elapsed: number }) {
   const theme = useTheme();
+  const tr = useT();
   const legs = legsOf(section);
   const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
   const beats = countdownBeats(gates, false);
@@ -87,10 +90,10 @@ function RunLegsBar({ section, duration, elapsed }: { section: Section; duration
       })}
       <View style={styles.legAxis}>
         <AppText preset="muted" color="textSecondary">
-          0 mp
+          {`0 ${tr('unit.sec')}`}
         </AppText>
         <AppText preset="muted" color="textSecondary">
-          {fmtSec(duration)} mp
+          {`${fmtSec(duration)} ${tr('unit.sec')}`}
         </AppText>
       </View>
     </View>
@@ -99,12 +102,13 @@ function RunLegsBar({ section, duration, elapsed }: { section: Section; duration
 
 /** Empty race (no sections to run). */
 function EmptyView({ onBack }: { onBack: () => void }) {
+  const t = useT();
   return (
     <RunFrame>
-      <RunHeader chipLabel="FUTÁS" dist="" onBack={onBack} />
+      <RunHeader chipLabel={t('run.chip')} dist="" onBack={onBack} />
       <View style={styles.body}>
         <AppText preset="muted" color="textSecondary">
-          Nincs feladat ehhez a versenyhez.
+          {t('run.empty')}
         </AppText>
       </View>
     </RunFrame>
@@ -125,23 +129,24 @@ function StandbyView({
   onStart: () => void;
   onBack: () => void;
 }) {
+  const t = useT();
   return (
     <RunFrame>
       <RunHeader
-        chipLabel={`${meta.short.toUpperCase()} · ${si + 1}`}
+        chipLabel={`${t(typeKey(section.type, 'short')).toUpperCase()} · ${si + 1}`}
         chipIcon={<Icon name={meta.icon} size={11} color="textPrimary" />}
         dist={`${section.segments[0].distanceM} m`}
         onBack={onBack}
       />
       <View style={styles.body}>
         <StatCard
-          left={{ label: 'Előkészítés', value: fmtSec(section.prepSec), unit: 'mp' }}
-          right={{ label: 'Szakasz', value: section.segments.map(g => fmtSec(g.timeSec)).join(' + '), unit: 'mp' }}
+          left={{ label: t('run.statPrep'), value: fmtSec(section.prepSec), unit: t('unit.sec') }}
+          right={{ label: t('run.statSection'), value: section.segments.map(g => fmtSec(g.timeSec)).join(' + '), unit: t('unit.sec') }}
         />
         <View style={styles.center}>
-          <BTButton label="START" onPress={onStart} />
+          <BTButton label={t('run.bt')} onPress={onStart} />
           <AppText preset="muted" color="textSecondary" style={styles.hint}>
-            Nyomd meg a Bluetooth gombot
+            {t('run.btHint')}
           </AppText>
         </View>
       </View>
@@ -166,6 +171,7 @@ function RunningView({
   onBack: () => void;
 }) {
   const theme = useTheme();
+  const t = useT();
   const inPrep = elapsed < section.prepSec;
   const legs = legsOf(section);
   const isMulti = section.segments.length > 1;
@@ -176,7 +182,13 @@ function RunningView({
   const primary = simultaneous ? legs[0] : seqActive;
   const bigVal = inPrep ? section.prepSec - elapsed : primary ? Math.max(0, primary.end - elapsed) : 0;
   const bigColor = inPrep ? 'numBright' : 'slower';
-  const phaseLabel = inPrep ? 'ELŐKÉSZÍTÉS' : simultaneous ? 'SZAKASZ A' : primary?.label ? `SZAKASZ ${primary.label}` : 'SZAKASZ';
+  const phaseLabel = inPrep
+    ? t('run.phase.prep')
+    : simultaneous
+      ? t('run.phase.sectionA')
+      : primary?.label
+        ? t('run.phase.sectionX', { leg: primary.label })
+        : t('run.phase.section');
   const subSecond = elapsed - Math.floor(elapsed);
   const progress = duration > 0 ? Math.min(1, elapsed / duration) : 0;
 
@@ -197,17 +209,17 @@ function RunningView({
   const beatColor = { backgroundColor: theme.colors.textSecondary };
   // On the per-second bar: only the beats falling inside the current second, as fractions.
   const floorSec = Math.floor(elapsed);
-  const subBeats = beats.filter(t => t >= floorSec && t < floorSec + 1).map(t => t - floorSec);
+  const subBeats = beats.filter(x => x >= floorSec && x < floorSec + 1).map(x => x - floorSec);
 
   // Secondary (B) timer — always present for simultaneous tasks.
   const bLeg = simultaneous ? legs[1] : undefined;
-  const bStatus = bLeg ? (elapsed < bLeg.start ? 'hamarosan' : elapsed < bLeg.end ? 'folyamatban' : 'kész') : '';
+  const bStatusKey = bLeg && elapsed >= bLeg.end ? 'run.b.done' : bLeg && elapsed >= bLeg.start ? 'run.b.running' : 'run.b.soon';
   const bVal = bLeg ? (elapsed < bLeg.start ? bLeg.end - bLeg.start : Math.max(0, bLeg.end - elapsed)) : 0;
 
   return (
     <RunFrame>
       <RunHeader
-        chipLabel={`${meta.short.toUpperCase()} · ${si + 1}`}
+        chipLabel={`${t(typeKey(section.type, 'short')).toUpperCase()} · ${si + 1}`}
         chipIcon={<Icon name={meta.icon} size={11} color="textPrimary" />}
         dist={`${section.segments[0].distanceM} m`}
         onBack={onBack}
@@ -225,35 +237,35 @@ function RunningView({
           <View style={[styles.subTick, styles.subTickLeft, tickColor]} />
           <View style={[styles.subTick, styles.subTickRight, tickColor]} />
         </View>
-        <BigNum value={counter(bigVal)} unit="mp" color={bigColor} />
+        <BigNum value={counter(bigVal)} unit={t('unit.sec')} color={bigColor} />
         {!isMulti ? (
           <View style={styles.progressWrap}>
             <View style={[styles.secTrack, secTrackBg]}>
               <View style={[styles.legBar, secBarStyle]} />
-              {beats.map((t, i) => {
-                const beatStyle = { left: `${(t / duration) * 100}%` as const };
+              {beats.map((bt, i) => {
+                const beatStyle = { left: `${(bt / duration) * 100}%` as const };
                 return <View key={`b${i}`} style={[styles.beatMark, beatColor, beatStyle]} />;
               })}
-              {gates.map((t, i) => {
-                const markStyle = { left: `${(t / duration) * 100}%` as const, backgroundColor: theme.colors.textPrimary };
+              {gates.map((gt, i) => {
+                const markStyle = { left: `${(gt / duration) * 100}%` as const, backgroundColor: theme.colors.textPrimary };
                 return <View key={`g${i}`} style={[styles.gateMark, markStyle]} />;
               })}
               <View style={[styles.legHead, secHeadStyle]} />
             </View>
             <View style={styles.gateRow}>
               <AppText preset="muted" color="textSecondary">
-                RAJT
+                {t('run.gate.start')}
               </AppText>
               <AppText preset="gate" color="textPrimary">
-                CÉL
+                {t('run.gate.finish')}
               </AppText>
             </View>
             <View style={styles.gateRow}>
               <AppText preset="muted" color="textSecondary">
-                0 mp
+                {`0 ${t('unit.sec')}`}
               </AppText>
               <AppText preset="muted" color="textSecondary">
-                {fmtSec(duration)} mp
+                {`${fmtSec(duration)} ${t('unit.sec')}`}
               </AppText>
             </View>
           </View>
@@ -262,14 +274,14 @@ function RunningView({
           <Card padding={13} style={styles.progressWrap}>
             <View style={styles.secRow}>
               <AppText preset="label" color="textSecondary">
-                {bLeg.label} · {bStatus}
+                {bLeg.label} · {t(bStatusKey)}
               </AppText>
               <View style={styles.secVal}>
-                <AppText preset="statN" color={bStatus === 'folyamatban' ? 'numBright' : 'textSecondary'} style={styles.secNum}>
+                <AppText preset="statN" color={bStatusKey === 'run.b.running' ? 'numBright' : 'textSecondary'} style={styles.secNum}>
                   {counter(bVal)}
                 </AppText>
                 <AppText preset="statUnit" color="textSecondary">
-                  mp
+                  {t('unit.sec')}
                 </AppText>
               </View>
             </View>
@@ -288,18 +300,19 @@ function RunningView({
 
 /** Done, quick task: no save — restart or leave. */
 function DoneQuickView({ onRestart, onBack, onHome }: { onRestart: () => void; onBack: () => void; onHome: () => void }) {
+  const t = useT();
   return (
     <RunFrame>
-      <RunHeader chipLabel="KÉSZ" dist="" onBack={onBack} />
+      <RunHeader chipLabel={t('run.kesz')} dist="" onBack={onBack} />
       <View style={styles.body}>
         <AppText preset="phase" color="accentText">
-          FELADAT KÉSZ
+          {t('run.doneHeading')}
         </AppText>
         <AppText preset="muted" color="textSecondary">
-          Gyakorló feladat — nincs mentés.
+          {t('run.quickSub')}
         </AppText>
-        <Button label="Újra" variant="secondary" icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />} onPress={onRestart} />
-        <Button label="Vissza" variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={onHome} />
+        <Button label={t('common.again')} variant="secondary" icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />} onPress={onRestart} />
+        <Button label={t('common.back')} variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={onHome} />
       </View>
     </RunFrame>
   );
@@ -323,29 +336,30 @@ function DoneRaceView({
   onNext: () => void;
   onBack: () => void;
 }) {
+  const t = useT();
   return (
     <RunFrame>
-      <RunHeader chipLabel={`FELADAT ${si + 1} · KÉSZ`} dist="" onBack={onBack} />
+      <RunHeader chipLabel={t('run.doneChip', { n: si + 1 })} dist="" onBack={onBack} />
       <View style={styles.body}>
         <AppText preset="phase" color="accentText">
-          FELADAT KÉSZ
+          {t('run.doneHeading')}
         </AppText>
         <AppText preset="muted" color="textSecondary">
-          Valós idő (opcionális)
+          {t('run.realTime')}
         </AppText>
         {section.segments.map((g, li) => (
           <Field
             key={li}
-            label={`${legName(section, li)} · cél ${fmtSec(g.timeSec)} mp`}
+            label={`${legName(t, section, li)} · ${t('result.target', { sec: fmtSec(g.timeSec), u: t('unit.sec') })}`}
             value={actuals[`${si}-${li}`] ?? ''}
             onChangeText={v => setActuals(prev => ({ ...prev, [`${si}-${li}`]: v }))}
-            unit="mp"
+            unit={t('unit.sec')}
             keyboardType="decimal-pad"
           />
         ))}
       </View>
       <Button
-        label={isLast ? 'Befejezés' : 'Következő feladat'}
+        label={isLast ? t('run.finish') : t('run.next')}
         variant="primary"
         icon={<Icon name={isLast ? 'check' : 'arrow-right'} size={16} color="onAccent" />}
         onPress={onNext}
@@ -356,23 +370,24 @@ function DoneRaceView({
 
 /** Finished: run saved — view result or leave. */
 function FinishedView({ onViewResult, onHome }: { onViewResult: () => void; onHome: () => void }) {
+  const t = useT();
   return (
     <RunFrame>
-      <RunHeader chipLabel="BEFEJEZVE" dist="" onBack={onHome} />
+      <RunHeader chipLabel={t('run.finishedChip')} dist="" onBack={onHome} />
       <View style={styles.body}>
         <AppText preset="phase" color="accentText">
-          BEFEJEZVE
+          {t('run.finishedChip')}
         </AppText>
         <AppText preset="muted" color="textSecondary">
-          A beírt idők mentve a futás eredményébe.
+          {t('run.finishedSub')}
         </AppText>
         <Button
-          label="Eredmény megtekintése"
+          label={t('run.viewResult')}
           variant="secondary"
           icon={<Icon name="chart-bar" size={16} color="textPrimary" />}
           onPress={onViewResult}
         />
-        <Button label="Vissza" variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={onHome} />
+        <Button label={t('common.back')} variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={onHome} />
       </View>
     </RunFrame>
   );

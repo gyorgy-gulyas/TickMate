@@ -12,6 +12,7 @@ import { AppText, BigNum, Button, Chip, Icon, NavBar, SegmentedControl, StatCard
 import { playRhythm, stopAudio } from '../audio';
 import { COUNTDOWN_OFFSETS } from '../data/timing';
 import { useTheme, type ColorTokens } from '../theme';
+import { useT, type StringKey } from '../i18n';
 import type { RootNav } from '../navigation/types';
 
 type Phase = 'ready' | 'running' | 'result' | 'summary';
@@ -25,9 +26,9 @@ const TICK = 80;
 const RESULT_PAUSE = 1600;
 const MISS_GRACE = 1.2; // s after the target with no press → auto-register a late miss
 
-const LEVELS: ReadonlyArray<{ key: Level; label: string }> = [
-  { key: 'guided', label: 'Vezetett' },
-  { key: 'blind', label: 'Néma' },
+const LEVELS: ReadonlyArray<{ key: Level; labelKey: StringKey }> = [
+  { key: 'guided', labelKey: 'rhythm.level.guided' },
+  { key: 'blind', labelKey: 'rhythm.level.blind' },
 ];
 
 const errColor = (ms: number): keyof ColorTokens => {
@@ -35,7 +36,7 @@ const errColor = (ms: number): keyof ColorTokens => {
   return a < 60 ? 'accentText' : a < 150 ? 'numBright' : 'slower';
 };
 const signed = (ms: number) => `${ms > 0 ? '+' : ''}${Math.round(ms)}`;
-const errLabel = (ms: number) => (Math.abs(ms) < 60 ? 'pontos' : ms < 0 ? 'korai' : 'késő');
+const errLabelKey = (ms: number): StringKey => (Math.abs(ms) < 60 ? 'rhythm.onTarget' : ms < 0 ? 'rhythm.early' : 'rhythm.late');
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
@@ -58,6 +59,8 @@ const styles = StyleSheet.create({
 export function RhythmScreen() {
   const navigation = useNavigation<RootNav>();
   const theme = useTheme();
+  const t = useT();
+  const levelOptions = LEVELS.map(l => ({ key: l.key, label: t(l.labelKey) }));
 
   const [phase, setPhase] = useState<Phase>('ready');
   const [level, setLevel] = useState<Level>('guided');
@@ -151,28 +154,28 @@ export function RhythmScreen() {
   if (phase === 'ready') {
     return (
       <View style={[styles.fill, root]}>
-        <NavBar title="Hangritmus" onBack={abort} />
+        <NavBar title={t('rhythm.title')} onBack={abort} />
         <View style={styles.ready}>
           <View style={styles.center}>
             <Icon name="metronome" size={40} color="accent" />
             <AppText preset="phase" color="accentText">
-              HANGRITMUS
+              {t('rhythm.heading')}
             </AppText>
             <AppText preset="muted" color="textSecondary" style={styles.hint}>
-              {ROUNDS} kör. Halld a gyorsuló visszaszámlálást, és nyomj pontosan a kapu pillanatában.
+              {t('rhythm.intro', { n: ROUNDS })}
             </AppText>
           </View>
           <View style={styles.group}>
             <AppText preset="label" color="textSecondary">
-              Szint
+              {t('rhythm.level')}
             </AppText>
-            <SegmentedControl options={LEVELS} value={level} onChange={setLevel} />
+            <SegmentedControl options={levelOptions} value={level} onChange={setLevel} />
             <AppText preset="muted" color="textSecondary" style={styles.hint}>
-              {level === 'guided' ? 'Vezetett: a végkattanás is szól — vele együtt nyomsz.' : 'Néma: az utolsó kattanás néma — érezd, hová esne.'}
+              {t(level === 'guided' ? 'rhythm.guided.hint' : 'rhythm.blind.hint')}
             </AppText>
           </View>
           <View style={styles.actions}>
-            <Button label="Kezdés" variant="primary" icon={<Icon name="play" size={14} color="onAccent" />} onPress={startSet} />
+            <Button label={t('common.begin')} variant="primary" icon={<Icon name="play" size={14} color="onAccent" />} onPress={startSet} />
           </View>
         </View>
       </View>
@@ -184,20 +187,20 @@ export function RhythmScreen() {
     const absMean = attempts.length ? attempts.reduce((s, x) => s + Math.abs(x), 0) / attempts.length : 0;
     const best = attempts.length ? Math.min(...attempts.map(x => Math.abs(x))) : 0;
     const bias = attempts.length ? attempts.reduce((s, x) => s + x, 0) / attempts.length : 0;
-    const biasText = Math.abs(bias) < 30 ? 'kiegyensúlyozott' : bias < 0 ? 'korán' : 'későn';
+    const biasText = t(Math.abs(bias) < 30 ? 'rhythm.bias.balanced' : bias < 0 ? 'rhythm.bias.early' : 'rhythm.bias.late');
     return (
       <View style={[styles.fill, root]}>
-        <NavBar title="Hangritmus" onBack={abort} />
+        <NavBar title={t('rhythm.title')} onBack={abort} />
         <View style={styles.summary}>
           <AppText preset="phase" color="accentText">
-            SZETT KÉSZ
+            {t('rhythm.setDone')}
           </AppText>
           <StatCard
-            left={{ label: 'Átl. hiba', value: String(Math.round(absMean)), unit: 'ms', valueSize: 24 }}
-            right={{ label: 'Legjobb', value: String(Math.round(best)), unit: 'ms', valueSize: 24, valueColor: 'accentText' }}
+            left={{ label: t('rhythm.avgErr'), value: String(Math.round(absMean)), unit: 'ms', valueSize: 24 }}
+            right={{ label: t('rhythm.best'), value: String(Math.round(best)), unit: 'ms', valueSize: 24, valueColor: 'accentText' }}
           />
           <AppText preset="muted" color="textSecondary" style={styles.hint}>
-            Torzítás: {signed(bias)} ms · {biasText}
+            {t('rhythm.bias', { ms: signed(bias), u: 'ms', dir: biasText })}
           </AppText>
           <View style={styles.strip}>
             {attempts.map((a, i) => (
@@ -205,8 +208,8 @@ export function RhythmScreen() {
             ))}
           </View>
           <View style={styles.actions}>
-            <Button label="Újra" variant="primary" icon={<Icon name="arrows-clockwise" size={16} color="onAccent" />} onPress={startSet} />
-            <Button label="Vissza" variant="secondary" icon={<Icon name="caret-left" size={16} color="textPrimary" />} onPress={abort} />
+            <Button label={t('common.again')} variant="primary" icon={<Icon name="arrows-clockwise" size={16} color="onAccent" />} onPress={startSet} />
+            <Button label={t('common.back')} variant="secondary" icon={<Icon name="caret-left" size={16} color="textPrimary" />} onPress={abort} />
           </View>
         </View>
       </View>
@@ -219,27 +222,27 @@ export function RhythmScreen() {
   const headFrac = Math.min(1, Math.max(0, elapsed / totalDur));
   const beats = COUNTDOWN_OFFSETS.filter(o => o > 0)
     .map(o => T - o)
-    .filter(t => t >= 0);
+    .filter(x => x >= 0);
   const trackBg = { backgroundColor: theme.colors.railAlt };
   const fillColor = phase === 'result' && last != null ? theme.colors[errColor(last)] : theme.colors.accent;
   const fillStyle = { width: `${headFrac * 100}%` as const, backgroundColor: fillColor };
   const gateStyle = { left: `${(T / totalDur) * 100}%` as const, backgroundColor: theme.colors.textPrimary };
   const beatColor = { backgroundColor: theme.colors.textSecondary };
-  const roundChip = `KÖR ${Math.min(round + 1, ROUNDS)} / ${ROUNDS}`;
+  const roundChip = t('round.label', { n: Math.min(round + 1, ROUNDS), total: ROUNDS });
 
   return (
     <View style={[styles.fill, root]}>
-      <NavBar title="Hangritmus" onBack={abort} />
-      <Pressable accessibilityRole="button" accessibilityLabel="ritmus gomb" style={styles.body} onPressIn={onPress}>
+      <NavBar title={t('rhythm.title')} onBack={abort} />
+      <Pressable accessibilityRole="button" accessibilityLabel={t('rhythm.title')} style={styles.body} onPressIn={onPress}>
         <Chip label={roundChip} />
 
         {phase === 'running' ? (
           <View style={styles.center}>
             <AppText preset="phase" color="accentText">
-              FIGYELD A RITMUST
+              {t('rhythm.watch')}
             </AppText>
             <AppText preset="muted" color="textSecondary" style={styles.hint}>
-              Nyomj a kapu pillanatában
+              {t('rhythm.pressAtGate')}
             </AppText>
           </View>
         ) : null}
@@ -248,7 +251,7 @@ export function RhythmScreen() {
           <View style={styles.center}>
             <BigNum value={`${signed(last)}`} unit="ms" color={errColor(last)} />
             <AppText preset="muted" color="textSecondary">
-              {errLabel(last)}
+              {t(errLabelKey(last))}
             </AppText>
           </View>
         ) : null}
@@ -256,18 +259,18 @@ export function RhythmScreen() {
         <View style={styles.barWrap}>
           <View style={[styles.track, trackBg]}>
             <View style={[styles.barFill, fillStyle]} />
-            {beats.map((t, i) => {
-              const bs = { left: `${(t / totalDur) * 100}%` as const };
+            {beats.map((bt, i) => {
+              const bs = { left: `${(bt / totalDur) * 100}%` as const };
               return <View key={`b${i}`} style={[styles.beatMark, beatColor, bs]} />;
             })}
             <View style={[styles.gateMark, gateStyle]} />
           </View>
           <View style={styles.axis}>
             <AppText preset="muted" color="textSecondary">
-              0 mp
+              {`0 ${t('unit.sec')}`}
             </AppText>
             <AppText preset="gate" color="textPrimary">
-              KAPU
+              {t('rhythm.gate')}
             </AppText>
           </View>
         </View>

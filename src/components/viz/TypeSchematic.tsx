@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, type LayoutChangeEvent, type ViewStyle } from 'react-native';
 import { AppText } from '../primitives';
 import { useTheme } from '../../theme';
+import { useT } from '../../i18n';
 import { fmtSec } from '../../data/model';
 
 export type SchematicMarker = {
@@ -43,6 +44,18 @@ const styles = StyleSheet.create({
 
 export function TypeSchematic({ markers, times = [], greenFrom, greenTo }: TypeSchematicProps) {
   const theme = useTheme();
+  const tr = useT();
+  // The build functions emit Hungarian gate captions; translate the known ones.
+  const capText = (cap?: string) => {
+    if (!cap) return cap;
+    const map: Record<string, string> = {
+      Gomb: tr('gate.button'),
+      Start: tr('gate.start'),
+      Cél: tr('gate.finish'),
+      Közös: tr('gate.common'),
+    };
+    return map[cap] ?? cap;
+  };
   const [width, setWidth] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
   const x = (pct: number) => (pct / 100) * width;
@@ -86,7 +99,7 @@ export function TypeSchematic({ markers, times = [], greenFrom, greenTo }: TypeS
                 preset="cardSub"
                 color={m.kind === 'sharedGate' ? 'textPrimary' : 'textSecondary'}
                 style={[styles.cap, cs]}>
-                {m.cap}
+                {capText(m.cap)}
               </AppText>
             );
           })}
@@ -99,7 +112,7 @@ export function TypeSchematic({ markers, times = [], greenFrom, greenTo }: TypeS
 const CEL_PCT = 94;
 
 /** Normal section: Gomb → grey prep → Start → green section → Cél → grey tail. */
-export function buildSchematic(prepSec: number, sectionSec: number): TypeSchematicProps {
+export function buildSchematic(prepSec: number, sectionSec: number, unit = 'mp'): TypeSchematicProps {
   const total = prepSec + sectionSec || 1;
   const startPct = (prepSec / total) * CEL_PCT;
   return {
@@ -109,8 +122,8 @@ export function buildSchematic(prepSec: number, sectionSec: number): TypeSchemat
       { pct: CEL_PCT, kind: 'gate', cap: 'Cél' },
     ],
     times: [
-      { pct: startPct / 2, label: `${fmtSec(prepSec)} mp` },
-      { pct: startPct + (CEL_PCT - startPct) / 2, label: `${fmtSec(sectionSec)} mp` },
+      { pct: startPct / 2, label: `${fmtSec(prepSec)} ${unit}` },
+      { pct: startPct + (CEL_PCT - startPct) / 2, label: `${fmtSec(sectionSec)} ${unit}` },
     ],
     greenFrom: startPct,
     greenTo: CEL_PCT,
@@ -121,7 +134,7 @@ export function buildSchematic(prepSec: number, sectionSec: number): TypeSchemat
  * Shared (egymást követő) section: prep, then two legs joined at a common gate.
  * Gomb → grey prep → Start → green A → Közös (A end = B start) → green B → Cél → tail.
  */
-export function buildSharedSchematic(prepSec: number, timeA: number, timeB: number): TypeSchematicProps {
+export function buildSharedSchematic(prepSec: number, timeA: number, timeB: number, unit = 'mp'): TypeSchematicProps {
   const total = prepSec + timeA + timeB || 1;
   const startPct = (prepSec / total) * CEL_PCT; // Start gate (end of prep)
   const kozosPct = ((prepSec + timeA) / total) * CEL_PCT; // Közös gate (A end = B start)
@@ -133,8 +146,8 @@ export function buildSharedSchematic(prepSec: number, timeA: number, timeB: numb
       { pct: CEL_PCT, kind: 'gate', cap: 'Cél' },
     ],
     times: [
-      { pct: (startPct + kozosPct) / 2, label: `${fmtSec(timeA)} mp` },
-      { pct: (kozosPct + CEL_PCT) / 2, label: `${fmtSec(timeB)} mp` },
+      { pct: (startPct + kozosPct) / 2, label: `${fmtSec(timeA)} ${unit}` },
+      { pct: (kozosPct + CEL_PCT) / 2, label: `${fmtSec(timeB)} ${unit}` },
     ],
     greenFrom: startPct,
     greenTo: CEL_PCT,

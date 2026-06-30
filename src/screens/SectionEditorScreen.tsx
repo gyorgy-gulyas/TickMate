@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, AudioPreview, Button, Field, Icon, SegmentedControl, TASK_TYPE_OPTIONS, TaskSchematic } from '../components';
+import { AppText, AudioPreview, Button, Field, Icon, SegmentedControl, TaskSchematic, useTaskTypeOptions } from '../components';
 import { fmtSec, toNum, type SectionType } from '../data/model';
+import { useT } from '../i18n';
 import { playTask } from '../audio';
 import { useRace, useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
@@ -24,6 +25,8 @@ export function SectionEditorScreen() {
   const race = useRace(raceId);
   const updateSection = useStore(s => s.updateSection);
   const secondsTick = useSettings().secondsTick;
+  const t = useT();
+  const typeOptions = useTaskTypeOptions();
 
   const index = race.sections.findIndex(s => s.id === sectionId);
   const existing = index >= 0 ? race.sections[index] : undefined;
@@ -65,14 +68,14 @@ export function SectionEditorScreen() {
   const generateAudio = () => commit(true);
   const audioCurrent = !!existing?.audioReady && !timingChanged;
 
-  const footer = <Button label="Mentés" variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={save} />;
+  const footer = <Button label={t('common.save')} variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={save} />;
 
   const rightActions = (
     <View style={styles.rightActions}>
-      <Pressable accessibilityRole="button" accessibilityLabel="típusok" onPress={() => navigation.navigate('SectionTypes')}>
+      <Pressable accessibilityRole="button" accessibilityLabel={t('a11y.types')} onPress={() => navigation.navigate('SectionTypes')}>
         <Icon name="question" size={19} color="textSecondary" />
       </Pressable>
-      <Pressable accessibilityRole="button" accessibilityLabel="fotó" onPress={() => navigation.navigate('SectionFromPhoto')}>
+      <Pressable accessibilityRole="button" accessibilityLabel={t('a11y.photo')} onPress={() => navigation.navigate('SectionFromPhoto')}>
         <Icon name="camera" size={20} color="accentText" />
       </Pressable>
     </View>
@@ -80,39 +83,39 @@ export function SectionEditorScreen() {
 
   return (
     <Screen
-      title={index >= 0 ? `Feladat · ${index + 1}` : 'Feladat szerkesztő'}
+      title={index >= 0 ? t('editor.titleN', { n: index + 1 }) : t('editor.title')}
       gap={13}
       rightActions={rightActions}
       footer={footer}>
-      <Field label="Név" value={name} onChangeText={setName} />
+      <Field label={t('field.name')} value={name} onChangeText={setName} />
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
-          Típus
+          {t('field.type')}
         </AppText>
-        <SegmentedControl options={TASK_TYPE_OPTIONS} value={type} onChange={setType} />
+        <SegmentedControl options={typeOptions} value={type} onChange={setType} />
       </View>
 
-      <Field label="Előkészítés" value={prep} onChangeText={setPrep} unit="mp" keyboardType="decimal-pad" />
+      <Field label={t('field.prep')} value={prep} onChangeText={setPrep} unit={t('unit.sec')} keyboardType="decimal-pad" />
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
-          {isMulti ? 'Szakasz A' : 'Szakasz'}
+          {isMulti ? t('section.a') : t('section.label')}
         </AppText>
         <View style={styles.row}>
-          <Field label="Távolság" value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} />
-          <Field label="Idő" value={timeA} onChangeText={setTimeA} unit="mp" keyboardType="decimal-pad" style={styles.flex1} />
+          <Field label={t('field.distance')} value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} />
+          <Field label={t('field.time')} value={timeA} onChangeText={setTimeA} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
         </View>
       </View>
 
       {isMulti ? (
         <View style={styles.group}>
           <AppText preset="label" color="textSecondary">
-            Szakasz B
+            {t('section.b')}
           </AppText>
           <View style={styles.row}>
-            <Field label="Távolság" value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} />
-            <Field label="Idő" value={timeB} onChangeText={setTimeB} unit="mp" keyboardType="decimal-pad" style={styles.flex1} />
+            <Field label={t('field.distance')} value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} />
+            <Field label={t('field.time')} value={timeB} onChangeText={setTimeB} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
           </View>
         </View>
       ) : null}
@@ -121,15 +124,15 @@ export function SectionEditorScreen() {
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
-          Hang
+          {t('audio.label')}
         </AppText>
         <AudioPreview
           ready={audioCurrent}
-          duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + g.timeSec, 0))} mp`}
+          duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + g.timeSec, 0))} ${t('unit.sec')}`}
           onPlay={() => playTask({ type, prepSec: toNum(prep), legs: segments.map(g => g.timeSec), secondsTick })}
         />
         <Button
-          label={audioCurrent ? 'Hang újragenerálása' : 'Hang generálása'}
+          label={audioCurrent ? t('audio.regen') : t('audio.gen')}
           variant="secondary"
           icon={<Icon name="waveform" size={16} color="textPrimary" />}
           onPress={generateAudio}

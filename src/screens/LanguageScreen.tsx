@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { AppText, Icon, SettingsRow } from '../components';
 import { LANGUAGES } from '../data/model';
+import { useT } from '../i18n';
 import { useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 
@@ -13,11 +14,12 @@ const styles = StyleSheet.create({
 export function LanguageScreen() {
   const selected = useSettings().language;
   const setSetting = useStore(s => s.setSetting);
+  const t = useT();
 
   return (
-    <Screen title="Nyelv" gap={0}>
+    <Screen title={t('language.title')} gap={0}>
       <AppText preset="listMeta" color="textSecondary" style={styles.intro}>
-        Válaszd ki az alkalmazás nyelvét. A hangjelzések ettől függetlenül azonosak.
+        {t('language.intro')}
       </AppText>
       {LANGUAGES.map((lang, i) => (
         <SettingsRow

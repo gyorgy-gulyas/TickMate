@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, Button, Field, Icon, Pill, SectionRow } from '../components';
 import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/model';
+import { useT, typeKey } from '../i18n';
 import { useRace, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';
@@ -21,6 +22,7 @@ export function RaceDetailScreen() {
   const regenerateRaceAudio = useStore(s => s.regenerateRaceAudio);
   const updateRace = useStore(s => s.updateRace);
   const closeRace = useStore(s => s.closeRace);
+  const t = useT();
 
   const recordResult = () => {
     const runId = closeRace(race.id);
@@ -34,19 +36,19 @@ export function RaceDetailScreen() {
   const footer = (
     <>
       <Button
-        label="Hang újragenerálása"
+        label={t('race.regen')}
         variant="secondary"
         icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />}
         onPress={() => regenerateRaceAudio(race.id)}
       />
       <Button
-        label="Eredmények"
+        label={t('race.results')}
         variant="secondary"
         icon={<Icon name="flag-checkered" size={16} color="textPrimary" />}
         onPress={recordResult}
       />
       <Button
-        label="Start"
+        label={t('common.start')}
         variant="primary"
         icon={<Icon name="play" size={14} color="onAccent" />}
         onPress={() => navigation.navigate('Run', { raceId: race.id })}
@@ -61,17 +63,17 @@ export function RaceDetailScreen() {
       rightActions={<Icon name="question" size={19} color="textSecondary" />}
       footer={footer}>
       <View style={styles.header}>
-        <Field label="Név" value={race.name} onChangeText={n => updateRace(race.id, { name: n })} />
+        <Field label={t('field.name')} value={race.name} onChangeText={n => updateRace(race.id, { name: n })} />
         <Field
-          label="Verseny napja"
+          label={t('race.date')}
           value={race.date}
           onChangeText={d => updateRace(race.id, { date: d })}
-          placeholder="ÉÉÉÉ.HH.NN"
+          placeholder={t('race.date.ph')}
         />
       </View>
       <Pressable accessibilityRole="button" onPress={() => navigation.navigate('Timeline')}>
         <Pill
-          label={`Hang ${audioReadyCount}/${total} kész · ${total} feladat · ${totalSec} mp`}
+          label={t('race.audioPill', { ready: audioReadyCount, total, sec: totalSec, u: t('unit.sec') })}
           dotColor={allAudioReady ? 'accent' : 'slower'}
         />
       </Pressable>
@@ -79,10 +81,10 @@ export function RaceDetailScreen() {
         <View>
           <View style={styles.thead}>
             <AppText preset="label" color="textSecondary">
-              Feladat
+              {t('col.task')}
             </AppText>
             <AppText preset="label" color="textSecondary">
-              Szakasz idő
+              {t('race.col.time')}
             </AppText>
           </View>
           {race.sections.map((s, i) => (
@@ -91,8 +93,8 @@ export function RaceDetailScreen() {
               index={i + 1}
               typeIcon={<Icon name={SECTION_TYPE_META[s.type].icon} size={15} color="textSecondary" />}
               name={s.name}
-              meta={SECTION_TYPE_META[s.type].label}
-              value={`${s.segments.map(g => fmtSec(g.timeSec)).join(' + ')} mp`}
+              meta={t(typeKey(s.type))}
+              value={`${s.segments.map(g => fmtSec(g.timeSec)).join(' + ')} ${t('unit.sec')}`}
               audioReady={s.audioReady}
               divider={i < race.sections.length - 1}
               onPress={() => navigation.navigate('SectionEditor', { raceId: race.id, sectionId: s.id })}
@@ -101,7 +103,7 @@ export function RaceDetailScreen() {
         </View>
       ) : (
         <AppText preset="muted" color="textSecondary" style={styles.empty}>
-          Még nincs feladat felvéve.
+          {t('race.empty')}
         </AppText>
       )}
     </Screen>

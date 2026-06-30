@@ -27,9 +27,9 @@ import {
   Slider,
   StatCard,
   Stepper,
-  TASK_TYPE_OPTIONS,
   Toggle,
   UpcomingRow,
+  useTaskTypeOptions,
   type IconName,
 } from '../components';
 import { useTheme } from '../theme';
@@ -49,6 +49,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export function DemoScreen() {
   const theme = useTheme();
   const navigation = useNavigation<RootNav>();
+  const typeOptions = useTaskTypeOptions();
   const [secsOn, setSecsOn] = useState(true);
   const [vol, setVol] = useState(0.72);
   const [latency, setLatency] = useState(120);
@@ -118,7 +119,7 @@ export function DemoScreen() {
             />
             <Field label="Elők." value="5.0" unit="mp" style={styles.flex1} />
           </View>
-          <SegmentedControl options={TASK_TYPE_OPTIONS} value={type} onChange={setType} />
+          <SegmentedControl options={typeOptions} value={type} onChange={setType} />
         </Section>
 
         <Section title="Controls">

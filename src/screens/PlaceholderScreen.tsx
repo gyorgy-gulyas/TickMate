@@ -4,9 +4,10 @@ import { StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AppText, NavBar } from '../components';
 import { useTheme } from '../theme';
+import { useT, type StringKey } from '../i18n';
 
 export type PlaceholderScreenProps = {
-  title: string;
+  titleKey: StringKey;
 };
 
 const styles = StyleSheet.create({
@@ -14,17 +15,18 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });
 
-export function PlaceholderScreen({ title }: PlaceholderScreenProps) {
+export function PlaceholderScreen({ titleKey }: PlaceholderScreenProps) {
   const theme = useTheme();
   const navigation = useNavigation();
+  const t = useT();
   const bg = { backgroundColor: theme.colors.bg };
 
   return (
     <View style={[styles.fill, bg]}>
-      <NavBar title={title} onBack={navigation.canGoBack() ? () => navigation.goBack() : undefined} />
+      <NavBar title={t(titleKey)} onBack={navigation.canGoBack() ? () => navigation.goBack() : undefined} />
       <View style={styles.center}>
         <AppText preset="muted" color="textSecondary">
-          Hamarosan
+          {t('common.soon')}
         </AppText>
       </View>
     </View>

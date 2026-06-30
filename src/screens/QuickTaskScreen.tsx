@@ -10,11 +10,12 @@ import {
   Icon,
   SegmentedControl,
   SettingsRow,
-  TASK_TYPE_OPTIONS,
   TaskSchematic,
   Toggle,
+  useTaskTypeOptions,
 } from '../components';
 import { fmtSec, toNum, type SectionType } from '../data/model';
+import { useT } from '../i18n';
 import { playTask } from '../audio';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';
@@ -28,6 +29,8 @@ const styles = StyleSheet.create({
 
 export function QuickTaskScreen() {
   const navigation = useNavigation<RootNav>();
+  const t = useT();
+  const typeOptions = useTaskTypeOptions();
   const [type, setType] = useState<SectionType>('normal');
   const [prep, setPrep] = useState('5.0');
   const [distA, setDistA] = useState('');
@@ -40,8 +43,8 @@ export function QuickTaskScreen() {
   const isMulti = type !== 'normal';
   // Changing the timing/type invalidates the generated audio.
   const invalidate = () => setAudioReady(false);
-  const changeType = (t: SectionType) => {
-    setType(t);
+  const changeType = (next: SectionType) => {
+    setType(next);
     invalidate();
   };
   const changePrep = (v: string) => {
@@ -68,7 +71,7 @@ export function QuickTaskScreen() {
 
   const footer = (
     <Button
-      label="Start"
+      label={t('common.start')}
       variant="primary"
       icon={<Icon name="play" size={14} color="onAccent" />}
       onPress={() => navigation.navigate('Run', { quick: { type, prepSec: toNum(prep), segments, secondsTick } })}
@@ -77,41 +80,41 @@ export function QuickTaskScreen() {
 
   return (
     <Screen
-      title="Gyors feladat"
+      title={t('quick.title')}
       gap={13}
       rightActions={<Icon name="question" size={19} color="textSecondary" />}
       footer={footer}>
       <AppText preset="muted" color="textSecondary" style={styles.intro}>
-        Mentés nélküli, azonnali időzítés. Próbálj ki bármelyik típust.
+        {t('quick.intro')}
       </AppText>
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
-          Típus
+          {t('field.type')}
         </AppText>
-        <SegmentedControl options={TASK_TYPE_OPTIONS} value={type} onChange={changeType} />
+        <SegmentedControl options={typeOptions} value={type} onChange={changeType} />
       </View>
 
-      <Field label="Előkészítés" value={prep} onChangeText={changePrep} unit="mp" keyboardType="decimal-pad" />
+      <Field label={t('field.prep')} value={prep} onChangeText={changePrep} unit={t('unit.sec')} keyboardType="decimal-pad" />
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
-          {isMulti ? 'Szakasz A' : 'Szakasz'}
+          {isMulti ? t('section.a') : t('section.label')}
         </AppText>
         <View style={styles.row}>
-          <Field label="Távolság" value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} />
-          <Field label="Idő" value={timeA} onChangeText={changeTimeA} unit="mp" keyboardType="decimal-pad" style={styles.flex1} />
+          <Field label={t('field.distance')} value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} />
+          <Field label={t('field.time')} value={timeA} onChangeText={changeTimeA} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
         </View>
       </View>
 
       {isMulti ? (
         <View style={styles.group}>
           <AppText preset="label" color="textSecondary">
-            Szakasz B
+            {t('section.b')}
           </AppText>
           <View style={styles.row}>
-            <Field label="Távolság" value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} />
-            <Field label="Idő" value={timeB} onChangeText={changeTimeB} unit="mp" keyboardType="decimal-pad" style={styles.flex1} />
+            <Field label={t('field.distance')} value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} />
+            <Field label={t('field.time')} value={timeB} onChangeText={changeTimeB} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
           </View>
         </View>
       ) : null}
@@ -120,10 +123,10 @@ export function QuickTaskScreen() {
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
-          Másodpercjelző
+          {t('quick.secondsLabel')}
         </AppText>
         <SettingsRow
-          label="Kattanás minden mp"
+          label={t('quick.secondsRow')}
           right={<Toggle value={secondsTick} onValueChange={setSecondsTick} />}
           divider={false}
         />
@@ -131,17 +134,17 @@ export function QuickTaskScreen() {
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
-          Hang
+          {t('audio.label')}
         </AppText>
         <AudioPreview
           ready={audioReady}
-          duration={`${fmtSec(totalSec)} mp`}
+          duration={`${fmtSec(totalSec)} ${t('unit.sec')}`}
           onPlay={() =>
             playTask({ type, prepSec: toNum(prep), legs: isMulti ? [toNum(timeA), toNum(timeB)] : [toNum(timeA)], secondsTick })
           }
         />
         <Button
-          label={audioReady ? 'Hang újragenerálása' : 'Hang generálása'}
+          label={audioReady ? t('audio.regen') : t('audio.gen')}
           variant="secondary"
           icon={<Icon name="waveform" size={16} color="textPrimary" />}
           onPress={() => setAudioReady(true)}

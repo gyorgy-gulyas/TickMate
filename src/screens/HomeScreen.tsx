@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BrandLockup, Icon, MenuCard, ReadyStatusCard } from '../components';
 import { useTheme } from '../theme';
+import { useT } from '../i18n';
+import { useRaces } from '../store/useStore';
 import type { RootStackParamList } from '../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -18,6 +20,8 @@ const styles = StyleSheet.create({
 export function HomeScreen() {
   const theme = useTheme();
   const navigation = useNavigation<Nav>();
+  const t = useT();
+  const races = useRaces();
   const bg = { backgroundColor: theme.colors.bg };
   const headerBorder = { borderBottomColor: theme.colors.divider };
 
@@ -29,37 +33,37 @@ export function HomeScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ReadyStatusCard
           icon={<Icon name="bluetooth-connected" size={19} color="accent" />}
-          title="Készen állsz"
-          subtitle="Gomb és füles csatlakoztatva"
+          title={t('home.ready.title')}
+          subtitle={t('home.ready.sub')}
         />
         <MenuCard
           icon={<Icon name="flag-checkered" size={22} color="accent" />}
-          title="Versenyek"
-          subtitle="4 mentett verseny"
+          title={t('home.races')}
+          subtitle={t('home.races.sub', { n: races.length })}
           onPress={() => navigation.navigate('Races')}
         />
         <MenuCard
           icon={<Icon name="target" size={22} color="accent" />}
-          title="Gyakorló mód"
-          subtitle="Reakció és ritmus"
+          title={t('home.practice')}
+          subtitle={t('home.practice.sub')}
           onPress={() => navigation.navigate('Practice')}
         />
         <MenuCard
           icon={<Icon name="gear-six" size={22} color="accent" />}
-          title="Beállítások"
-          subtitle="Bluetooth, hang, mód"
+          title={t('home.settings')}
+          subtitle={t('home.settings.sub')}
           onPress={() => navigation.navigate('Settings')}
         />
         <MenuCard
           icon={<Icon name="question" size={22} color="accent" />}
-          title="Súgó"
-          subtitle="Útmutató és gyakori kérdések"
+          title={t('home.help')}
+          subtitle={t('home.help.sub')}
           onPress={() => navigation.navigate('Help')}
         />
         <MenuCard
           icon={<Icon name="lightning" size={22} color="slower" />}
-          title="UI Kit (dev)"
-          subtitle="Komponens-katalógus — fejlesztői"
+          title={t('home.demo')}
+          subtitle={t('home.demo.sub')}
           onPress={() => navigation.navigate('Demo')}
         />
       </ScrollView>

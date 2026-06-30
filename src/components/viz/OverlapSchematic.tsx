@@ -5,6 +5,7 @@ import React from 'react';
 import { StyleSheet, View, type TextStyle, type ViewStyle } from 'react-native';
 import { AppText } from '../primitives';
 import { useTheme } from '../../theme';
+import { useT } from '../../i18n';
 
 export type OverlapTrack = {
   label: string;
@@ -45,6 +46,7 @@ const styles = StyleSheet.create({
 
 export function OverlapSchematic({ tracks, showGomb }: OverlapSchematicProps) {
   const theme = useTheme();
+  const tr = useT();
   const trackBase: ViewStyle = { backgroundColor: theme.colors.railAlt };
   const gombColor: ViewStyle = { backgroundColor: theme.colors.accent };
 
@@ -69,7 +71,7 @@ export function OverlapSchematic({ tracks, showGomb }: OverlapSchematicProps) {
               {showGomb && i === 0 ? <View style={[styles.dot, gombColor]} /> : null}
               {showGomb && i === 0 ? (
                 <AppText preset="cardSub" color="textSecondary" style={styles.gombCap}>
-                  Gomb
+                  {tr('gate.button')}
                 </AppText>
               ) : null}
               <View style={[styles.gate, startGate]} />
@@ -80,10 +82,10 @@ export function OverlapSchematic({ tracks, showGomb }: OverlapSchematicProps) {
                 </AppText>
               ) : null}
               <AppText preset="cardSub" color="textSecondary" style={[styles.cap, startCap]}>
-                {t.startCap ?? 'Start'}
+                {t.startCap ?? tr('gate.start')}
               </AppText>
               <AppText preset="cardSub" color="textSecondary" style={[styles.cap, endCap]}>
-                {t.endCap ?? 'Cél'}
+                {t.endCap ?? tr('gate.finish')}
               </AppText>
             </View>
           </View>

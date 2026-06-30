@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 import { AppText } from '../primitives';
 import { Icon } from '../icons';
 import { useTheme } from '../../theme';
+import { useT } from '../../i18n';
 
 export type AudioPreviewProps = {
   onPlay?: () => void;
@@ -25,6 +26,7 @@ const styles = StyleSheet.create({
 
 export function AudioPreview({ onPlay, duration, ready = true }: AudioPreviewProps) {
   const theme = useTheme();
+  const t = useT();
   const container: ViewStyle = { backgroundColor: theme.colors.surface2 };
   const play: ViewStyle = { backgroundColor: ready ? theme.colors.accent : theme.colors.railAlt };
 
@@ -32,7 +34,7 @@ export function AudioPreview({ onPlay, duration, ready = true }: AudioPreviewPro
     <View style={[styles.container, container]}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="hang lejátszása"
+        accessibilityLabel={t('audio.play.a11y')}
         disabled={!ready}
         onPress={onPlay}
         style={[styles.play, play]}>
