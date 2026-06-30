@@ -40,13 +40,13 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - ✅ Gyors feladatból indított egy-feladatos futás is ugyanitt (RunScreen)
 - ⬜ Eseménynapló + visszajátszás — kihagyva (a telefon **nem időmérő**; lásd RUN_ENGINE.md)
 
-## 4. Hangmotor 🟡 (szintézis kész, natív lejátszás hátravan)
+## 4. Hangmotor 🟡 (szintézis kész; natív lejátszás: Android kész, iOS + BT-offset hátravan)
 - ✅ PCM-szintézis: 8 ms kattanások, gyorsuló + emelkedő kapu-visszaszámlálás (sor: 3.00→0.00), durva végkattanás, indító hang, másodperc-jelző — `audio/synth.ts` + `audio/buildTask.ts`
 - ✅ Hang **összeállítása** feladatonként (`COUNTDOWN_OFFSETS` közös forrás a vizuális ütem-jelölőkkel)
 - ✅ Web-lejátszás (Web Audio) az előnézethez — `audio/player.web.ts`
-- ⬜ **Natív, alacsony késleltetésű, ütemezett lejátszás** (AVAudioEngine / Oboe) — jitter minimalizálás
+- 🟡 **Natív, alacsony késleltetésű lejátszás** — **Android kész** (`TmAudio` Kotlin modul, `AudioTrack` `PERFORMANCE_MODE_LOW_LATENCY`, ENCODING_PCM_FLOAT mono; a JS-ben renderelt PCM base64-ként megy át, eszközön bemérve szól). **iOS hátravan** (AVAudioEngine, Mac kell). Ha az Android jitter kevés lenne, a JS-interfész változatlanul Oboe-ra cserélhető.
 - ⬜ **BT-késleltetés offset** beépítése az ütemezésbe; BT-kalibráció valós méréssel (a UI megvan)
-> A natív lejátszás a legnagyobb maradék műszaki kockázat — korán prototípuszandó valós eszközön.
+> A natív lejátszás volt a legnagyobb műszaki kockázat — Androidon megvan, valós eszközön (emulátor) hallhatóan szól.
 
 ## 5. Natív integrációk ⬜
 - **Bluetooth gomb** bemenet (média-HID vagy BLE) → Start/Következő/Vissza/Megszakítás/Gyakorlás
@@ -76,7 +76,7 @@ Tömeges roadbook-import (CSV/QR/több oldal), feladat-készlet megosztás (QR/l
 3. ✅ **Hangmotor — szintézis** (4. első fele) — kattanások/visszaszámlálás, web-előnézet
 4. ✅ **Futás-motor** (3.) — a hang idővonalával együtt futó nézetek
 5. ✅ **Android környezet** (7. eleje) — valódi eszközön fut (megépült + elindult emulátoron, 2026-06-30)
-6. ⬜ **Hangmotor — natív lejátszás** (4. második fele) — alacsony késleltetés + BT-offset, valós eszközön
+6. 🟡 **Hangmotor — natív lejátszás** (4. második fele) — Android ✅ (AudioTrack low-latency); hátravan: BT-offset + iOS
 7. ⬜ **BT gomb** (5.) — a tényleges vezérlés (csak START)
 8. ⬜ **Lokalizáció** (6.) + **polish/ikonok** (7.)
 9. ⬜ **Okosóra + OCR** (5. maradék) — fázisozható
