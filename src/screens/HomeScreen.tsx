@@ -60,12 +60,6 @@ export function HomeScreen() {
           subtitle={t('home.help.sub')}
           onPress={() => navigation.navigate('Help')}
         />
-        <MenuCard
-          icon={<Icon name="lightning" size={22} color="slower" />}
-          title={t('home.demo')}
-          subtitle={t('home.demo.sub')}
-          onPress={() => navigation.navigate('Demo')}
-        />
       </ScrollView>
     </View>
   );

@@ -29,8 +29,6 @@ export type RootStackParamList = {
   Run:
     | { raceId?: string; quick?: { name?: string; type: SectionType; prepSec: number; segments: Segment[]; secondsTick: boolean } }
     | undefined;
-  /** Dev-only: the component UI-kit. Remove before release. */
-  Demo: undefined;
 };
 
 /** Navigation prop for any root screen. */

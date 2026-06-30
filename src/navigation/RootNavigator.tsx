@@ -9,7 +9,6 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from '../theme';
 import { HomeScreen } from '../screens/HomeScreen';
-import { DemoScreen } from '../screens/DemoScreen';
 import { PlaceholderScreen } from '../screens/PlaceholderScreen';
 import { RacesScreen } from '../screens/RacesScreen';
 import { RaceDetailScreen } from '../screens/RaceDetailScreen';
@@ -89,7 +88,6 @@ export function RootNavigator() {
         {STUB_COMPONENTS.map(s => (
           <Stack.Screen key={s.name} name={s.name} component={s.component} />
         ))}
-        <Stack.Screen name="Demo" component={DemoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

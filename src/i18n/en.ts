@@ -50,8 +50,6 @@ export const en: Record<StringKey, string> = {
   'home.settings.sub': 'Bluetooth, sound, mode',
   'home.help': 'Help',
   'home.help.sub': 'Guide and FAQ',
-  'home.demo': 'UI Kit (dev)',
-  'home.demo.sub': 'Component catalogue — developer',
 
   'races.title': 'Races',
   'races.new': 'New race',

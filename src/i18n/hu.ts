@@ -54,8 +54,6 @@ export const hu = {
   'home.settings.sub': 'Bluetooth, hang, mód',
   'home.help': 'Súgó',
   'home.help.sub': 'Útmutató és gyakori kérdések',
-  'home.demo': 'UI Kit (dev)',
-  'home.demo.sub': 'Komponens-katalógus — fejlesztői',
 
   // races
   'races.title': 'Versenyek',
