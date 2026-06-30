@@ -123,6 +123,10 @@ export const hu = {
   'settings.darkMode': 'Sötét mód',
   'settings.cat.device': 'Eszköz',
   'settings.cat.general': 'Általános',
+  'sound.preset.soft': 'Lágy',
+  'sound.preset.normal': 'Normál',
+  'sound.preset.sharp': 'Éles',
+  'sound.preset.custom': 'Egyedi',
 
   // language
   'language.title': 'Nyelv',

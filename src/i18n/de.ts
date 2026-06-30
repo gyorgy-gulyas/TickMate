@@ -113,6 +113,10 @@ export const de: Record<StringKey, string> = {
   'settings.darkMode': 'Dunkelmodus',
   'settings.cat.device': 'Gerät',
   'settings.cat.general': 'Allgemein',
+  'sound.preset.soft': 'Sanft',
+  'sound.preset.normal': 'Normal',
+  'sound.preset.sharp': 'Scharf',
+  'sound.preset.custom': 'Eigen',
 
   'language.title': 'Sprache',
   'language.intro': 'Wähle die App-Sprache. Die Tonsignale bleiben davon unabhängig gleich.',

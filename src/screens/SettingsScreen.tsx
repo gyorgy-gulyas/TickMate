@@ -4,7 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AppText, Icon, SettingsRow, Toggle } from '../components';
 import { useTheme } from '../theme';
-import { useT } from '../i18n';
+import { useT, type StringKey } from '../i18n';
+import { matchPreset } from '../data/model';
 import { useSettings } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';
@@ -30,6 +31,8 @@ export function SettingsScreen() {
   const navigation = useNavigation<RootNav>();
   const settings = useSettings();
   const t = useT();
+  const presetId = matchPreset(settings.sound);
+  const presetName = t(presetId ? (`sound.preset.${presetId}` as StringKey) : 'sound.preset.custom');
 
   return (
     <Screen title={t('settings.title')} gap={16} rightActions={<Icon name="question" size={19} color="textSecondary" />}>
@@ -46,7 +49,7 @@ export function SettingsScreen() {
       </Category>
 
       <Category title={t('settings.cat.general')}>
-        <SettingsRow label={t('settings.soundProfile')} value={settings.soundProfile} chevron onPress={() => navigation.navigate('SoundProfile')} />
+        <SettingsRow label={t('settings.soundProfile')} value={presetName} chevron onPress={() => navigation.navigate('SoundProfile')} />
         <SettingsRow label={t('settings.language')} value={settings.language} chevron onPress={() => navigation.navigate('Language')} />
         <SettingsRow
           label={t('settings.darkMode')}

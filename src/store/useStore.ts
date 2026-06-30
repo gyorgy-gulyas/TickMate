@@ -4,6 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { storage } from './storage';
 import {
   DEFAULT_SETTINGS,
+  DEFAULT_SOUND_PROFILE,
   INITIAL_RACES,
   INITIAL_RUNS,
   snapshotResults,
@@ -11,6 +12,7 @@ import {
   type Run,
   type Section,
   type Settings,
+  type SoundProfile,
   type ThemeMode,
 } from '../data/model';
 
@@ -149,14 +151,29 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'tickmate-store',
-      // v3: sections now use a segments[] model — re-seed races, keep settings.
-      version: 3,
+      // v4: settings.sound (SoundProfile) replaces secondsTick + soundProfile.
+      // Non-destructive: keep races/runs; fold the old secondsTick into the profile.
+      version: 4,
       storage: createJSONStorage(() => storage),
-      migrate: persisted => {
-        const prev = (persisted ?? {}) as { settings?: Partial<Settings> };
+      migrate: (persisted, version) => {
+        const prev = (persisted ?? {}) as {
+          races?: Race[];
+          runs?: Run[];
+          settings?: Partial<Settings> & { secondsTick?: boolean; soundProfile?: string };
+        };
+        const s = prev.settings ?? {};
+        const sound: SoundProfile = s.sound ?? { ...DEFAULT_SOUND_PROFILE, secondsTick: s.secondsTick ?? DEFAULT_SOUND_PROFILE.secondsTick };
+        // The pre-v3 race shape is incompatible (no segments[]) — re-seed it then.
+        const fresh = version < 3;
         return {
-          races: INITIAL_RACES,
-          settings: { ...DEFAULT_SETTINGS, ...(prev.settings ?? {}) },
+          races: fresh ? INITIAL_RACES : prev.races ?? INITIAL_RACES,
+          runs: fresh ? INITIAL_RUNS : prev.runs ?? INITIAL_RUNS,
+          settings: {
+            themeMode: s.themeMode ?? DEFAULT_SETTINGS.themeMode,
+            language: s.language ?? DEFAULT_SETTINGS.language,
+            btLatencyMs: s.btLatencyMs ?? DEFAULT_SETTINGS.btLatencyMs,
+            sound,
+          },
         } as unknown as AppState;
       },
     },

@@ -75,25 +75,6 @@ export const INITIAL_RACES: Race[] = [
 
 export type ThemeMode = 'dark' | 'light';
 
-export type Settings = {
-  themeMode: ThemeMode;
-  language: Language;
-  secondsTick: boolean;
-  btLatencyMs: number;
-  soundProfile: string;
-};
-
-export const DEFAULT_SETTINGS: Settings = {
-  themeMode: 'dark',
-  language: 'Magyar',
-  secondsTick: true,
-  btLatencyMs: 120,
-  soundProfile: 'Profil v1',
-};
-
-export const LANGUAGES = ['Magyar', 'English', 'Deutsch', 'Español'] as const;
-export type Language = (typeof LANGUAGES)[number];
-
 // --- Sound profile: the character of the run-time audio cues (spec §8) ---
 export type CountdownAccel = 'gentle' | 'normal' | 'aggressive';
 export type PitchDir = 'up' | 'down' | 'flat';
@@ -182,6 +163,24 @@ export function matchPreset(p: SoundProfile): SoundPresetId | null {
   const keys = Object.keys(SOUND_PRESETS) as SoundPresetId[];
   return keys.find(k => JSON.stringify(SOUND_PRESETS[k]) === JSON.stringify(p)) ?? null;
 }
+
+export type Settings = {
+  themeMode: ThemeMode;
+  language: Language;
+  btLatencyMs: number;
+  /** Audio-cue character (spec §8). Owns the seconds-tick toggle. */
+  sound: SoundProfile;
+};
+
+export const DEFAULT_SETTINGS: Settings = {
+  themeMode: 'dark',
+  language: 'Magyar',
+  btLatencyMs: 120,
+  sound: DEFAULT_SOUND_PROFILE,
+};
+
+export const LANGUAGES = ['Magyar', 'English', 'Deutsch', 'Español'] as const;
+export type Language = (typeof LANGUAGES)[number];
 
 export const fmtSec = (n: number): string => (Number.isInteger(n) ? `${n}` : n.toFixed(1));
 

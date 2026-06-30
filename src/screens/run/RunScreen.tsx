@@ -399,7 +399,7 @@ export function RunScreen() {
   const quick = route.params?.quick;
   const isQuick = !!quick;
   const race = useRace(route.params?.raceId);
-  const settingsTick = useSettings().secondsTick;
+  const settingsTick = useSettings().sound.secondsTick;
   const closeRace = useStore(s => s.closeRace);
   const setRunActual = useStore(s => s.setRunActual);
   const finishedRun = useRunByRace(race.id);

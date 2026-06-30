@@ -113,6 +113,10 @@ export const es: Record<StringKey, string> = {
   'settings.darkMode': 'Modo oscuro',
   'settings.cat.device': 'Dispositivo',
   'settings.cat.general': 'General',
+  'sound.preset.soft': 'Suave',
+  'sound.preset.normal': 'Normal',
+  'sound.preset.sharp': 'Nítido',
+  'sound.preset.custom': 'Personalizado',
 
   'language.title': 'Idioma',
   'language.intro': 'Elige el idioma de la app. Las señales de audio son las mismas en cualquier caso.',

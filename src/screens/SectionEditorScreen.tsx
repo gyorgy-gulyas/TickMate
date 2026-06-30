@@ -25,7 +25,7 @@ export function SectionEditorScreen() {
   const race = useRace(raceId);
   const updateSection = useStore(s => s.updateSection);
   const deleteSection = useStore(s => s.deleteSection);
-  const secondsTick = useSettings().secondsTick;
+  const secondsTick = useSettings().sound.secondsTick;
   const t = useT();
   const typeOptions = useTaskTypeOptions();
   const [confirmDelete, setConfirmDelete] = useState(false);

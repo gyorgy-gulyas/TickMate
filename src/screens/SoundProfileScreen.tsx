@@ -17,6 +17,7 @@ import {
   type PitchDir,
 } from '../data/model';
 import { SAMPLE_RATE, playPcm, playRhythm, renderClick, renderStart, stopAudio } from '../audio';
+import { useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 
 const PRESET_OPTS: { key: SoundPresetId; label: string }[] = [
@@ -113,15 +114,16 @@ function ToggleControl({ label, info, value, onChange }: { label: string; info: 
 }
 
 export function SoundProfileScreen() {
-  const [p, setP] = useState<SoundProfile>(SOUND_PRESETS.normal);
-  const set = (patch: Partial<SoundProfile>) => setP(prev => ({ ...prev, ...patch }));
+  const p = useSettings().sound;
+  const setSetting = useStore(s => s.setSetting);
+  const set = (patch: Partial<SoundProfile>) => setSetting('sound', { ...p, ...patch });
   const active = matchPreset(p);
   const pct = (v: number) => `${Math.round(v * 100)}%`;
 
   return (
     <Screen title="Hangprofil" gap={18} rightActions={<Icon name="question" size={19} color="textSecondary" />}>
       <Group title={`Preset${active ? '' : ' · Egyedi'}`}>
-        <SegmentedControl options={PRESET_OPTS} value={(active ?? '') as SoundPresetId} onChange={id => setP(SOUND_PRESETS[id])} />
+        <SegmentedControl options={PRESET_OPTS} value={(active ?? '') as SoundPresetId} onChange={id => setSetting('sound', SOUND_PRESETS[id])} />
         <AppText preset="muted" color="textSecondary" style={styles.info}>
           Válassz kiindulási csomagot, majd hangold a knobokkal — a tweak után „Egyedi" lesz.
         </AppText>
