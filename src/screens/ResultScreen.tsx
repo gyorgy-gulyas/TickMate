@@ -2,7 +2,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, Button, DivergingBar, Field, Icon, Legend, StatCard } from '../components';
+import { AppText, Button, DivergingBar, Field, Icon, Legend, StatCard, StatusView } from '../components';
 import { fmtDelta, fmtSec, legDelta, runDeltas, toNum } from '../data/model';
 import { useT, typeKey } from '../i18n';
 import { useRunById, useStore } from '../store/useStore';
@@ -27,10 +27,8 @@ export function ResultScreen() {
 
   if (!run) {
     return (
-      <Screen title={t('result.title')}>
-        <AppText preset="muted" color="textSecondary" style={styles.empty}>
-          {t('result.none')}
-        </AppText>
+      <Screen title={t('result.title')} scroll={false}>
+        <StatusView icon="chart-bar" title={t('result.none')} />
       </Screen>
     );
   }

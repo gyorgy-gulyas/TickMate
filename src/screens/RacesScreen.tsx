@@ -2,7 +2,7 @@
 import React from 'react';
 import { Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Button, Icon, ListRow } from '../components';
+import { Button, Icon, ListRow, StatusView } from '../components';
 import { useT } from '../i18n';
 import { useRaces, useStore } from '../store/useStore';
 import { Screen } from './Screen';
@@ -25,21 +25,26 @@ export function RacesScreen() {
     <Screen
       title={t('races.title')}
       gap={0}
+      scroll={races.length > 0}
       rightActions={
         <Pressable accessibilityRole="button" accessibilityLabel={t('races.new')} onPress={createRace}>
           <Icon name="plus" size={22} color="accentText" />
         </Pressable>
       }
       footer={footer}>
-      {races.map((race, i) => (
-        <ListRow
-          key={race.id}
-          name={race.name}
-          meta={`${t('tasks.count', { n: race.sections.length })}${race.date ? ` · ${race.date}` : ''}`}
-          onPress={() => navigation.navigate('RaceDetail', { raceId: race.id })}
-          divider={i < races.length - 1}
-        />
-      ))}
+      {races.length > 0 ? (
+        races.map((race, i) => (
+          <ListRow
+            key={race.id}
+            name={race.name}
+            meta={`${t('tasks.count', { n: race.sections.length })}${race.date ? ` · ${race.date}` : ''}`}
+            onPress={() => navigation.navigate('RaceDetail', { raceId: race.id })}
+            divider={i < races.length - 1}
+          />
+        ))
+      ) : (
+        <StatusView icon="flag-checkered" title={t('races.empty')} />
+      )}
     </Screen>
   );
 }

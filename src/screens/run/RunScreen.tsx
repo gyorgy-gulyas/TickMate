@@ -4,7 +4,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard } from '../../components';
+import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard, StatusView } from '../../components';
 import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/model';
 import { countdownBeats, gateTimes, isSimultaneous, legWindows, taskDuration } from '../../data/timing';
 import { playTask, stopAudio } from '../../audio';
@@ -107,11 +107,7 @@ function EmptyView({ onBack }: { onBack: () => void }) {
   return (
     <RunFrame>
       <RunHeader chipLabel={t('run.chip')} dist="" onBack={onBack} />
-      <View style={styles.body}>
-        <AppText preset="muted" color="textSecondary">
-          {t('run.empty')}
-        </AppText>
-      </View>
+      <StatusView icon="flag-checkered" title={t('run.empty')} />
     </RunFrame>
   );
 }

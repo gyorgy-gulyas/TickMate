@@ -8,6 +8,7 @@ export const hu = {
   'common.begin': 'Kezdés',
   'common.again': 'Újra',
   'common.soon': 'Hamarosan',
+  'common.loading': 'Betöltés…',
   'common.cancel': 'Mégse',
   'common.delete': 'Törlés',
   'race.addTask': 'Feladat hozzáadása',
@@ -59,6 +60,7 @@ export const hu = {
   // races
   'races.title': 'Versenyek',
   'races.new': 'Új verseny',
+  'races.empty': 'Még nincs verseny',
 
   // race detail
   'field.name': 'Név',

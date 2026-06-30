@@ -8,6 +8,7 @@ export const de: Record<StringKey, string> = {
   'common.begin': 'Beginnen',
   'common.again': 'Nochmal',
   'common.soon': 'Demnächst',
+  'common.loading': 'Lädt…',
   'common.cancel': 'Abbrechen',
   'common.delete': 'Löschen',
   'race.addTask': 'Aufgabe hinzufügen',
@@ -54,6 +55,7 @@ export const de: Record<StringKey, string> = {
 
   'races.title': 'Wettbewerbe',
   'races.new': 'Neuer Wettbewerb',
+  'races.empty': 'Noch keine Wettbewerbe',
 
   'field.name': 'Name',
   'race.date': 'Datum des Wettbewerbs',

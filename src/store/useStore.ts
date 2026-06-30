@@ -1,4 +1,5 @@
 /** Global app state (races + settings) with persistence. */
+import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { storage } from './storage';
@@ -179,6 +180,16 @@ export const useStore = create<AppState>()(
     },
   ),
 );
+
+/** True once the persisted state has rehydrated (async on native; instant on web). */
+export function useHydrated(): boolean {
+  const [hydrated, setHydrated] = useState(() => useStore.persist.hasHydrated());
+  useEffect(() => {
+    if (useStore.persist.hasHydrated()) setHydrated(true);
+    return useStore.persist.onFinishHydration(() => setHydrated(true));
+  }, []);
+  return hydrated;
+}
 
 // --- Selectors ---
 export const useRaces = () => useStore(s => s.races);
