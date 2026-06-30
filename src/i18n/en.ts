@@ -136,7 +136,7 @@ export const en: Record<StringKey, string> = {
   'sound.tickPitch': 'Tick pitch',
   'sound.tickPitch.info': 'Pitch of the seconds tick — set it apart from the countdown so you don’t confuse the two. Default: 2000 Hz.',
   'sound.lead': 'Lead before the gate',
-  'sound.lead.info': 'How many seconds before the gate the countdown starts. Default: 3 s.',
+  'sound.lead.info': 'How many seconds before the gate the countdown starts. Default: 4 s.',
   'sound.accel': 'Acceleration curve',
   'sound.accel.info': 'How sharply the clicks bunch toward the gate. Default: normal (halving: 1, 0.5, 0.25 …).',
   'sound.accel.gentle': 'Gentle',

@@ -115,9 +115,9 @@ export function SoundProfileScreen() {
     { key: 'flat' as const, label: t('sound.dir.flat') },
   ];
   const leadOpts = [
-    { key: '2', label: `2 ${u}` },
     { key: '3', label: `3 ${u}` },
     { key: '4', label: `4 ${u}` },
+    { key: '5', label: `5 ${u}` },
   ];
 
   return (

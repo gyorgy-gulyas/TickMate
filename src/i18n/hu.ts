@@ -146,7 +146,7 @@ export const hu = {
   'sound.tickPitch': 'Tikk hangmagassága',
   'sound.tickPitch.info': 'A másodperc-tikk hangmagassága — érdemes másra állítani, mint a visszaszámlálásét, hogy ne keverd össze a kettőt. Alap: 2000 Hz.',
   'sound.lead': 'Kezdés a kapu előtt',
-  'sound.lead.info': 'Hány másodperccel a kapu előtt induljon a visszaszámláló sor. Alap: 3 mp.',
+  'sound.lead.info': 'Hány másodperccel a kapu előtt induljon a visszaszámláló sor. Alap: 4 mp.',
   'sound.accel': 'Gyorsulási görbe',
   'sound.accel.info': 'Mennyire élesen sűrűsödnek a kattanások a kapu felé. Alap: normál (feleződés: 1, 0.5, 0.25 …).',
   'sound.accel.gentle': 'Lágy',

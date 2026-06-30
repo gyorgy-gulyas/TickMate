@@ -136,7 +136,7 @@ export const de: Record<StringKey, string> = {
   'sound.tickPitch': 'Tick-Tonhöhe',
   'sound.tickPitch.info': 'Tonhöhe des Sekundentons — setze sie vom Countdown ab, damit du beide nicht verwechselst. Standard: 2000 Hz.',
   'sound.lead': 'Vorlauf vor dem Tor',
-  'sound.lead.info': 'Wie viele Sekunden vor dem Tor der Countdown startet. Standard: 3 s.',
+  'sound.lead.info': 'Wie viele Sekunden vor dem Tor der Countdown startet. Standard: 4 s.',
   'sound.accel': 'Beschleunigungskurve',
   'sound.accel.info': 'Wie stark sich die Klicks zum Tor hin verdichten. Standard: normal (Halbierung: 1, 0.5, 0.25 …).',
   'sound.accel.gentle': 'Sanft',

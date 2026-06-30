@@ -136,7 +136,7 @@ export const es: Record<StringKey, string> = {
   'sound.tickPitch': 'Tono de la marca',
   'sound.tickPitch.info': 'Tono de la marca de segundos — conviene diferenciarlo del de la cuenta atrás para no confundirlos. Predet.: 2000 Hz.',
   'sound.lead': 'Antelación antes de la puerta',
-  'sound.lead.info': 'Cuántos segundos antes de la puerta empieza la cuenta atrás. Predet.: 3 s.',
+  'sound.lead.info': 'Cuántos segundos antes de la puerta empieza la cuenta atrás. Predet.: 4 s.',
   'sound.accel': 'Curva de aceleración',
   'sound.accel.info': 'Cuán bruscamente se agrupan los clics hacia la puerta. Predet.: normal (a la mitad: 1, 0.5, 0.25 …).',
   'sound.accel.gentle': 'Suave',

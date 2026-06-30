@@ -91,12 +91,11 @@ export function buildTaskPCM(spec: TaskSpec, p: SoundProfile): Float32Array {
 
   if (p.startSound) place(renderStart(), 0);
 
-  // Per-second tick, suppressed inside any countdown window.
-  const windows = gates.map(g => [g - p.leadSec, g] as const);
-  const inCountdown = (t: number) => windows.some(([a, b]) => t > a + 1e-6 && t <= b + 1e-6);
+  // Per-second tick — runs the whole time, including during a countdown.
+  // Kept sharp (more square) so it stays crisp and distinct from the clicks.
   if (p.secondsTick) {
-    const tick = renderClickEx(p.tickPitch, p.harshness, p.clickMs, 0.9);
-    for (let s = 1; s <= Math.floor(lastGate); s++) if (!inCountdown(s)) place(tick, s);
+    const tick = renderClickEx(p.tickPitch, Math.max(p.harshness, 0.7), p.clickMs, 0.9);
+    for (let s = 1; s <= Math.floor(lastGate); s++) place(tick, s);
   }
 
   // distinguishAB: the B-leg's own gates play lower so you can tell them apart.
