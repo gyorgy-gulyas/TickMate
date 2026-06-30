@@ -398,6 +398,9 @@ export function RunScreen() {
   const isQuick = !!quick;
   const race = useRace(route.params?.raceId);
   const sound = useSettings().sound;
+  // Earpiece (audio output) latency: lag the on-screen timeline by this so the
+  // visuals match what is heard (audio is delayed by the output path).
+  const audioLatencyMs = useSettings().btAudioLatencyMs;
   const closeRace = useStore(s => s.closeRace);
   const setRunActual = useStore(s => s.setRunActual);
   const finishedRun = useRunByRace(race.id);
@@ -418,7 +421,7 @@ export function RunScreen() {
   useEffect(() => {
     if (phase !== 'running' || !section) return;
     const id = setInterval(() => {
-      const e = (Date.now() - startRef.current) / 1000;
+      const e = Math.max(0, (Date.now() - startRef.current - audioLatencyMs) / 1000);
       if (e >= duration) {
         setElapsed(duration);
         setPhase('done');
@@ -427,7 +430,7 @@ export function RunScreen() {
       }
     }, 80);
     return () => clearInterval(id);
-  }, [phase, section, duration]);
+  }, [phase, section, duration, audioLatencyMs]);
 
   // Stop any audio when leaving the run.
   useEffect(() => () => stopAudio(), []);

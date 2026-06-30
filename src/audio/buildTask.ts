@@ -7,7 +7,7 @@
  * The countdown offsets come from data/timing so the on-screen beat markers
  * stay perfectly in sync with what is heard.
  */
-import { SAMPLE_RATE, renderClickEx, renderStart } from './synth';
+import { SAMPLE_RATE, renderClickEx, renderStart, renderTone } from './synth';
 import { countdownOffsets, gateTimes, isSimultaneous, legWindows } from '../data/timing';
 import type { Segment, SectionType, SoundProfile } from '../data/model';
 
@@ -133,6 +133,55 @@ export function buildCountdownPCM(targetSec: number, p: SoundProfile, muteFinal 
   if (p.startSound) place(renderStart(), 0);
   placeCountdown(place, T, p, p.onGateClick && !muteFinal);
 
+  clampInPlace(out);
+  return out;
+}
+
+// --- Earpiece-latency calibration pattern ---
+// Two resolutions: long beeps (coarse, clear on/off boundary) then a fast
+// rhythmic click train (fine, align by rhythm), then long beeps again.
+const LT_TONE_MS = 800; // long beep length (= its flash length)
+const LT_TONE_REST = 0.8; // silence between beeps
+const LT_CLICK_MS = 8; // short click length
+const LT_CLICK_GAP = 0.25; // 4 Hz rhythm
+const LT_CLICKS = 10;
+const LT_CLICK_FLASH_MS = 90; // visible blink for an 8 ms click
+const LT_SECTION_GAP = 0.6; // between beep/click sections
+
+export type LatencyEvent = { atSec: number; kind: 'tone' | 'click'; flashMs: number };
+
+/** The shared timeline for the earpiece test — used to build the audio AND to
+ *  schedule the on-screen flashes, so they describe the exact same events. */
+export function latencyTestEvents(): LatencyEvent[] {
+  const ev: LatencyEvent[] = [];
+  let t = 0;
+  const beeps = () => {
+    for (let i = 0; i < 3; i++) {
+      ev.push({ atSec: t, kind: 'tone', flashMs: LT_TONE_MS });
+      t += LT_TONE_MS / 1000 + LT_TONE_REST;
+    }
+  };
+  beeps();
+  t += LT_SECTION_GAP;
+  for (let i = 0; i < LT_CLICKS; i++) {
+    ev.push({ atSec: t, kind: 'click', flashMs: LT_CLICK_FLASH_MS });
+    t += LT_CLICK_GAP;
+  }
+  t += LT_SECTION_GAP;
+  beeps();
+  return ev;
+}
+
+/** Build the earpiece-latency test audio from the shared event timeline. */
+export function buildLatencyTestPCM(p: SoundProfile): Float32Array {
+  const ev = latencyTestEvents();
+  const lastEnd = ev.reduce((m, e) => Math.max(m, e.atSec + (e.kind === 'tone' ? LT_TONE_MS : LT_CLICK_MS) / 1000), 0);
+  const totalSec = Math.min(MAX_SEC, lastEnd + 0.4);
+  const out = new Float32Array(Math.ceil(totalSec * SAMPLE_RATE) + SAMPLE_RATE);
+  const place = makePlace(out);
+  const tone = renderTone(p.basePitch, LT_TONE_MS, 0.7);
+  const click = renderClickEx(p.basePitch, Math.max(p.harshness, 0.7), LT_CLICK_MS, 0.95);
+  ev.forEach(e => place(e.kind === 'tone' ? tone : click, e.atSec));
   clampInPlace(out);
   return out;
 }

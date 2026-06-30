@@ -47,6 +47,23 @@ export function renderClickEx(freq: number, harshness: number, ms: number, amp: 
   return buf;
 }
 
+/** Sustained flat tone of `ms` length with a tiny (~5 ms) fade in/out to avoid
+ *  clicks. Used by the earpiece-latency test so the beep and the visual flash
+ *  share the same sharp on/off boundaries. */
+export function renderTone(freq: number, ms: number, amp = 0.7): Float32Array {
+  const n = Math.max(1, Math.round((ms / 1000) * SAMPLE_RATE));
+  const buf = new Float32Array(n);
+  const fade = Math.min(Math.floor(n / 4), Math.round(0.005 * SAMPLE_RATE));
+  for (let i = 0; i < n; i++) {
+    const t = i / SAMPLE_RATE;
+    let env = 1;
+    if (i < fade) env = i / fade;
+    else if (i > n - fade) env = (n - i) / fade;
+    buf[i] = Math.sin(2 * Math.PI * freq * t) * env * amp;
+  }
+  return buf;
+}
+
 /** Distinct start sound (button press) — a lower, slightly longer tone. */
 export function renderStart(): Float32Array {
   const n = Math.round((90 / 1000) * SAMPLE_RATE);

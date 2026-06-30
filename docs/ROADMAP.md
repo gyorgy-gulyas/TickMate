@@ -45,7 +45,10 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - ✅ Hang **összeállítása** feladatonként (`COUNTDOWN_OFFSETS` közös forrás a vizuális ütem-jelölőkkel)
 - ✅ Web-lejátszás (Web Audio) az előnézethez — `audio/player.web.ts`
 - 🟡 **Natív, alacsony késleltetésű lejátszás** — **Android kész** (`TmAudio` Kotlin modul, `AudioTrack` `PERFORMANCE_MODE_LOW_LATENCY`, ENCODING_PCM_FLOAT mono; a JS-ben renderelt PCM base64-ként megy át, eszközön bemérve szól). **iOS hátravan** (AVAudioEngine, Mac kell). Ha az Android jitter kevés lenne, a JS-interfész változatlanul Oboe-ra cserélhető.
-- ⬜ **BT-késleltetés offset** beépítése az ütemezésbe; BT-kalibráció valós méréssel (a UI megvan)
+- 🟡 **Késleltetés-kompenzáció** — két külön érték (Beállítások → Eszköz):
+  - **Füles (kimeneti) késleltetés** ✅ (`btAudioLatencyMs`): a futás-nézet a számlálót/jelzőket ennyivel hátrébb tolja, hogy egyezzen a hallottal; a Fülhallgató képernyőn **kalibráló teszt** (3 sípolás → 10 ritmusos kattanás → 3 sípolás + szinkron villanás).
+  - **Gomb (bemeneti) késleltetés** ⬜ (`btButtonLatencyMs`): a teljes futás-idővonal origóját tolja korábbra — a **BT-gombbal** együtt jön (§5). A beállítás-képernyő kész, a hatás még nincs bekötve.
+  - ⬜ BT-auto-bemérés (a „Bemérés" gomb még stub) — kézi korrekció működik.
 > A natív lejátszás volt a legnagyobb műszaki kockázat — Androidon megvan, valós eszközön (emulátor) hallhatóan szól.
 
 ## 5. Natív integrációk ⬜

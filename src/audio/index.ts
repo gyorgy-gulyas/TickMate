@@ -3,7 +3,7 @@ export * from './buildTask';
 export { playPcm, stopAudio } from './player';
 
 import { SAMPLE_RATE } from './synth';
-import { buildTaskPCM, buildCountdownPCM, type TaskSpec } from './buildTask';
+import { buildTaskPCM, buildCountdownPCM, buildLatencyTestPCM, type TaskSpec } from './buildTask';
 import { playPcm } from './player';
 import type { SoundProfile } from '../data/model';
 
@@ -41,4 +41,9 @@ export function playTask(spec: TaskSpec, profile: SoundProfile): void {
 /** Play a single accelerating countdown into `targetSec` (Hangritmus practice). */
 export function playRhythm(targetSec: number, profile: SoundProfile, muteFinal = false): void {
   playPcm(buildCountdownPCM(targetSec, profile, muteFinal), SAMPLE_RATE);
+}
+
+/** Play the earpiece-latency calibration pattern (beeps + click train). */
+export function playLatencyTest(profile: SoundProfile): void {
+  playPcm(buildLatencyTestPCM(profile), SAMPLE_RATE);
 }
