@@ -122,8 +122,7 @@ export const hu = {
   'settings.secondsTick': 'Másodpercjelző',
   'settings.darkMode': 'Sötét mód',
   'settings.cat.device': 'Eszköz',
-  'settings.cat.sound': 'Hang',
-  'settings.cat.appearance': 'Megjelenés',
+  'settings.cat.general': 'Általános',
 
   // language
   'language.title': 'Nyelv',

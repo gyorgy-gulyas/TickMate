@@ -112,8 +112,7 @@ export const en: Record<StringKey, string> = {
   'settings.secondsTick': 'Second ticks',
   'settings.darkMode': 'Dark mode',
   'settings.cat.device': 'Device',
-  'settings.cat.sound': 'Sound',
-  'settings.cat.appearance': 'Appearance',
+  'settings.cat.general': 'General',
 
   'language.title': 'Language',
   'language.intro': 'Choose the app language. The audio cues stay the same regardless.',

@@ -112,8 +112,7 @@ export const de: Record<StringKey, string> = {
   'settings.secondsTick': 'Sekundenton',
   'settings.darkMode': 'Dunkelmodus',
   'settings.cat.device': 'Gerät',
-  'settings.cat.sound': 'Ton',
-  'settings.cat.appearance': 'Darstellung',
+  'settings.cat.general': 'Allgemein',
 
   'language.title': 'Sprache',
   'language.intro': 'Wähle die App-Sprache. Die Tonsignale bleiben davon unabhängig gleich.',

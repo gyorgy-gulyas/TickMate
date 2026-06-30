@@ -112,8 +112,7 @@ export const es: Record<StringKey, string> = {
   'settings.secondsTick': 'Marca de segundos',
   'settings.darkMode': 'Modo oscuro',
   'settings.cat.device': 'Dispositivo',
-  'settings.cat.sound': 'Sonido',
-  'settings.cat.appearance': 'Apariencia',
+  'settings.cat.general': 'General',
 
   'language.title': 'Idioma',
   'language.intro': 'Elige el idioma de la app. Las señales de audio son las mismas en cualquier caso.',
