@@ -1,4 +1,6 @@
-/** BT audio latency calibration. Maps to "Bluetooth késleltetés". Persisted. */
+/** Earpiece (audio output) latency. Time from playback to what reaches the ear;
+ *  the on-screen timeline is aligned to it so picture and sound stay together.
+ *  Maps to "Fülhallgató (hangkimenet)". Persisted as settings.btAudioLatencyMs. */
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -11,17 +13,18 @@ import type { RootNav } from '../navigation/types';
 const styles = StyleSheet.create({
   intro: { lineHeight: 18 },
   field: { gap: 7 },
+  hint: { marginLeft: 2 },
 });
 
-export function BluetoothLatencyScreen() {
+export function EarpieceScreen() {
   const navigation = useNavigation<RootNav>();
-  const saved = useSettings().btLatencyMs;
+  const saved = useSettings().btAudioLatencyMs;
   const setSetting = useStore(s => s.setSetting);
   const t = useT();
   const [latency, setLatency] = useState(saved);
 
   const save = () => {
-    setSetting('btLatencyMs', latency);
+    setSetting('btAudioLatencyMs', latency);
     navigation.goBack();
   };
 
@@ -50,10 +53,13 @@ export function BluetoothLatencyScreen() {
           {t('bt.manual')}
         </AppText>
         <Stepper value={latency} onChange={setLatency} step={5} min={0} max={400} unit="ms" />
+        <AppText preset="listMeta" color="textSecondary" style={styles.hint}>
+          {t('bt.latencyHint')}
+        </AppText>
       </View>
       <Button label={t('bt.test')} variant="secondary" icon={<Icon name="play" size={14} color="textPrimary" />} />
     </Screen>
   );
 }
 
-export default BluetoothLatencyScreen;
+export default EarpieceScreen;

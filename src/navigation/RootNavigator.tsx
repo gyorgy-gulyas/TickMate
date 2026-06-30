@@ -16,7 +16,8 @@ import { QuickTaskScreen } from '../screens/QuickTaskScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { LanguageScreen } from '../screens/LanguageScreen';
 import { SoundProfileScreen } from '../screens/SoundProfileScreen';
-import { BluetoothLatencyScreen } from '../screens/BluetoothLatencyScreen';
+import { BluetoothButtonScreen } from '../screens/BluetoothButtonScreen';
+import { EarpieceScreen } from '../screens/EarpieceScreen';
 import { HelpScreen } from '../screens/HelpScreen';
 import { SectionTypesScreen } from '../screens/SectionTypesScreen';
 import { SectionEditorScreen } from '../screens/SectionEditorScreen';
@@ -75,7 +76,8 @@ export function RootNavigator() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Language" component={LanguageScreen} />
         <Stack.Screen name="SoundProfile" component={SoundProfileScreen} />
-        <Stack.Screen name="BluetoothLatency" component={BluetoothLatencyScreen} />
+        <Stack.Screen name="BluetoothButton" component={BluetoothButtonScreen} />
+        <Stack.Screen name="Earpiece" component={EarpieceScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="Practice" component={PracticeScreen} />
         <Stack.Screen name="Reaction" component={ReactionScreen} />

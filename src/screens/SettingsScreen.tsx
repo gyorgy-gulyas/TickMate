@@ -37,13 +37,17 @@ export function SettingsScreen() {
   return (
     <Screen title={t('settings.title')} gap={16} rightActions={<Icon name="question" size={19} color="textSecondary" />}>
       <Category title={t('settings.cat.device')}>
-        <SettingsRow label={t('settings.btButton')} statusDot value={t('settings.connected')} />
-        <SettingsRow label={t('settings.btHeadset')} value="AirPods Pro" />
         <SettingsRow
-          label={t('settings.btLatency')}
-          value={`${settings.btLatencyMs} ms`}
+          label={t('settings.btButton')}
+          value={`${settings.btButtonLatencyMs} ms`}
           chevron
-          onPress={() => navigation.navigate('BluetoothLatency')}
+          onPress={() => navigation.navigate('BluetoothButton')}
+        />
+        <SettingsRow
+          label={t('settings.btHeadset')}
+          value={`${settings.btAudioLatencyMs} ms`}
+          chevron
+          onPress={() => navigation.navigate('Earpiece')}
         />
         <SettingsRow label={t('settings.watch')} value="Apple Watch" chevron onPress={() => navigation.navigate('Smartwatch')} divider={false} />
       </Category>

@@ -19,7 +19,10 @@ export type RootStackParamList = {
   Language: undefined;
   /** Sound-profile editor (audio cue character). */
   SoundProfile: undefined;
-  BluetoothLatency: undefined;
+  /** BT START button (input) latency + pairing (deferred). */
+  BluetoothButton: undefined;
+  /** Earpiece (audio output) latency calibration. */
+  Earpiece: undefined;
   Smartwatch: undefined;
   Help: undefined;
   Timeline: { runId?: string } | undefined;

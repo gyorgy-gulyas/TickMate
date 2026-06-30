@@ -153,14 +153,16 @@ export const useStore = create<AppState>()(
     {
       name: 'tickmate-store',
       // v4: settings.sound (SoundProfile) replaces secondsTick + soundProfile.
+      // v5: btLatencyMs split into btButtonLatencyMs (input) + btAudioLatencyMs
+      //     (output); the old single value was the earpiece (audio) latency.
       // Non-destructive: keep races/runs; fold the old secondsTick into the profile.
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => storage),
       migrate: (persisted, version) => {
         const prev = (persisted ?? {}) as {
           races?: Race[];
           runs?: Run[];
-          settings?: Partial<Settings> & { secondsTick?: boolean; soundProfile?: string };
+          settings?: Partial<Settings> & { secondsTick?: boolean; soundProfile?: string; btLatencyMs?: number };
         };
         const s = prev.settings ?? {};
         const sound: SoundProfile = s.sound ?? { ...DEFAULT_SOUND_PROFILE, secondsTick: s.secondsTick ?? DEFAULT_SOUND_PROFILE.secondsTick };
@@ -172,7 +174,8 @@ export const useStore = create<AppState>()(
           settings: {
             themeMode: s.themeMode ?? DEFAULT_SETTINGS.themeMode,
             language: s.language ?? DEFAULT_SETTINGS.language,
-            btLatencyMs: s.btLatencyMs ?? DEFAULT_SETTINGS.btLatencyMs,
+            btButtonLatencyMs: s.btButtonLatencyMs ?? DEFAULT_SETTINGS.btButtonLatencyMs,
+            btAudioLatencyMs: s.btAudioLatencyMs ?? s.btLatencyMs ?? DEFAULT_SETTINGS.btAudioLatencyMs,
             sound,
           },
         } as unknown as AppState;

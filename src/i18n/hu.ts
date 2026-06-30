@@ -186,14 +186,25 @@ export const hu = {
   'language.title': 'Nyelv',
   'language.intro': 'Válaszd ki az alkalmazás nyelvét. A hangjelzések ettől függetlenül azonosak.',
 
-  // bluetooth latency
-  'bt.title': 'Bluetooth késleltetés',
-  'bt.intro': 'A fülhallgató hangkésleltetését mérjük és kompenzáljuk, hogy a kattanások pontosak legyenek.',
+  // earpiece (audio output) latency
+  'bt.title': 'Fülhallgató (hangkimenet)',
+  'bt.intro': 'A fülhallgató hangkésleltetése: a lejátszás és a fülben hallható hang közti idő. A képernyős számlálót ehhez igazítjuk, hogy a kép és a hang ne csússzon szét.',
   'bt.measured': 'Mért késleltetés',
   'bt.device': 'Eszköz',
   'bt.manual': 'Kézi korrekció',
+  'bt.latencyHint': 'Lejátszás → hallható',
   'bt.auto': 'Automatikus mérés',
   'bt.test': 'Teszt hang lejátszása',
+  // bluetooth button (input) latency
+  'btn.title': 'Bluetooth gomb',
+  'btn.intro': 'A START gomb megnyomása és érzékelése közti késleltetés. Az egész idővonalat ennyivel korábbra tolja, így a kép és a hang együtt mozog.',
+  'btn.connection': 'Kapcsolat',
+  'btn.notPaired': 'Nincs párosítva',
+  'btn.latency': 'Gomb késleltetése',
+  'btn.latencyHint': 'Gombnyomás → érzékelés',
+  'btn.pair': 'Párosítás',
+  'btn.soon': 'Hamarosan',
+  'btn.test': 'Teszt',
 
   // help
   'help.title': 'Súgó',

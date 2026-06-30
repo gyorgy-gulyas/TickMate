@@ -53,7 +53,12 @@ export type ThemeMode = 'dark' | 'light';
 export type Settings = {
   themeMode: ThemeMode;
   language: Language;
-  btLatencyMs: number;
+  /** BT START button input latency (press → app detects), ms. Shifts the whole
+   *  run-timeline origin earlier so audio + visuals move together. */
+  btButtonLatencyMs: number;
+  /** Audio output latency (playback → heard in the earpiece), ms. Used to lag
+   *  the on-screen timeline so the picture matches what you hear. */
+  btAudioLatencyMs: number;
   /** Audio-cue character (spec §8). Owns the seconds-tick toggle. */
   sound: SoundProfile;
 };
@@ -61,7 +66,8 @@ export type Settings = {
 export const DEFAULT_SETTINGS: Settings = {
   themeMode: 'dark',
   language: 'Magyar',
-  btLatencyMs: 120,
+  btButtonLatencyMs: 20,
+  btAudioLatencyMs: 120,
   sound: DEFAULT_SOUND_PROFILE,
 };
 
