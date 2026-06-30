@@ -8,7 +8,7 @@
  * stay perfectly in sync with what is heard.
  */
 import { SAMPLE_RATE, renderClickEx, renderStart } from './synth';
-import { countdownOffsets, gateTimes } from '../data/timing';
+import { countdownOffsets, gateTimes, isSimultaneous, legWindows } from '../data/timing';
 import type { SectionType, SoundProfile } from '../data/model';
 
 export type TaskSpec = {
@@ -40,8 +40,9 @@ function clampInPlace(out: Float32Array): void {
   }
 }
 
-/** Place one accelerating countdown into the gate at `gateSec`, shaped by `p`. */
-function placeCountdown(place: Place, gateSec: number, p: SoundProfile, gateClick: boolean): void {
+/** Place one accelerating countdown into the gate at `gateSec`, shaped by `p`.
+ *  `pitchShift` (Hz) separates the B-leg gates when distinguishAB is on. */
+function placeCountdown(place: Place, gateSec: number, p: SoundProfile, gateClick: boolean, pitchShift = 0): void {
   const offs = countdownOffsets(p);
   const n = offs.length;
   offs.forEach((off, i) => {
@@ -57,10 +58,11 @@ function placeCountdown(place: Place, gateSec: number, p: SoundProfile, gateClic
       return;
     }
 
-    // Pitch contour across the sequence.
+    // Pitch contour across the sequence (+ A/B separation shift).
     let freq = p.basePitch;
     if (p.pitchDir === 'up') freq = p.basePitch + pos * p.pitchRange;
     else if (p.pitchDir === 'down') freq = p.basePitch + (1 - pos) * p.pitchRange;
+    freq = Math.max(200, freq + pitchShift);
 
     // Timbre morph (soft → harsh toward the gate).
     let harsh = p.timbreMorph ? Math.max(p.harshness, pos) : p.harshness;
@@ -97,7 +99,16 @@ export function buildTaskPCM(spec: TaskSpec, p: SoundProfile): Float32Array {
     for (let s = 1; s <= Math.floor(lastGate); s++) if (!inCountdown(s)) place(tick, s);
   }
 
-  gates.forEach(g => placeCountdown(place, g, p, p.onGateClick));
+  // distinguishAB: the B-leg's own gates play lower so you can tell them apart.
+  let bGates = new Set<number>();
+  if (p.distinguishAB && isSimultaneous(spec.type)) {
+    const legs = legWindows(spec.type, spec.prepSec, spec.legs);
+    if (legs.length > 1) {
+      const aTimes = new Set([legs[0].start, legs[0].end]);
+      bGates = new Set([legs[1].start, legs[1].end].filter(t => !aTimes.has(t)));
+    }
+  }
+  gates.forEach(g => placeCountdown(place, g, p, p.onGateClick, bGates.has(g) ? -350 : 0));
 
   clampInPlace(out);
   return out;

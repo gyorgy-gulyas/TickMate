@@ -128,7 +128,7 @@ export const DEFAULT_SOUND_PROFILE: SoundProfile = {
   tickPitch: 2000,
   leadSec: 3,
   accel: 'normal',
-  beats: 6,
+  beats: 7,
   onGateClick: true,
   readyMarker: false,
   pitchDir: 'up',
