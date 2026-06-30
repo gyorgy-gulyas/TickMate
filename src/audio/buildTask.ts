@@ -68,3 +68,41 @@ export function buildTaskPCM(spec: TaskSpec): Float32Array {
   }
   return out;
 }
+
+/**
+ * A single accelerating countdown into one target gate at `targetSec` — for the
+ * Hangritmus practice. Same rising-pitch clicks as a real gate. `muteFinal`
+ * silences the on-target click (the "blind" level: feel where it would land).
+ */
+export function buildCountdownPCM(targetSec: number, muteFinal: boolean): Float32Array {
+  const T = Math.max(COUNTDOWN[0], targetSec); // keep the full 3 s window
+  const totalSec = Math.min(MAX_SEC, T + 0.6);
+  const out = new Float32Array(Math.ceil(totalSec * SAMPLE_RATE) + SAMPLE_RATE);
+  const start = renderStart();
+  const countdownClicks = COUNTDOWN.map((_, i) =>
+    i === COUNTDOWN.length - 1 ? renderFinalClick() : renderClick(2000 + (i / (COUNTDOWN.length - 1)) * 1800),
+  );
+
+  const place = (sample: Float32Array, atSec: number) => {
+    const at = Math.round(atSec * SAMPLE_RATE);
+    if (at < 0) return;
+    for (let i = 0; i < sample.length; i++) {
+      const idx = at + i;
+      if (idx < out.length) out[idx] += sample[i];
+    }
+  };
+
+  place(start, 0);
+  COUNTDOWN.forEach((off, i) => {
+    const isFinal = i === COUNTDOWN.length - 1;
+    if (isFinal && muteFinal) return;
+    const t = T - off;
+    if (t >= 0) place(countdownClicks[i], t);
+  });
+
+  for (let i = 0; i < out.length; i++) {
+    if (out[i] > 1) out[i] = 1;
+    else if (out[i] < -1) out[i] = -1;
+  }
+  return out;
+}

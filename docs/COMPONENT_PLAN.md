@@ -51,7 +51,7 @@
 5. Feladat szerkesztő — Field-ek + SegmentedControl + élő TaskSchematic előnézet + kamera akció
 6. Feladat fotóból — ScanView + felismert Field-ek check-circle jelzőkkel (⬜ később)
 7. Gyors feladat — 2 Field + Toggle
-8. Gyakorló mód — 3 MenuCard (**Reakcióidő** kész, Hangritmus, Gyors feladat)
+8. Gyakorló mód — 3 MenuCard (**Reakcióidő** + **Hangritmus** kész, Gyors feladat)
 9. Beállítások — SettingsRow-k (érték / chevron / toggle / slider)
 10. Nyelv — SettingsRow + check (5 nyelv)
 11. Bluetooth késleltetés — StatCard + Stepper + teszt/auto/mentés gombok
@@ -68,7 +68,7 @@
 **Eredmény / idővonal (header-es):**
 18. Szakaszok idővonala — Timeline (sáv + átfedő sáv + vezetővonal) + Legend + jegyzet
 19. **Eredmények (Result)** — verseny alatt: valós idő-mezők (cél + élő delta) + **élő elemzés** (StatCard átl. eltérés + DivergingBar, gyorsabb zöld / lassabb sárga) + **Megjegyzés**
-> A korábbi külön History (lista), History-részletek és Futás-elemzés képernyők ide olvadtak (összevonás: 2026-06-30). Plusz a **Reakcióidő** gyakorló képernyő (lásd `REACTION.md`).
+> A korábbi külön History (lista), History-részletek és Futás-elemzés képernyők ide olvadtak (összevonás: 2026-06-30). Plusz a **Reakcióidő** és **Hangritmus** gyakorló képernyők (lásd `REACTION.md` / `RHYTHM.md`).
 
 ---
 

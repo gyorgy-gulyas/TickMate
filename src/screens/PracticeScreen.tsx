@@ -6,9 +6,9 @@ import type { IconName } from '../components';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';
 
-const ITEMS: { icon: IconName; title: string; subtitle: string; route?: 'QuickTask' | 'Reaction' }[] = [
+const ITEMS: { icon: IconName; title: string; subtitle: string; route?: 'QuickTask' | 'Reaction' | 'Rhythm' }[] = [
   { icon: 'lightning', title: 'Reakcióidő', subtitle: 'Reagálj az indító hangra', route: 'Reaction' },
-  { icon: 'metronome', title: 'Hangritmus', subtitle: 'Visszaszámlálás megszokása' },
+  { icon: 'metronome', title: 'Hangritmus', subtitle: 'Visszaszámlálás megszokása', route: 'Rhythm' },
   { icon: 'timer', title: 'Gyors feladat', subtitle: 'Azonnali időzítés mentés nélkül', route: 'QuickTask' },
 ];
 

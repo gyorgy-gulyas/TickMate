@@ -18,7 +18,7 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 
 ## 1. UI befejezése — vizualizációk + maradék képernyők ✅ (kész)
 **Kész viz-komponensek:** BrandMark, TypeSchematic, OverlapSchematic, Timeline, DivergingBar, BTButton (+ Legend).
-**Kész képernyők:** Főképernyő, Versenyek, Verseny részletei, Feladat típusok (**4 típus**: normál / követő / fonódó / átfedő), Feladat szerkesztő (élő sémával), Gyors feladat, Gyakorló mód, **Reakcióidő** (gyakorlómód, lásd `REACTION.md`), Beállítások, Nyelv, BT késleltetés, Súgó, **Eredmények** (Result: valós idők + elemzés + megjegyzés egy helyen), Idővonal, és a **4 futás-nézet** (készenlét / futás / feladat kész / befejezve).
+**Kész képernyők:** Főképernyő, Versenyek, Verseny részletei, Feladat típusok (**4 típus**: normál / követő / fonódó / átfedő), Feladat szerkesztő (élő sémával), Gyors feladat, Gyakorló mód, **Reakcióidő** + **Hangritmus** (gyakorlómódok, lásd `REACTION.md` / `RHYTHM.md`), Beállítások, Nyelv, BT késleltetés, Súgó, **Eredmények** (Result: valós idők + elemzés + megjegyzés egy helyen), Idővonal, és a **4 futás-nézet** (készenlét / futás / feladat kész / befejezve).
 > **Összevonás (2026-06-30):** a külön History / History-részletek / Elemzés képernyők megszűntek; az eredmények a verseny alatt, az **Eredmények** képernyőn élnek (idők + élő elemzés + megjegyzés).
 **Hátralévő polish (később):** világos mód finomhangolás minden képernyőn; üres/töltő/hiba állapotok; érintési célok ≥44; akadálymentesítés.
 

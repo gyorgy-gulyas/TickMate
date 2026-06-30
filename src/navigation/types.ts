@@ -13,6 +13,8 @@ export type RootStackParamList = {
   Practice: undefined;
   /** Reaction-time practice (a set of rounds: react to a sudden cue). */
   Reaction: undefined;
+  /** Rhythm practice: hit the gate moment on an accelerating countdown. */
+  Rhythm: undefined;
   Settings: undefined;
   Language: undefined;
   BluetoothLatency: undefined;
