@@ -79,8 +79,6 @@ export type Settings = {
   themeMode: ThemeMode;
   language: Language;
   secondsTick: boolean;
-  /** 0..1 */
-  volume: number;
   btLatencyMs: number;
   soundProfile: string;
 };
@@ -89,7 +87,6 @@ export const DEFAULT_SETTINGS: Settings = {
   themeMode: 'dark',
   language: 'Magyar',
   secondsTick: true,
-  volume: 0.72,
   btLatencyMs: 120,
   soundProfile: 'Profil v1',
 };
@@ -111,7 +108,10 @@ export const fmtDelta = (n: number): string => `${n >= 0 ? '+' : '−'}${Math.ab
 // --- Runs (results of completing a race) — one run per race ---
 
 export type RunLeg = { targetSec: number; actualSec: number | null };
-export type RunSection = { name: string; type: SectionType; legs: RunLeg[] };
+/** `sectionId` ties the snapshot back to its source section so reordering the
+ *  race re-maps recorded times by identity, not by position. Optional for
+ *  backward-compat with results saved before this field existed. */
+export type RunSection = { sectionId?: string; name: string; type: SectionType; legs: RunLeg[] };
 
 export type Run = {
   id: string;
@@ -122,16 +122,26 @@ export type Run = {
   results: RunSection[];
 };
 
-/** Snapshot a race's plan into run results (targets set, actuals preserved from prev). */
+/**
+ * Snapshot a race's plan into run results (targets set, actuals preserved from
+ * prev). Previous actuals are matched by `sectionId` so reordering the race
+ * keeps each time with its section. Old results without ids fall back to
+ * position matching (they predate reordering, so order is unchanged).
+ */
 export function snapshotResults(race: Race, prev?: Run): RunSection[] {
-  return race.sections.map((s, si) => ({
-    name: s.name,
-    type: s.type,
-    legs: s.segments.map((g, li) => ({
-      targetSec: g.timeSec,
-      actualSec: prev?.results[si]?.legs[li]?.actualSec ?? null,
-    })),
-  }));
+  const byPosition = !!prev && prev.results.every(r => r.sectionId === undefined);
+  return race.sections.map((s, si) => {
+    const prevSec = byPosition ? prev!.results[si] : prev?.results.find(r => r.sectionId === s.id);
+    return {
+      sectionId: s.id,
+      name: s.name,
+      type: s.type,
+      legs: s.segments.map((g, li) => ({
+        targetSec: g.timeSec,
+        actualSec: prevSec?.legs[li]?.actualSec ?? null,
+      })),
+    };
+  });
 }
 
 /** Per-leg delta = actual − target (null until an actual is entered). */
@@ -159,6 +169,7 @@ export const INITIAL_RUNS: Run[] = [
     date: '2026.04.12',
     note: 'Jó ritmus, a 4. kapunál késtem.',
     results: tavasziSections.map((s, si) => ({
+      sectionId: s.id,
       name: s.name,
       type: s.type,
       legs: s.segments.map(g => ({

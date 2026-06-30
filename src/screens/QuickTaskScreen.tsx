@@ -69,11 +69,20 @@ export function QuickTaskScreen() {
       ]
     : [{ distanceM: toNum(distA), timeSec: toNum(timeA) }];
 
+  // Validation: times > 0, prep/distances ≥ 0.
+  const prepErr = toNum(prep) < 0;
+  const distAErr = toNum(distA) < 0;
+  const timeAErr = toNum(timeA) <= 0;
+  const distBErr = isMulti && toNum(distB) < 0;
+  const timeBErr = isMulti && toNum(timeB) <= 0;
+  const invalid = prepErr || distAErr || timeAErr || distBErr || timeBErr;
+
   const footer = (
     <Button
       label={t('common.start')}
       variant="primary"
       icon={<Icon name="play" size={14} color="onAccent" />}
+      disabled={invalid}
       onPress={() => navigation.navigate('Run', { quick: { type, prepSec: toNum(prep), segments, secondsTick } })}
     />
   );
@@ -95,15 +104,23 @@ export function QuickTaskScreen() {
         <SegmentedControl options={typeOptions} value={type} onChange={changeType} />
       </View>
 
-      <Field label={t('field.prep')} value={prep} onChangeText={changePrep} unit={t('unit.sec')} keyboardType="decimal-pad" />
+      <Field
+        label={t('field.prep')}
+        value={prep}
+        onChangeText={changePrep}
+        unit={t('unit.sec')}
+        keyboardType="decimal-pad"
+        error={prepErr}
+        errorText={t('valid.nonNeg')}
+      />
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
           {isMulti ? t('section.a') : t('section.label')}
         </AppText>
         <View style={styles.row}>
-          <Field label={t('field.distance')} value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} />
-          <Field label={t('field.time')} value={timeA} onChangeText={changeTimeA} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
+          <Field label={t('field.distance')} value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} error={distAErr} errorText={t('valid.nonNeg')} />
+          <Field label={t('field.time')} value={timeA} onChangeText={changeTimeA} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} error={timeAErr} errorText={t('valid.positive')} />
         </View>
       </View>
 
@@ -113,8 +130,8 @@ export function QuickTaskScreen() {
             {t('section.b')}
           </AppText>
           <View style={styles.row}>
-            <Field label={t('field.distance')} value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} />
-            <Field label={t('field.time')} value={timeB} onChangeText={changeTimeB} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
+            <Field label={t('field.distance')} value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} error={distBErr} errorText={t('valid.nonNeg')} />
+            <Field label={t('field.time')} value={timeB} onChangeText={changeTimeB} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} error={timeBErr} errorText={t('valid.positive')} />
           </View>
         </View>
       ) : null}
@@ -148,6 +165,7 @@ export function QuickTaskScreen() {
           variant="secondary"
           icon={<Icon name="waveform" size={16} color="textPrimary" />}
           onPress={() => setAudioReady(true)}
+          disabled={invalid}
         />
       </View>
     </Screen>

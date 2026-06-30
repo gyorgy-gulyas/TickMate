@@ -15,6 +15,9 @@ export const hu = {
   'race.deleteConfirm': 'Biztosan törlöd ezt a versenyt? Az eredményei is törlődnek.',
   'section.delete': 'Feladat törlése',
   'section.deleteConfirm': 'Biztosan törlöd ezt a feladatot?',
+  'valid.required': 'Kötelező',
+  'valid.positive': 'Nagyobb mint 0',
+  'valid.nonNeg': 'Nem lehet negatív',
   'unit.sec': 'mp',
   'tasks.count': '{n} feladat',
   'round.label': 'KÖR {n} / {total}',
@@ -96,6 +99,9 @@ export const hu = {
   'audio.play.a11y': 'hang lejátszása',
   'a11y.types': 'típusok',
   'a11y.photo': 'fotó',
+  'a11y.moveUp': 'feljebb',
+  'a11y.moveDown': 'lejjebb',
+  'a11y.drag': 'húzás az átrendezéshez',
   'schematic.preview': 'Előnézet',
 
   // quick task
@@ -111,11 +117,13 @@ export const hu = {
   'settings.btHeadset': 'Bluetooth füles',
   'settings.btLatency': 'Bluetooth késleltetés',
   'settings.watch': 'Okosóra',
-  'settings.volume': 'Hangerő',
   'settings.soundProfile': 'Hangprofil',
   'settings.language': 'Nyelv',
   'settings.secondsTick': 'Másodpercjelző',
   'settings.darkMode': 'Sötét mód',
+  'settings.cat.device': 'Eszköz',
+  'settings.cat.sound': 'Hang',
+  'settings.cat.appearance': 'Megjelenés',
 
   // language
   'language.title': 'Nyelv',

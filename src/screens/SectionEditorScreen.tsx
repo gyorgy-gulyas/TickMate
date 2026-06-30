@@ -51,6 +51,15 @@ export function SectionEditorScreen() {
       ]
     : [{ distanceM: toNum(distA), timeSec: toNum(timeA) }];
 
+  // Validation: name required, times > 0, prep/distances ≥ 0.
+  const nameErr = name.trim() === '';
+  const prepErr = toNum(prep) < 0;
+  const distAErr = toNum(distA) < 0;
+  const timeAErr = toNum(timeA) <= 0;
+  const distBErr = isMulti && toNum(distB) < 0;
+  const timeBErr = isMulti && toNum(timeB) <= 0;
+  const invalid = nameErr || prepErr || distAErr || timeAErr || distBErr || timeBErr;
+
   const timingChanged =
     !!existing &&
     (type !== existing.type ||
@@ -76,7 +85,9 @@ export function SectionEditorScreen() {
     navigation.goBack();
   };
 
-  const footer = <Button label={t('common.save')} variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={save} />;
+  const footer = (
+    <Button label={t('common.save')} variant="primary" icon={<Icon name="check" size={16} color="onAccent" />} onPress={save} disabled={invalid} />
+  );
 
   const rightActions = (
     <View style={styles.rightActions}>
@@ -100,7 +111,13 @@ export function SectionEditorScreen() {
       gap={13}
       rightActions={rightActions}
       footer={footer}>
-      <Field label={t('field.name')} value={name} onChangeText={setName} />
+      <Field
+        label={t('field.name')}
+        value={name}
+        onChangeText={setName}
+        error={nameErr}
+        errorText={t('valid.required')}
+      />
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
@@ -109,15 +126,23 @@ export function SectionEditorScreen() {
         <SegmentedControl options={typeOptions} value={type} onChange={setType} />
       </View>
 
-      <Field label={t('field.prep')} value={prep} onChangeText={setPrep} unit={t('unit.sec')} keyboardType="decimal-pad" />
+      <Field
+        label={t('field.prep')}
+        value={prep}
+        onChangeText={setPrep}
+        unit={t('unit.sec')}
+        keyboardType="decimal-pad"
+        error={prepErr}
+        errorText={t('valid.nonNeg')}
+      />
 
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
           {isMulti ? t('section.a') : t('section.label')}
         </AppText>
         <View style={styles.row}>
-          <Field label={t('field.distance')} value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} />
-          <Field label={t('field.time')} value={timeA} onChangeText={setTimeA} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
+          <Field label={t('field.distance')} value={distA} onChangeText={setDistA} unit="m" keyboardType="number-pad" style={styles.flex1} error={distAErr} errorText={t('valid.nonNeg')} />
+          <Field label={t('field.time')} value={timeA} onChangeText={setTimeA} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} error={timeAErr} errorText={t('valid.positive')} />
         </View>
       </View>
 
@@ -127,8 +152,8 @@ export function SectionEditorScreen() {
             {t('section.b')}
           </AppText>
           <View style={styles.row}>
-            <Field label={t('field.distance')} value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} />
-            <Field label={t('field.time')} value={timeB} onChangeText={setTimeB} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} />
+            <Field label={t('field.distance')} value={distB} onChangeText={setDistB} unit="m" keyboardType="number-pad" style={styles.flex1} error={distBErr} errorText={t('valid.nonNeg')} />
+            <Field label={t('field.time')} value={timeB} onChangeText={setTimeB} unit={t('unit.sec')} keyboardType="decimal-pad" style={styles.flex1} error={timeBErr} errorText={t('valid.positive')} />
           </View>
         </View>
       ) : null}
@@ -149,6 +174,7 @@ export function SectionEditorScreen() {
           variant="secondary"
           icon={<Icon name="waveform" size={16} color="textPrimary" />}
           onPress={generateAudio}
+          disabled={invalid}
         />
       </View>
 

@@ -31,10 +31,25 @@ export type FieldProps = {
   rightAdornment?: React.ReactNode;
   keyboardType?: KeyboardTypeOptions;
   editable?: boolean;
+  /** Invalid state — red border (and red errorText below, if given). */
+  error?: boolean;
+  errorText?: string;
   style?: ViewStyle;
 };
 
-export function Field({ label, value, onChangeText, placeholder, unit, rightAdornment, keyboardType, editable, style }: FieldProps) {
+export function Field({
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  unit,
+  rightAdornment,
+  keyboardType,
+  editable,
+  error,
+  errorText,
+  style,
+}: FieldProps) {
   const theme = useTheme();
   const isEditable = editable ?? !!onChangeText;
 
@@ -44,7 +59,7 @@ export function Field({ label, value, onChangeText, placeholder, unit, rightAdor
     justifyContent: 'space-between',
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: error ? theme.colors.danger : theme.colors.border,
     borderRadius: theme.radii.input,
     paddingHorizontal: theme.spacing.base,
     paddingVertical: 13,
@@ -89,6 +104,11 @@ export function Field({ label, value, onChangeText, placeholder, unit, rightAdor
           {rightAdornment}
         </View>
       </View>
+      {error && errorText ? (
+        <AppText preset="muted" color="danger">
+          {errorText}
+        </AppText>
+      ) : null}
     </View>
   );
 }

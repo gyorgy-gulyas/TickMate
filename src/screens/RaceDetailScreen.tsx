@@ -2,11 +2,12 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, Button, ConfirmDialog, Field, Icon, Pill, SectionRow } from '../components';
-import { SECTION_TYPE_META, fmtSec, sectionTotalSec } from '../data/model';
-import { useT, typeKey } from '../i18n';
+import { AppText, Button, ConfirmDialog, Field, Icon, Pill } from '../components';
+import { sectionTotalSec } from '../data/model';
+import { useT } from '../i18n';
 import { useRace, useStore } from '../store/useStore';
 import { Screen } from './Screen';
+import { SectionReorderList } from './SectionReorderList';
 import type { RootNav, RootStackParamList } from '../navigation/types';
 
 const styles = StyleSheet.create({
@@ -104,19 +105,11 @@ export function RaceDetailScreen() {
               {t('race.col.time')}
             </AppText>
           </View>
-          {race.sections.map((s, i) => (
-            <SectionRow
-              key={s.id}
-              index={i + 1}
-              typeIcon={<Icon name={SECTION_TYPE_META[s.type].icon} size={15} color="textSecondary" />}
-              name={s.name}
-              meta={t(typeKey(s.type))}
-              value={`${s.segments.map(g => fmtSec(g.timeSec)).join(' + ')} ${t('unit.sec')}`}
-              audioReady={s.audioReady}
-              divider={i < race.sections.length - 1}
-              onPress={() => navigation.navigate('SectionEditor', { raceId: race.id, sectionId: s.id })}
-            />
-          ))}
+          <SectionReorderList
+            raceId={race.id}
+            sections={race.sections}
+            onOpen={id => navigation.navigate('SectionEditor', { raceId: race.id, sectionId: id })}
+          />
         </View>
       ) : (
         <AppText preset="muted" color="textSecondary" style={styles.empty}>

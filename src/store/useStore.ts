@@ -40,6 +40,10 @@ type AppState = {
   addSection: (raceId: string) => string;
   updateSection: (raceId: string, sectionId: string, patch: Partial<Section>) => void;
   deleteSection: (raceId: string, sectionId: string) => void;
+  /** Move a section one slot up (dir -1) or down (dir +1). */
+  moveSection: (raceId: string, sectionId: string, dir: -1 | 1) => void;
+  /** Move the section at `from` to index `to` (drag reorder). */
+  reorderSection: (raceId: string, from: number, to: number) => void;
   /** Mark every section's audio in a race as generated. */
   regenerateRaceAudio: (raceId: string) => void;
   // settings
@@ -106,6 +110,30 @@ export const useStore = create<AppState>()(
       deleteSection: (raceId, sectionId) =>
         set(s => ({
           races: s.races.map(r => (r.id === raceId ? { ...r, sections: r.sections.filter(sec => sec.id !== sectionId) } : r)),
+        })),
+      moveSection: (raceId, sectionId, dir) =>
+        set(s => ({
+          races: s.races.map(r => {
+            if (r.id !== raceId) return r;
+            const i = r.sections.findIndex(sec => sec.id === sectionId);
+            const j = i + dir;
+            if (i < 0 || j < 0 || j >= r.sections.length) return r;
+            const sections = [...r.sections];
+            [sections[i], sections[j]] = [sections[j], sections[i]];
+            return { ...r, sections };
+          }),
+        })),
+      reorderSection: (raceId, from, to) =>
+        set(s => ({
+          races: s.races.map(r => {
+            if (r.id !== raceId) return r;
+            const n = r.sections.length;
+            if (from === to || from < 0 || to < 0 || from >= n || to >= n) return r;
+            const sections = [...r.sections];
+            const [moved] = sections.splice(from, 1);
+            sections.splice(to, 0, moved);
+            return { ...r, sections };
+          }),
         })),
       regenerateRaceAudio: raceId =>
         set(s => ({
