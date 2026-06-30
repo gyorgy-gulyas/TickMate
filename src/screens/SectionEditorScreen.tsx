@@ -25,7 +25,7 @@ export function SectionEditorScreen() {
   const race = useRace(raceId);
   const updateSection = useStore(s => s.updateSection);
   const deleteSection = useStore(s => s.deleteSection);
-  const secondsTick = useSettings().sound.secondsTick;
+  const sound = useSettings().sound;
   const t = useT();
   const typeOptions = useTaskTypeOptions();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -167,7 +167,7 @@ export function SectionEditorScreen() {
         <AudioPreview
           ready={audioCurrent}
           duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + g.timeSec, 0))} ${t('unit.sec')}`}
-          onPlay={() => playTask({ type, prepSec: toNum(prep), legs: segments.map(g => g.timeSec), secondsTick })}
+          onPlay={() => playTask({ type, prepSec: toNum(prep), legs: segments.map(g => g.timeSec) }, sound)}
         />
         <Button
           label={audioCurrent ? t('audio.regen') : t('audio.gen')}

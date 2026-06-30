@@ -53,9 +53,10 @@ const styles = StyleSheet.create({
 function RunLegsBar({ section, duration, elapsed }: { section: Section; duration: number; elapsed: number }) {
   const theme = useTheme();
   const tr = useT();
+  const sound = useSettings().sound;
   const legs = legsOf(section);
   const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
-  const beats = countdownBeats(gates, false);
+  const beats = countdownBeats(gates, sound, false);
   const head = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
   const headStyle = { left: `${head * 100}%` as const, backgroundColor: theme.colors.textPrimary };
   const trackBg = { backgroundColor: theme.colors.railAlt };
@@ -172,6 +173,7 @@ function RunningView({
 }) {
   const theme = useTheme();
   const t = useT();
+  const sound = useSettings().sound;
   const inPrep = elapsed < section.prepSec;
   const legs = legsOf(section);
   const isMulti = section.segments.length > 1;
@@ -205,7 +207,7 @@ function RunningView({
   // Section boundaries (gate times) marked on the bar.
   const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
   // Accelerating countdown beats (the audio's intermediate clicks into each gate).
-  const beats = countdownBeats(gates, false);
+  const beats = countdownBeats(gates, sound, false);
   const beatColor = { backgroundColor: theme.colors.textSecondary };
   // On the per-second bar: only the beats falling inside the current second, as fractions.
   const floorSec = Math.floor(elapsed);
@@ -399,7 +401,7 @@ export function RunScreen() {
   const quick = route.params?.quick;
   const isQuick = !!quick;
   const race = useRace(route.params?.raceId);
-  const settingsTick = useSettings().sound.secondsTick;
+  const sound = useSettings().sound;
   const closeRace = useStore(s => s.closeRace);
   const setRunActual = useStore(s => s.setRunActual);
   const finishedRun = useRunByRace(race.id);
@@ -413,7 +415,7 @@ export function RunScreen() {
   const sections: Section[] = quick
     ? [{ id: 'quick', name: quick.name || 'Gyors feladat', type: quick.type, prepSec: quick.prepSec, segments: quick.segments, audioReady: true }]
     : race.sections;
-  const tick = quick ? quick.secondsTick : settingsTick;
+  const playProfile = quick ? { ...sound, secondsTick: quick.secondsTick } : sound;
   const section = sections[si];
   const duration = section ? durationOf(section) : 0;
 
@@ -441,7 +443,7 @@ export function RunScreen() {
   const goHome = () => navigation.goBack();
 
   const start = () => {
-    playTask({ type: section.type, prepSec: section.prepSec, legs: section.segments.map(g => g.timeSec), secondsTick: tick });
+    playTask({ type: section.type, prepSec: section.prepSec, legs: section.segments.map(g => g.timeSec) }, playProfile);
     startRef.current = Date.now();
     setElapsed(0);
     setPhase('running');

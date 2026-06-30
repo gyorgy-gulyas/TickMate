@@ -10,7 +10,8 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AppText, BigNum, Button, Chip, Icon, NavBar, SegmentedControl, StatCard } from '../components';
 import { playRhythm, stopAudio } from '../audio';
-import { COUNTDOWN_OFFSETS } from '../data/timing';
+import { countdownOffsets } from '../data/timing';
+import { useSettings } from '../store/useStore';
 import { useTheme, type ColorTokens } from '../theme';
 import { useT, type StringKey } from '../i18n';
 import type { RootNav } from '../navigation/types';
@@ -60,6 +61,7 @@ export function RhythmScreen() {
   const navigation = useNavigation<RootNav>();
   const theme = useTheme();
   const t = useT();
+  const sound = useSettings().sound;
   const levelOptions = LEVELS.map(l => ({ key: l.key, label: t(l.labelKey) }));
 
   const [phase, setPhase] = useState<Phase>('ready');
@@ -99,7 +101,7 @@ export function RhythmScreen() {
     setLast(null);
     setElapsed(0);
     setPhase('running');
-    playRhythm(T, level === 'blind');
+    playRhythm(T, sound, level === 'blind');
     startRef.current = Date.now();
     intervalRef.current = setInterval(() => {
       const e = (Date.now() - startRef.current) / 1000;
@@ -220,7 +222,8 @@ export function RhythmScreen() {
   const T = targetRef.current;
   const totalDur = T + TAIL;
   const headFrac = Math.min(1, Math.max(0, elapsed / totalDur));
-  const beats = COUNTDOWN_OFFSETS.filter(o => o > 0)
+  const beats = countdownOffsets(sound)
+    .filter(o => o > 1e-6)
     .map(o => T - o)
     .filter(x => x >= 0);
   const trackBg = { backgroundColor: theme.colors.railAlt };

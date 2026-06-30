@@ -29,6 +29,24 @@ export function renderFinalClick(): Float32Array {
   return buf;
 }
 
+/**
+ * Parametric click — blends sine (soft) ↔ square (harsh) by `harshness`, with a
+ * given length and amplitude. The profile-driven task/countdown audio uses this.
+ */
+export function renderClickEx(freq: number, harshness: number, ms: number, amp: number): Float32Array {
+  const n = Math.max(1, Math.round((ms / 1000) * SAMPLE_RATE));
+  const buf = new Float32Array(n);
+  const tau = Math.max(0.001, (ms / 1000) * 0.28);
+  const h = Math.min(1, Math.max(0, harshness));
+  for (let i = 0; i < n; i++) {
+    const t = i / SAMPLE_RATE;
+    const sine = Math.sin(2 * Math.PI * freq * t);
+    const square = sine >= 0 ? 1 : -1;
+    buf[i] = ((1 - h) * sine + h * square) * Math.exp(-t / tau) * amp;
+  }
+  return buf;
+}
+
 /** Distinct start sound (button press) — a lower, slightly longer tone. */
 export function renderStart(): Float32Array {
   const n = Math.round((90 / 1000) * SAMPLE_RATE);

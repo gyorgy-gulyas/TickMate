@@ -16,7 +16,7 @@ import {
   type CountdownAccel,
   type PitchDir,
 } from '../data/model';
-import { SAMPLE_RATE, playPcm, playRhythm, renderClick, renderStart, stopAudio } from '../audio';
+import { SAMPLE_RATE, playPcm, playRhythm, renderClickEx, renderStart, stopAudio } from '../audio';
 import { useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 
@@ -236,13 +236,13 @@ export function SoundProfileScreen() {
 
       <Group title="Előhallgatás">
         <View style={styles.previewRow}>
-          <Button label="Induló hang" variant="secondary" icon={<Icon name="play" size={14} color="textPrimary" />} onPress={() => playPcm(renderStart(), SAMPLE_RATE)} />
-          <Button label="Másodperc-tikk" variant="secondary" icon={<Icon name="play" size={14} color="textPrimary" />} onPress={() => playPcm(renderClick(p.tickPitch), SAMPLE_RATE)} />
-          <Button label="Minta visszaszámlálás" variant="secondary" icon={<Icon name="play" size={14} color="textPrimary" />} onPress={() => playRhythm(Math.max(3, p.leadSec), !p.onGateClick)} />
+          <Button label="Induló hang" variant="secondary" icon={<Icon name="play" size={14} color="textPrimary" />} onPress={() => p.startSound && playPcm(renderStart(), SAMPLE_RATE)} />
+          <Button label="Másodperc-tikk" variant="secondary" icon={<Icon name="play" size={14} color="textPrimary" />} onPress={() => playPcm(renderClickEx(p.tickPitch, p.harshness, p.clickMs, 0.9), SAMPLE_RATE)} />
+          <Button label="Minta visszaszámlálás" variant="secondary" icon={<Icon name="play" size={14} color="textPrimary" />} onPress={() => playRhythm(p.leadSec, p)} />
           <Button label="Leállítás" variant="secondary" icon={<Icon name="stop" size={14} color="textPrimary" />} onPress={() => stopAudio()} />
         </View>
         <AppText preset="muted" color="textSecondary" style={styles.info}>
-          Az előhallgatás jelenleg részben reagál (tikk hangmagasság, kezdés, záró kattanás). A többi knob a hangmotor-lépés után szól.
+          A „Minta visszaszámlálás" a teljes profilt szólaltatja meg (minden knob hallható). Az induló hang a „Bekapcsolva" kapcsolótól függ.
         </AppText>
       </Group>
     </Screen>

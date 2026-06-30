@@ -17,6 +17,7 @@ import {
 import { fmtSec, toNum, type SectionType } from '../data/model';
 import { useT } from '../i18n';
 import { playTask } from '../audio';
+import { useSettings } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';
 
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
 export function QuickTaskScreen() {
   const navigation = useNavigation<RootNav>();
   const t = useT();
+  const sound = useSettings().sound;
   const typeOptions = useTaskTypeOptions();
   const [type, setType] = useState<SectionType>('normal');
   const [prep, setPrep] = useState('5.0');
@@ -157,7 +159,7 @@ export function QuickTaskScreen() {
           ready={audioReady}
           duration={`${fmtSec(totalSec)} ${t('unit.sec')}`}
           onPlay={() =>
-            playTask({ type, prepSec: toNum(prep), legs: isMulti ? [toNum(timeA), toNum(timeB)] : [toNum(timeA)], secondsTick })
+            playTask({ type, prepSec: toNum(prep), legs: isMulti ? [toNum(timeA), toNum(timeB)] : [toNum(timeA)] }, { ...sound, secondsTick })
           }
         />
         <Button
