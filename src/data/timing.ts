@@ -41,3 +41,20 @@ export const taskDuration = (type: SectionType, prepSec: number, legTimes: numbe
 
 /** True when two legs run at the same time (nested / overlap). */
 export const isSimultaneous = (type: SectionType): boolean => type === 'nested' || type === 'overlap';
+
+/** Offsets (s) before a gate where a countdown beat fires; 0 = at the gate. */
+export const COUNTDOWN_OFFSETS = [3.0, 2.0, 1.5, 1.0, 0.75, 0.5, 0.35, 0.25, 0.15, 0.08, 0.0];
+
+/**
+ * All countdown beat times (s) across every gate — the accelerating clicks the
+ * audio plays into each gate. `includeGate=false` drops the on-gate beat (0.0),
+ * since the gate itself is already drawn as a solid boundary mark.
+ */
+export function countdownBeats(gates: number[], includeGate = true): number[] {
+  const ts = gates.flatMap(g =>
+    COUNTDOWN_OFFSETS.filter(off => includeGate || off > 0)
+      .map(off => g - off)
+      .filter(t => t >= 0),
+  );
+  return [...new Set(ts)].sort((a, b) => a - b);
+}

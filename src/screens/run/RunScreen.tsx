@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard } from '../../components';
 import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/model';
-import { gateTimes, isSimultaneous, legWindows, taskDuration } from '../../data/timing';
+import { countdownBeats, gateTimes, isSimultaneous, legWindows, taskDuration } from '../../data/timing';
 import { playTask, stopAudio } from '../../audio';
 import { useRace, useRunByRace, useSettings, useStore } from '../../store/useStore';
 import { useTheme } from '../../theme';
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   legBar: { position: 'absolute', top: 0, bottom: 0, borderRadius: 4 },
   legHead: { position: 'absolute', top: -3, bottom: -3, width: 2, marginLeft: -1 },
   gateMark: { position: 'absolute', top: -4, bottom: -4, width: 1.5, borderRadius: 1, marginLeft: -0.75 },
+  beatMark: { position: 'absolute', top: -2, bottom: -2, width: 0.5, marginLeft: -0.25 },
   legAxis: { flexDirection: 'row', justifyContent: 'space-between', marginLeft: 24, marginTop: 2 },
 });
 
@@ -51,9 +52,11 @@ function RunLegsBar({ section, duration, elapsed }: { section: Section; duration
   const theme = useTheme();
   const legs = legsOf(section);
   const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
+  const beats = countdownBeats(gates, false);
   const head = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
   const headStyle = { left: `${head * 100}%` as const, backgroundColor: theme.colors.textPrimary };
   const trackBg = { backgroundColor: theme.colors.railAlt };
+  const beatColor = { backgroundColor: theme.colors.textSecondary };
   return (
     <View style={styles.legsWrap}>
       {legs.map((l, i) => {
@@ -69,6 +72,10 @@ function RunLegsBar({ section, duration, elapsed }: { section: Section; duration
             </AppText>
             <View style={[styles.legTrack, trackBg]}>
               <View style={[styles.legBar, barStyle]} />
+              {beats.map((t, bi) => {
+                const beatStyle = { left: `${(t / duration) * 100}%` as const };
+                return <View key={`b${bi}`} style={[styles.beatMark, beatColor, beatStyle]} />;
+              })}
               {gates.map((t, gi) => {
                 const markStyle = { left: `${(t / duration) * 100}%` as const, backgroundColor: theme.colors.textPrimary };
                 return <View key={`g${gi}`} style={[styles.gateMark, markStyle]} />;
@@ -185,6 +192,12 @@ function RunningView({
   const tickColor = { backgroundColor: theme.colors.textPrimary };
   // Section boundaries (gate times) marked on the bar.
   const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
+  // Accelerating countdown beats (the audio's intermediate clicks into each gate).
+  const beats = countdownBeats(gates, false);
+  const beatColor = { backgroundColor: theme.colors.textSecondary };
+  // On the per-second bar: only the beats falling inside the current second, as fractions.
+  const floorSec = Math.floor(elapsed);
+  const subBeats = beats.filter(t => t >= floorSec && t < floorSec + 1).map(t => t - floorSec);
 
   // Secondary (B) timer — always present for simultaneous tasks.
   const bLeg = simultaneous ? legs[1] : undefined;
@@ -205,6 +218,10 @@ function RunningView({
         </AppText>
         <View style={styles.subBar}>
           <ProgressTrack value={subSecond} height={4} fillColor={theme.colors[bigColor]} />
+          {subBeats.map((f, bi) => {
+            const beatStyle = { left: `${f * 100}%` as const };
+            return <View key={`sb${bi}`} style={[styles.beatMark, beatColor, beatStyle]} />;
+          })}
           <View style={[styles.subTick, styles.subTickLeft, tickColor]} />
           <View style={[styles.subTick, styles.subTickRight, tickColor]} />
         </View>
@@ -213,6 +230,10 @@ function RunningView({
           <View style={styles.progressWrap}>
             <View style={[styles.secTrack, secTrackBg]}>
               <View style={[styles.legBar, secBarStyle]} />
+              {beats.map((t, i) => {
+                const beatStyle = { left: `${(t / duration) * 100}%` as const };
+                return <View key={`b${i}`} style={[styles.beatMark, beatColor, beatStyle]} />;
+              })}
               {gates.map((t, i) => {
                 const markStyle = { left: `${(t / duration) * 100}%` as const, backgroundColor: theme.colors.textPrimary };
                 return <View key={`g${i}`} style={[styles.gateMark, markStyle]} />;

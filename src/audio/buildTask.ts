@@ -6,7 +6,7 @@
  *  - an accelerating countdown ending at EVERY gate (Start, Közös, A-cél, B-cél, Cél)
  */
 import { SAMPLE_RATE, renderClick, renderFinalClick, renderStart } from './synth';
-import { gateTimes } from '../data/timing';
+import { COUNTDOWN_OFFSETS, gateTimes } from '../data/timing';
 import type { SectionType } from '../data/model';
 
 export type TaskSpec = {
@@ -17,8 +17,7 @@ export type TaskSpec = {
   secondsTick: boolean;
 };
 
-/** Offsets (s) before a gate where a countdown click fires; 0 = at the gate. */
-const COUNTDOWN = [3.0, 2.0, 1.5, 1.0, 0.75, 0.5, 0.35, 0.25, 0.15, 0.08, 0.0];
+const COUNTDOWN = COUNTDOWN_OFFSETS;
 
 const MAX_SEC = 120;
 
