@@ -24,6 +24,7 @@ import { TimelineScreen } from '../screens/TimelineScreen';
 import { ResultScreen } from '../screens/ResultScreen';
 import { RunScreen } from '../screens/run/RunScreen';
 import { PracticeScreen } from '../screens/PracticeScreen';
+import { ReactionScreen } from '../screens/ReactionScreen';
 import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -74,6 +75,7 @@ export function RootNavigator() {
         <Stack.Screen name="BluetoothLatency" component={BluetoothLatencyScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="Practice" component={PracticeScreen} />
+        <Stack.Screen name="Reaction" component={ReactionScreen} />
         <Stack.Screen name="SectionTypes" component={SectionTypesScreen} />
         <Stack.Screen name="SectionEditor" component={SectionEditorScreen} />
         <Stack.Screen name="Timeline" component={TimelineScreen} />
