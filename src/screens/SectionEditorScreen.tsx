@@ -5,7 +5,7 @@ import { useNavigation, useRoute, type RouteProp } from '@react-navigation/nativ
 import { AppText, AudioPreview, Button, ConfirmDialog, Field, Icon, SegmentedControl, TaskSchematic, useTaskTypeOptions } from '../components';
 import { fmtSec, toNum, type SectionType } from '../data/model';
 import { useT } from '../i18n';
-import { playTask } from '../audio';
+import { playTask, prewarmTask } from '../audio';
 import { useRace, useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav, RootStackParamList } from '../navigation/types';
@@ -76,7 +76,10 @@ export function SectionEditorScreen() {
     commit(timingChanged ? false : existing?.audioReady ?? false);
     navigation.goBack();
   };
-  const generateAudio = () => commit(true);
+  const generateAudio = () => {
+    commit(true);
+    prewarmTask({ type, prepSec: toNum(prep), legs: segments.map(g => g.timeSec) }, sound);
+  };
   const audioCurrent = !!existing?.audioReady && !timingChanged;
 
   const removeSection = () => {

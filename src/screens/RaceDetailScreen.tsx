@@ -5,7 +5,8 @@ import { useNavigation, useRoute, type RouteProp } from '@react-navigation/nativ
 import { AppText, Button, ConfirmDialog, Field, Icon, Pill } from '../components';
 import { sectionTotalSec } from '../data/model';
 import { useT } from '../i18n';
-import { useRace, useStore } from '../store/useStore';
+import { prewarmTask } from '../audio';
+import { useRace, useSettings, useStore } from '../store/useStore';
 import { Screen } from './Screen';
 import { SectionReorderList } from './SectionReorderList';
 import type { RootNav, RootStackParamList } from '../navigation/types';
@@ -25,8 +26,14 @@ export function RaceDetailScreen() {
   const closeRace = useStore(s => s.closeRace);
   const addSection = useStore(s => s.addSection);
   const deleteRace = useStore(s => s.deleteRace);
+  const sound = useSettings().sound;
   const t = useT();
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const regenerate = () => {
+    regenerateRaceAudio(race.id);
+    race.sections.forEach(s => prewarmTask({ type: s.type, prepSec: s.prepSec, legs: s.segments.map(g => g.timeSec) }, sound));
+  };
 
   const recordResult = () => {
     const runId = closeRace(race.id);
@@ -53,7 +60,7 @@ export function RaceDetailScreen() {
         label={t('race.regen')}
         variant="secondary"
         icon={<Icon name="arrows-clockwise" size={16} color="textPrimary" />}
-        onPress={() => regenerateRaceAudio(race.id)}
+        onPress={regenerate}
       />
       <Button
         label={t('race.results')}
