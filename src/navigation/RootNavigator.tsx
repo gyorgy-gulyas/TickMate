@@ -16,6 +16,7 @@ import { RaceDetailScreen } from '../screens/RaceDetailScreen';
 import { QuickTaskScreen } from '../screens/QuickTaskScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { LanguageScreen } from '../screens/LanguageScreen';
+import { SoundProfileScreen } from '../screens/SoundProfileScreen';
 import { BluetoothLatencyScreen } from '../screens/BluetoothLatencyScreen';
 import { HelpScreen } from '../screens/HelpScreen';
 import { SectionTypesScreen } from '../screens/SectionTypesScreen';
@@ -74,6 +75,7 @@ export function RootNavigator() {
         <Stack.Screen name="QuickTask" component={QuickTaskScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Language" component={LanguageScreen} />
+        <Stack.Screen name="SoundProfile" component={SoundProfileScreen} />
         <Stack.Screen name="BluetoothLatency" component={BluetoothLatencyScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="Practice" component={PracticeScreen} />

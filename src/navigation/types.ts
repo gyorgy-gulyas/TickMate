@@ -17,6 +17,8 @@ export type RootStackParamList = {
   Rhythm: undefined;
   Settings: undefined;
   Language: undefined;
+  /** Sound-profile editor (audio cue character). */
+  SoundProfile: undefined;
   BluetoothLatency: undefined;
   Smartwatch: undefined;
   Help: undefined;

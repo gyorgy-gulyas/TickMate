@@ -47,7 +47,7 @@ export function SettingsScreen() {
       </Category>
 
       <Category title={t('settings.cat.sound')}>
-        <SettingsRow label={t('settings.soundProfile')} value={settings.soundProfile} chevron />
+        <SettingsRow label={t('settings.soundProfile')} value={settings.soundProfile} chevron onPress={() => navigation.navigate('SoundProfile')} />
         <SettingsRow
           label={t('settings.secondsTick')}
           right={<Toggle value={settings.secondsTick} onValueChange={v => setSetting('secondsTick', v)} />}
