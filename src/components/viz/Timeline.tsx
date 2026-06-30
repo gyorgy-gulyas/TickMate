@@ -20,8 +20,6 @@ export type TimelineProps = {
   axis: string[];
 };
 
-const SECONDARY_TEXT = '#BFE8D6';
-
 const styles = StyleSheet.create({
   wrap: { gap: 8 },
   track: { height: 34, borderRadius: 7 },
@@ -48,7 +46,7 @@ export function Timeline({ bars, guidePct, axis }: TimelineProps) {
             width: `${b.widthPct}%`,
             backgroundColor: isPrimary ? theme.colors.accent : theme.colors.accentDark,
           };
-          const labelColor: TextStyle = { color: isPrimary ? theme.colors.onAccent : SECONDARY_TEXT };
+          const labelColor: TextStyle = { color: isPrimary ? theme.colors.onAccent : theme.colors.onAccentDark };
           return (
             <View key={`${b.label}${i}`} style={[styles.track, trackStyle]}>
               <View style={[styles.bar, barStyle]}>

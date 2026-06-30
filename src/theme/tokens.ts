@@ -32,6 +32,8 @@ export type ColorTokens = {
   accentDark: string;
   /** Text/icon on top of an accent fill */
   onAccent: string;
+  /** Text/icon on top of the darker accent (overlap secondary) bar */
+  onAccentDark: string;
   /** "Ready" status card background + border */
   readyBg: string;
   readyBorder: string;
@@ -59,6 +61,7 @@ export const darkColors: ColorTokens = {
   accentText: '#4FB98A',
   accentDark: '#2C5F49',
   onAccent: '#0F1113',
+  onAccentDark: '#BFE8D6',
   readyBg: '#15241D',
   readyBorder: 'rgba(79,185,138,0.22)',
   slower: '#CAA24A',
@@ -80,6 +83,7 @@ export const lightColors: ColorTokens = {
   accentText: '#2C5F49',
   accentDark: '#2C5F49',
   onAccent: '#0F1113',
+  onAccentDark: '#BFE8D6',
   readyBg: '#E4F3EB',
   readyBorder: 'rgba(44,95,73,0.28)',
   slower: '#9A7521',
