@@ -3,6 +3,8 @@
 > Forrás: `design/TickMate App.dc.html` (21 képernyő) + `CLAUDE_CODE.md` + `TickMate_Spec_v1.0.md`.
 > Stack-döntés: **bare React Native** (TypeScript). A natív audio (AVAudioEngine/Oboe), BLE gomb és okosóra rétegek miatt.
 > Ez egy **terv**, nem kód. A `.dc.html` csak vizuális/strukturális referencia — a `support.js`-t nem emeljük át.
+>
+> **Állapot (2026-06-30):** az alábbi terv nagyrészt megvalósult. Fő eltérések a kódhoz képest: **4 szakasztípus** (normál / követő / fonódó / átfedő), a **futás-nézetek egyetlen `RunScreen`** fázis-állapotgépben, és a History/Elemzés képernyők egy **Eredmények** (Result) képernyőbe vonva. A valós mappastruktúra a §4-ben frissítve.
 
 ---
 
@@ -45,28 +47,28 @@
 1. Főképernyő — brand lockup + „Készen állsz" kártya + 6 MenuCard
 2. Versenyek — ListRow lista + „Új verseny" footer gomb
 3. Verseny részletei — Pill + SectionRow lista + dupla footer (újragenerálás / Start)
-4. Szakasz típusok — 3 TypeCard sémával (normál / közös kapu / átfedő)
-5. Szakasz szerkesztő — Field-ek + SegmentedControl + élő TypeSchematic előnézet + kamera akció
-6. Szakasz fotóból — ScanView + felismert Field-ek check-circle jelzőkkel
+4. Feladat típusok — **4** TypeCard sémával (normál / **követő** közös kapu / **fonódó** B az A-ban / átfedő)
+5. Feladat szerkesztő — Field-ek + SegmentedControl + élő TaskSchematic előnézet + kamera akció
+6. Feladat fotóból — ScanView + felismert Field-ek check-circle jelzőkkel (⬜ később)
 7. Gyors feladat — 2 Field + Toggle
-8. Gyakorló mód — 4 MenuCard
+8. Gyakorló mód — 3 MenuCard (**Reakcióidő** kész, Hangritmus, Gyors feladat)
 9. Beállítások — SettingsRow-k (érték / chevron / toggle / slider)
 10. Nyelv — SettingsRow + check (5 nyelv)
 11. Bluetooth késleltetés — StatCard + Stepper + teszt/auto/mentés gombok
 12. Okosóra-kísérő — WatchFace + SettingsRow-k + slider
 13. Súgó — Gyors kezdés (számozott) + FAQ ListRow-k + Kapcsolat MenuCard
 
-**Futás (header NÉLKÜL, teljes nézet, `content` space-between):**
-14. Készenlét — Chip + StatCard + nagy kör START gomb + UpcomingRow-k
-15. Normál — Chip + Phase + BigNum + ProgressTrack (RAJT→CÉL) + STOP
-16. Közös kapu — mint normál + automatikus-váltás info-kártya
-17. Átfedő (2 aktív) — elsődleges BigNum + másodlagos OverlapSecondary kártya
+**Futás (header NÉLKÜL, teljes nézet — egyetlen `RunScreen` fázis-állapotgépben):**
+14. KÉSZENLÉT — Chip + StatCard + nagy kör START gomb
+15. FUT — Chip + fázis + BigNum + sáv (szakaszhatár- és audio-szinkron ütem-jelölőkkel) + STOP; fonódó/átfedőnél külön B-számláló kártya
+16. FELADAT KÉSZ — valós idő beírása + „Következő feladat"
+17. BEFEJEZVE — mentés + „Eredmény megtekintése" (→ Eredmények)
+> A „következő feladatok" (`UpcomingRow`) rész szándékosan kivéve; a korábbi külön normál/közös/átfedő nézetek egy RunScreen-be olvadtak.
 
-**Előzmény / elemzés (header-es):**
+**Eredmény / idővonal (header-es):**
 18. Szakaszok idővonala — Timeline (sáv + átfedő sáv + vezetővonal) + Legend + jegyzet
-19. History — ListRow lista
-20. History részletek — SectionRow lista mért időkkel + Note + „Elemzés" gomb
-21. Futás elemzés — StatCard + DivergingBar lista (gyorsabb zöld / lassabb sárga)
+19. **Eredmények (Result)** — verseny alatt: valós idő-mezők (cél + élő delta) + **élő elemzés** (StatCard átl. eltérés + DivergingBar, gyorsabb zöld / lassabb sárga) + **Megjegyzés**
+> A korábbi külön History (lista), History-részletek és Futás-elemzés képernyők ide olvadtak (összevonás: 2026-06-30). Plusz a **Reakcióidő** gyakorló képernyő (lásd `REACTION.md`).
 
 ---
 
@@ -119,25 +121,27 @@
 
 ## 4. Javasolt mappastruktúra (bare RN + TS)
 
+> A valós (jelenlegi) struktúra — a `domain/` helyett külön `data/` + `store/`, és a már megírt `audio/`:
+
 ```
 src/
-  theme/        tokens.ts · ThemeProvider.tsx (sötét/világos) · typography.ts
+  theme/        tokens.ts (sötét/világos) · ThemeProvider · typography
   components/
-    primitives/ Button, Field, Toggle, Slider, Stepper, SegmentedControl, Chip, Pill, IconTile, Card
-    composite/  NavBar, MenuCard, ListRow, SectionRow, SettingsRow, StatCard, ProgressTrack, BigNum, UpcomingRow
-    viz/        TypeSchematic, OverlapSchematic, Timeline, DivergingBar, WatchFace, ScanView, BTButton, BrandMark, Legend
-  screens/
-    home/ races/ sections/ run/ practice/ history/ settings/ help/
-  navigation/   RootNavigator.tsx (native stack header-es; külön headerless csoport a futás-nézeteknek)
-  domain/       models.ts (Race, Section, SectionType=normal|shared|overlap) · store (állapot)
-  audio/        engine.ts (WAV generálás + ütemezett lejátszás) · latency.ts (BT offset)
-  ble/          button.ts (média-HID / BLE gomb bemenet)
-  i18n/         hu, en, de, sk, it
-  native/       watch/ (WatchConnectivity / Wear OS bridge)
-  assets/       fonts/ (Hanken Grotesk, JetBrains Mono) · icons (app-ikon az icon/-ból)
+    primitives/ Button, Field, Toggle, Slider, Stepper, SegmentedControl, Chip, Pill, IconTile, Card, AppText
+    composite/  NavBar, MenuCard, ListRow, SectionRow, SettingsRow, StatCard, ProgressTrack, BigNum, UpcomingRow, TaskSchematic
+    viz/        TypeSchematic, OverlapSchematic, Timeline, DivergingBar, BTButton, BrandMark, Legend   (WatchFace/ScanView: később)
+    icons/      Icon.tsx (natív) · Icon.web.tsx (Phosphor DOM)
+  screens/      Home, Races, RaceDetail, SectionTypes, SectionEditor, QuickTask, Practice, Reaction,
+                Settings, Language, BluetoothLatency, Help, Result, Timeline · run/RunScreen (+ RunShell)
+  navigation/   RootNavigator.tsx (native stack, headerless — minden képernyő saját NavBar-t használ) · types.ts
+  data/         model.ts (Race, Section: 4 típus, Segment[], Settings, Run/RunLeg…) · timing.ts (kapu-/leg-idő + COUNTDOWN_OFFSETS)
+  store/        useStore.ts (Zustand + persist v3) · storage.ts / storage.web.ts
+  audio/        synth.ts · buildTask.ts · player.ts / player.web.ts (Web Audio) · index.ts   [⬜ natív ütemezett lejátszás + BT-offset]
+  ── később: ble/ (BLE gomb, csak START) · i18n/ (hu/en/de/sk/it) · native/watch/ ──
+  assets/       fonts/ (Hanken Grotesk, JetBrains Mono)
 ```
 
-Ikonok: `phosphor-react-native` (regular). Használt nevek a CLAUDE_CODE.md §6-ban; szakasztípus-ikonok: `arrow-right` (normál), `link-simple` (közös kapu), `arrows-split` (átfedő).
+Ikonok: `phosphor-react-native` (natív) + `@phosphor-icons/react` (web-előnézet, `Icon.web.tsx`). Szakasztípus-ikonok: `arrow-right` (normál), `link-simple` (követő), `intersect` (fonódó), `arrows-split` (átfedő).
 
 ---
 

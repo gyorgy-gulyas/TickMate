@@ -14,36 +14,39 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - ✅ Primitív + összetett komponensek; betűk (Hanken/JetBrains) + Phosphor ikonok
 - ✅ React Native Web előnézet (gyors vizuális ellenőrzés böngészőben)
 - ✅ Navigáció (react-navigation) + Főképernyő
-- 🟡 Statikus képernyők: Beállítások, Nyelv, BT késleltetés, Versenyek, Verseny részletei, Gyors feladat, Súgó kész; a többi stub
+- ✅ A képernyők valós állapottal működnek (Zustand + perzisztencia, lásd §2); csak a `SectionFromPhoto` (OCR) és `Smartwatch` maradt „Hamarosan" placeholder
 
-## 1. UI befejezése — vizualizációk + maradék képernyők 🟡 (majdnem kész)
+## 1. UI befejezése — vizualizációk + maradék képernyők ✅ (kész)
 **Kész viz-komponensek:** BrandMark, TypeSchematic, OverlapSchematic, Timeline, DivergingBar, BTButton (+ Legend).
-**Kész képernyők (18):** Főképernyő, Versenyek, Verseny részletei, Feladat típusok, Feladat szerkesztő (élő sémával), Gyors feladat, Gyakorló mód, Beállítások, Nyelv, BT késleltetés, Súgó, History, History részletek, Elemzés, Idővonal, és a **4 futás-nézet** (készenlét / normál / közös kapu / átfedő).
+**Kész képernyők:** Főképernyő, Versenyek, Verseny részletei, Feladat típusok (**4 típus**: normál / követő / fonódó / átfedő), Feladat szerkesztő (élő sémával), Gyors feladat, Gyakorló mód, **Reakcióidő** (gyakorlómód, lásd `REACTION.md`), Beállítások, Nyelv, BT késleltetés, Súgó, **Eredmények** (Result: valós idők + elemzés + megjegyzés egy helyen), Idővonal, és a **4 futás-nézet** (készenlét / futás / feladat kész / befejezve).
+> **Összevonás (2026-06-30):** a külön History / History-részletek / Elemzés képernyők megszűntek; az eredmények a verseny alatt, az **Eredmények** képernyőn élnek (idők + élő elemzés + megjegyzés).
 **Hátralévő polish (később):** világos mód finomhangolás minden képernyőn; üres/töltő/hiba állapotok; érintési célok ≥44; akadálymentesítés.
 
 ### Halasztva — későbbi terv (döntés: 2026-06-29) ⏸️
 - **Feladat fotóból (OCR)** — a `ScanView` viz + a képernyő + az on-device OCR (lásd §5). Most „Hamarosan" placeholder.
 - **Okosóra-kísérő** — a `WatchFace` viz + a képernyő + a natív óra-réteg (lásd §5). Most „Hamarosan" placeholder.
 
-## 2. Adatmodell + állapot + perzisztencia ⬜
-- Valódi adatmodell (Verseny, Feladat, Beállítások) a mock helyett
-- Állapotkezelő (pl. Zustand) + tárolás (MMKV/AsyncStorage)
-- CRUD: verseny/feladat létrehozás, szerkesztés, törlés, sorrend
-- Beállítások perzisztálása (téma, nyelv, BT-offset, hangprofil, másodpercjelző)
+## 2. Adatmodell + állapot + perzisztencia ✅
+- ✅ Valódi adatmodell a mock helyett: `data/model.ts` (Race, Section 4 típussal, Segment[], Settings, Run/RunLeg/RunSection) + `data/timing.ts` (kapu-/leg-időzítés, közös countdown)
+- ✅ Állapotkezelő: `store/useStore.ts` — **Zustand + persist** (v3 + migrate); tárolás web=localStorage, natív=AsyncStorage
+- ✅ CRUD: verseny/feladat létrehozás, szerkesztés, törlés
+- ✅ Eredmény-modell: **versenyenként egy Run** (snapshot a tervből + a beírt valós idők); élő elemzés az Eredmények képernyőn
+- ✅ Beállítások perzisztálása (téma, nyelv, BT-offset, másodpercjelző)
 
-## 3. Futás-motor (állapotgép) ⬜
-- Fázisok: előkészítés → szakasz → kapu; automatikus haladás a feladatok között
-- Típusok logikája: **normál**, **közös kapu** (egy esemény zár+indít), **átfedő** (több párhuzamos időzítő)
-- Nagy pontosságú ütemezés/időmérés
-- Eseménynapló (gombnyomás, indít/zár, megszakítás) → History + visszajátszás
+## 3. Futás-motor (állapotgép) ✅
+- ✅ Fázisok: KÉSZENLÉT → FUT (hang) → FELADAT KÉSZ (kézi idő) → … → BEFEJEZVE; viselkedés: `docs/RUN_ENGINE.md`
+- ✅ Mind a **4 típus** logikája: normál, **követő** (közös kapu), **fonódó** (B az A-ban), **átfedő** (B az A-ba lóg) — `data/timing.ts`
+- ✅ A vizuális számláló a START-tól, a hang idővonalával együtt fut; szakaszhatár- és (audio-szinkron) ütem-jelölők a sávokon
+- ✅ Gyors feladatból indított egy-feladatos futás is ugyanitt (RunScreen)
+- ⬜ Eseménynapló + visszajátszás — kihagyva (a telefon **nem időmérő**; lásd RUN_ENGINE.md)
 
-## 4. Hangmotor — a kritikus rész ⬜
-- WAV-generálás: 8 ms kattanások, gyorsuló kapu-visszaszámlálás (a pontos sor: 3.00→0.00), indító hang, másodperc-jelző
-- Hang **előre generálása** a feladatok mentése után (versenyenként)
-- **Alacsony késleltetésű, ütemezett lejátszás** (natív AVAudioEngine / Oboe, vagy expo-av) — jitter minimalizálás
-- **BT-késleltetés offset** beépítése az ütemezésbe
-- BT-kalibráció: mérés + kézi korrekció + teszt hang (a UI már megvan)
-> Ez a legnagyobb műszaki kockázat — korán prototípuszandó valós eszközön.
+## 4. Hangmotor 🟡 (szintézis kész, natív lejátszás hátravan)
+- ✅ PCM-szintézis: 8 ms kattanások, gyorsuló + emelkedő kapu-visszaszámlálás (sor: 3.00→0.00), durva végkattanás, indító hang, másodperc-jelző — `audio/synth.ts` + `audio/buildTask.ts`
+- ✅ Hang **összeállítása** feladatonként (`COUNTDOWN_OFFSETS` közös forrás a vizuális ütem-jelölőkkel)
+- ✅ Web-lejátszás (Web Audio) az előnézethez — `audio/player.web.ts`
+- ⬜ **Natív, alacsony késleltetésű, ütemezett lejátszás** (AVAudioEngine / Oboe) — jitter minimalizálás
+- ⬜ **BT-késleltetés offset** beépítése az ütemezésbe; BT-kalibráció valós méréssel (a UI megvan)
+> A natív lejátszás a legnagyobb maradék műszaki kockázat — korán prototípuszandó valós eszközön.
 
 ## 5. Natív integrációk ⬜
 - **Bluetooth gomb** bemenet (média-HID vagy BLE) → Start/Következő/Vissza/Megszakítás/Gyakorlás
@@ -68,12 +71,13 @@ Tömeges roadbook-import (CSV/QR/több oldal), feladat-készlet megosztás (QR/l
 ---
 
 ## Javasolt sorrend (a legrövidebb út a használható appig)
-1. **UI befejezése** (1.) — látható, kattintható teljes app (web-en is ellenőrizve)
-2. **Adatmodell** (2.) — a Versenyek/szerkesztő valódivá válik
-3. **Android környezet** (7. eleje) — valódi eszközön fut
-4. **Hangmotor prototípus** (4.) — a kritikus kockázat korai igazolása valós eszközön
-5. **Futás-motor** (3.) — a hanggal együtt működő futás
-6. **BT gomb** (5.) — a tényleges vezérlés
-7. **Lokalizáció** (6.) + **polish/ikonok** (7.)
-8. **Okosóra + OCR** (5. maradék) — fázisozható
-9. **Kiadás** (7. vége)
+1. ✅ **UI befejezése** (1.) — látható, kattintható teljes app (web-en ellenőrizve)
+2. ✅ **Adatmodell** (2.) — a Versenyek/szerkesztő valódi, perzisztens
+3. ✅ **Hangmotor — szintézis** (4. első fele) — kattanások/visszaszámlálás, web-előnézet
+4. ✅ **Futás-motor** (3.) — a hang idővonalával együtt futó nézetek
+5. ⬜ **Android környezet** (7. eleje) — valódi eszközön fut (SDK/JDK bekötés)
+6. ⬜ **Hangmotor — natív lejátszás** (4. második fele) — alacsony késleltetés + BT-offset, valós eszközön
+7. ⬜ **BT gomb** (5.) — a tényleges vezérlés (csak START)
+8. ⬜ **Lokalizáció** (6.) + **polish/ikonok** (7.)
+9. ⬜ **Okosóra + OCR** (5. maradék) — fázisozható
+10. ⬜ **Kiadás** (7. vége)
