@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard } from '../../components';
 import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/model';
-import { isSimultaneous, legWindows, taskDuration } from '../../data/timing';
+import { gateTimes, isSimultaneous, legWindows, taskDuration } from '../../data/timing';
 import { playTask, stopAudio } from '../../audio';
 import { useRace, useRunByRace, useSettings, useStore } from '../../store/useStore';
 import { useTheme } from '../../theme';
@@ -27,7 +27,11 @@ const styles = StyleSheet.create({
   hint: { textAlign: 'center' },
   runMid: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 18 },
   subBar: { width: 160 },
+  subTick: { position: 'absolute', top: -3, bottom: -3, width: 1.5, borderRadius: 1 },
+  subTickLeft: { left: 0 },
+  subTickRight: { right: 0 },
   progressWrap: { width: '100%', gap: 8 },
+  secTrack: { width: '100%', height: 8, borderRadius: 4 },
   gateRow: { flexDirection: 'row', justifyContent: 'space-between' },
   secRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   secVal: { flexDirection: 'row', alignItems: 'baseline', gap: 3 },
@@ -38,6 +42,7 @@ const styles = StyleSheet.create({
   legTrack: { flex: 1, height: 8, borderRadius: 4 },
   legBar: { position: 'absolute', top: 0, bottom: 0, borderRadius: 4 },
   legHead: { position: 'absolute', top: -3, bottom: -3, width: 2, marginLeft: -1 },
+  gateMark: { position: 'absolute', top: -4, bottom: -4, width: 1.5, borderRadius: 1, marginLeft: -0.75 },
   legAxis: { flexDirection: 'row', justifyContent: 'space-between', marginLeft: 24, marginTop: 2 },
 });
 
@@ -45,6 +50,7 @@ const styles = StyleSheet.create({
 function RunLegsBar({ section, duration, elapsed }: { section: Section; duration: number; elapsed: number }) {
   const theme = useTheme();
   const legs = legsOf(section);
+  const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
   const head = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
   const headStyle = { left: `${head * 100}%` as const, backgroundColor: theme.colors.textPrimary };
   const trackBg = { backgroundColor: theme.colors.railAlt };
@@ -63,6 +69,10 @@ function RunLegsBar({ section, duration, elapsed }: { section: Section; duration
             </AppText>
             <View style={[styles.legTrack, trackBg]}>
               <View style={[styles.legBar, barStyle]} />
+              {gates.map((t, gi) => {
+                const markStyle = { left: `${(t / duration) * 100}%` as const, backgroundColor: theme.colors.textPrimary };
+                return <View key={`g${gi}`} style={[styles.gateMark, markStyle]} />;
+              })}
               <View style={[styles.legHead, headStyle]} />
             </View>
           </View>
@@ -70,7 +80,7 @@ function RunLegsBar({ section, duration, elapsed }: { section: Section; duration
       })}
       <View style={styles.legAxis}>
         <AppText preset="muted" color="textSecondary">
-          0
+          0 mp
         </AppText>
         <AppText preset="muted" color="textSecondary">
           {fmtSec(duration)} mp
@@ -163,6 +173,19 @@ function RunningView({
   const subSecond = elapsed - Math.floor(elapsed);
   const progress = duration > 0 ? Math.min(1, elapsed / duration) : 0;
 
+  // Normal task: show the section as a distinct band (prep = empty rail) with a moving head.
+  const single = legs[0];
+  const secTrackBg = { backgroundColor: theme.colors.railAlt };
+  const secBarStyle = {
+    left: `${(single.start / duration) * 100}%` as const,
+    width: `${((single.end - single.start) / duration) * 100}%` as const,
+    backgroundColor: theme.colors.accent,
+  };
+  const secHeadStyle = { left: `${progress * 100}%` as const, backgroundColor: theme.colors.textPrimary };
+  const tickColor = { backgroundColor: theme.colors.textPrimary };
+  // Section boundaries (gate times) marked on the bar.
+  const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
+
   // Secondary (B) timer — always present for simultaneous tasks.
   const bLeg = simultaneous ? legs[1] : undefined;
   const bStatus = bLeg ? (elapsed < bLeg.start ? 'hamarosan' : elapsed < bLeg.end ? 'folyamatban' : 'kész') : '';
@@ -182,17 +205,34 @@ function RunningView({
         </AppText>
         <View style={styles.subBar}>
           <ProgressTrack value={subSecond} height={4} fillColor={theme.colors[bigColor]} />
+          <View style={[styles.subTick, styles.subTickLeft, tickColor]} />
+          <View style={[styles.subTick, styles.subTickRight, tickColor]} />
         </View>
         <BigNum value={counter(bigVal)} unit="mp" color={bigColor} />
         {!isMulti ? (
           <View style={styles.progressWrap}>
-            <ProgressTrack value={progress} />
+            <View style={[styles.secTrack, secTrackBg]}>
+              <View style={[styles.legBar, secBarStyle]} />
+              {gates.map((t, i) => {
+                const markStyle = { left: `${(t / duration) * 100}%` as const, backgroundColor: theme.colors.textPrimary };
+                return <View key={`g${i}`} style={[styles.gateMark, markStyle]} />;
+              })}
+              <View style={[styles.legHead, secHeadStyle]} />
+            </View>
             <View style={styles.gateRow}>
               <AppText preset="muted" color="textSecondary">
                 RAJT
               </AppText>
               <AppText preset="gate" color="textPrimary">
                 CÉL
+              </AppText>
+            </View>
+            <View style={styles.gateRow}>
+              <AppText preset="muted" color="textSecondary">
+                0 mp
+              </AppText>
+              <AppText preset="muted" color="textSecondary">
+                {fmtSec(duration)} mp
               </AppText>
             </View>
           </View>
