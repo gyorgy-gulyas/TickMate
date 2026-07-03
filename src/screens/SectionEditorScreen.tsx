@@ -1,9 +1,9 @@
 /** Section editor with a live schematic preview. Maps to "Feladat szerkesztő". */
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, AudioPreview, Button, ConfirmDialog, Field, Icon, SegmentedControl, TaskSchematic, useTaskTypeOptions } from '../components';
-import { fmtSec, toNum, type SectionType } from '../data/model';
+import { fmtSec, toNum, toNumOrNull, type SectionType } from '../data/model';
 import { useT } from '../i18n';
 import { playTask, prewarmTask, sectionSpec } from '../audio';
 import { useRace, useSettings, useStore } from '../store/useStore';
@@ -15,6 +15,9 @@ const styles = StyleSheet.create({
   group: { gap: 7 },
   flex1: { flex: 1, minWidth: 0 },
   rightActions: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  photo: { width: '100%', height: 150, borderRadius: 12 },
+  viewerBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', alignItems: 'center', justifyContent: 'center', padding: 16 },
+  viewerImg: { width: '100%', height: '85%' },
 });
 
 export function SectionEditorScreen() {
@@ -39,26 +42,31 @@ export function SectionEditorScreen() {
   const [type, setType] = useState<SectionType>(existing?.type ?? 'normal');
   const [prep, setPrep] = useState(existing ? String(existing.prepSec) : '5.0');
   const [distA, setDistA] = useState(segA ? String(segA.distanceM) : '');
-  const [timeA, setTimeA] = useState(segA ? String(segA.timeSec) : '7.0');
+  const [timeA, setTimeA] = useState(segA ? (segA.timeSec == null ? '' : String(segA.timeSec)) : '');
   const [distB, setDistB] = useState(segB ? String(segB.distanceM) : '');
-  const [timeB, setTimeB] = useState(segB ? String(segB.timeSec) : '5.0');
+  const [timeB, setTimeB] = useState(segB ? (segB.timeSec == null ? '' : String(segB.timeSec)) : '');
+  const [viewer, setViewer] = useState(false);
 
   const isMulti = type !== 'normal';
   const segments = isMulti
     ? [
-        { distanceM: toNum(distA), timeSec: toNum(timeA) },
-        { distanceM: toNum(distB), timeSec: toNum(timeB) },
+        { distanceM: toNum(distA), timeSec: toNumOrNull(timeA) },
+        { distanceM: toNum(distB), timeSec: toNumOrNull(timeB) },
       ]
-    : [{ distanceM: toNum(distA), timeSec: toNum(timeA) }];
+    : [{ distanceM: toNum(distA), timeSec: toNumOrNull(timeA) }];
 
-  // Validation: name required, times > 0, prep/distances ≥ 0.
+  // Validation: name required, prep/distances ≥ 0. Times are optional here (a
+  // photo import may lack them) — but if entered they must be > 0. A section
+  // with a missing time saves fine; it just can't generate audio or run until
+  // the time is filled in (blocked before start).
   const nameErr = name.trim() === '';
   const prepErr = toNum(prep) < 0;
   const distAErr = toNum(distA) < 0;
-  const timeAErr = toNum(timeA) <= 0;
+  const timeAErr = timeA.trim() !== '' && toNum(timeA) <= 0;
   const distBErr = isMulti && toNum(distB) < 0;
-  const timeBErr = isMulti && toNum(timeB) <= 0;
+  const timeBErr = isMulti && timeB.trim() !== '' && toNum(timeB) <= 0;
   const invalid = nameErr || prepErr || distAErr || timeAErr || distBErr || timeBErr;
+  const timesComplete = segments.every(g => g.timeSec != null && g.timeSec > 0);
 
   const timingChanged =
     !!existing &&
@@ -97,7 +105,7 @@ export function SectionEditorScreen() {
       <Pressable accessibilityRole="button" accessibilityLabel={t('a11y.types')} onPress={() => navigation.navigate('SectionTypes')}>
         <Icon name="question" size={19} color="textSecondary" />
       </Pressable>
-      <Pressable accessibilityRole="button" accessibilityLabel={t('a11y.photo')} onPress={() => navigation.navigate('SectionFromPhoto')}>
+      <Pressable accessibilityRole="button" accessibilityLabel={t('a11y.photo')} onPress={() => navigation.navigate('SectionFromPhoto', { raceId })}>
         <Icon name="camera" size={20} color="accentText" />
       </Pressable>
       {existing ? (
@@ -163,23 +171,47 @@ export function SectionEditorScreen() {
 
       <TaskSchematic type={type} prepSec={toNum(prep)} timeA={toNum(timeA)} timeB={toNum(timeB)} />
 
+      {existing?.imageUri ? (
+        <View style={styles.group}>
+          <AppText preset="label" color="textSecondary">
+            {t('photo.saved')}
+          </AppText>
+          <Pressable accessibilityRole="imagebutton" accessibilityLabel={t('photo.saved')} onPress={() => setViewer(true)}>
+            <Image source={{ uri: existing.imageUri }} style={styles.photo} resizeMode="cover" />
+          </Pressable>
+        </View>
+      ) : null}
+
       <View style={styles.group}>
         <AppText preset="label" color="textSecondary">
           {t('audio.label')}
         </AppText>
         <AudioPreview
           ready={audioCurrent}
-          duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + g.timeSec, 0))} ${t('unit.sec')}`}
-          onPlay={() => playTask(sectionSpec({ type, prepSec: toNum(prep), segments }), sound)}
+          duration={`${fmtSec(toNum(prep) + segments.reduce((s, g) => s + (g.timeSec ?? 0), 0))} ${t('unit.sec')}`}
+          onPlay={() => timesComplete && playTask(sectionSpec({ type, prepSec: toNum(prep), segments }), sound)}
         />
         <Button
           label={audioCurrent ? t('audio.regen') : t('audio.gen')}
           variant="secondary"
           icon={<Icon name="waveform" size={16} color="textPrimary" />}
           onPress={generateAudio}
-          disabled={invalid}
+          disabled={invalid || !timesComplete}
         />
+        {!timesComplete ? (
+          <AppText preset="muted" color="danger">
+            {t('photo.needTime')}
+          </AppText>
+        ) : null}
       </View>
+
+      {existing?.imageUri ? (
+        <Modal visible={viewer} transparent animationType="fade" onRequestClose={() => setViewer(false)}>
+          <Pressable style={styles.viewerBackdrop} onPress={() => setViewer(false)}>
+            <Image source={{ uri: existing.imageUri }} style={styles.viewerImg} resizeMode="contain" />
+          </Pressable>
+        </Modal>
+      ) : null}
 
       <ConfirmDialog
         visible={confirmDelete}

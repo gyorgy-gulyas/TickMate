@@ -14,7 +14,7 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - ✅ Primitív + összetett komponensek; betűk (Hanken/JetBrains) + Phosphor ikonok
 - ✅ React Native Web előnézet (gyors vizuális ellenőrzés böngészőben)
 - ✅ Navigáció (react-navigation) + Főképernyő
-- ✅ A képernyők valós állapottal működnek (Zustand + perzisztencia, lásd §2); csak a `SectionFromPhoto` (OCR) és `Smartwatch` maradt „Hamarosan" placeholder
+- ✅ A képernyők valós állapottal működnek (Zustand + perzisztencia, lásd §2); minden route valós képernyő (a `SectionFromPhoto` OCR és a `Smartwatch` is kész)
 
 ## 1. UI befejezése — vizualizációk + maradék képernyők ✅ (kész)
 **Kész viz-komponensek:** BrandMark, TypeSchematic, OverlapSchematic, Timeline, DivergingBar, BTButton (+ Legend).
@@ -23,8 +23,7 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 **Polish:** ✅ üres/töltő/hiba állapotok (`StatusView`, `inline` móddal a listákban is), ✅ **Súgó FAQ** tartalom (lenyíló Q&A, 4 nyelven). Hátravan: világos mód finomhangolás minden képernyőn; érintési célok ≥44; akadálymentesítés.
 
 ### Halasztva — későbbi terv (döntés: 2026-06-29) ⏸️
-- **Feladat fotóból (OCR)** — a `ScanView` viz + a képernyő + az on-device OCR (lásd §5). Most „Hamarosan" placeholder.
-- **Okosóra-kísérő** — a `WatchFace` viz + a képernyő + a natív óra-réteg (lásd §5). Most „Hamarosan" placeholder.
+- **Okosóra-kísérő natív rétege** — a rezgő visszaszámlálás / csuklós vezérlés (Wear OS / Apple Watch). A képernyő + státusz + `watchLatencyMs` kész; a natív óra-réteg hátravan (lásd §5).
 
 ## 2. Adatmodell + állapot + perzisztencia ✅
 - ✅ Valódi adatmodell a mock helyett: `data/model.ts` (Race, Section 4 típussal, Segment[], Settings, Run/RunLeg/RunSection) + `data/timing.ts` (kapu-/leg-időzítés, közös countdown)
@@ -56,7 +55,7 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 ## 5. Natív integrációk ⬜
 - **Bluetooth gomb** bemenet (média-HID vagy BLE) → Start/Következő/Vissza/Megszakítás/Gyakorlás
 - **Okosóra-kísérő** (Apple Watch / Wear OS): rezgő visszaszámlálás, óra mint vezérlő, csuklós számlap — külön natív réteg
-- **Képfelismerés / OCR** (ML Kit / Vision) a „Feladat fotóból"-hoz — roadbook-számok, mindig szerkeszthető
+- ✅ **Képfelismerés / OCR** (ML Kit, `@react-native-ml-kit/text-recognition` + `react-native-image-picker`): fotó/galéria → on-device OCR → egység-alapú kinyerés (hosszak `m`, idő `s`/`mm:ss`); 2 hossz → **követő**; hiányzó idő indítás előtt kötelező; a roadbook-kép a szakaszhoz mentve és a futás előtt előhívható. A rajzot nem értelmezzük — a típus mindig szerkeszthető. iOS: Vision hátravan.
 
 ## 6. Lokalizáció ⬜
 - i18n keret (i18next), minden felirat HU/EN/DE/ES

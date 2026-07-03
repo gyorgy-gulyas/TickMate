@@ -38,6 +38,12 @@ export const es: Record<StringKey, string> = {
   'gate.button': 'Botón',
 
   'stub.photo': 'Tarea desde foto',
+  'photo.intro': 'Haz o elige una foto de la página del roadbook. Del texto leemos el número de secciones y las longitudes (y el tiempo si aparece); el diagrama no se interpreta — tú confirmas el tipo.',
+  'photo.camera': 'Foto',
+  'photo.gallery': 'Galería',
+  'photo.reading': 'Leyendo imagen…',
+  'photo.saved': 'Foto de roadbook guardada',
+  'photo.needTime': 'Introduce cada tiempo para generar el audio y correr',
   'stub.watch': 'Reloj inteligente',
 
   'home.ready.title': 'Estás listo',
@@ -293,6 +299,9 @@ export const es: Record<StringKey, string> = {
   'run.statSection': 'Sección',
   'run.bt': 'SALIDA',
   'run.btHint': 'Pulsa el botón Bluetooth',
+  'run.needTime': 'Falta un tiempo — introdúcelo antes de empezar',
+  'run.editTimes': 'Introducir tiempos',
+  'run.viewPhoto': 'Ver foto del roadbook',
   'run.phase.prep': 'PREPARACIÓN',
   'run.phase.sectionA': 'SECCIÓN A',
   'run.phase.section': 'SECCIÓN',

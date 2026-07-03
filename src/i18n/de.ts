@@ -38,6 +38,12 @@ export const de: Record<StringKey, string> = {
   'gate.button': 'Taste',
 
   'stub.photo': 'Aufgabe aus Foto',
+  'photo.intro': 'Fotografiere die Roadbook-Seite oder wähle ein Foto. Aus dem Text lesen wir Anzahl und Längen der Abschnitte (und die Zeit, falls angegeben); das Diagramm wird nicht interpretiert — den Typ bestätigst du.',
+  'photo.camera': 'Foto',
+  'photo.gallery': 'Galerie',
+  'photo.reading': 'Bild wird gelesen…',
+  'photo.saved': 'Gespeichertes Roadbook-Foto',
+  'photo.needTime': 'Gib jede Zeit ein, um Audio zu erzeugen und zu starten',
   'stub.watch': 'Smartwatch',
 
   'home.ready.title': 'Du bist bereit',
@@ -293,6 +299,9 @@ export const de: Record<StringKey, string> = {
   'run.statSection': 'Abschnitt',
   'run.bt': 'START',
   'run.btHint': 'Drücke die Bluetooth-Taste',
+  'run.needTime': 'Eine Zeit fehlt — gib sie vor dem Start ein',
+  'run.editTimes': 'Zeiten eingeben',
+  'run.viewPhoto': 'Roadbook-Foto ansehen',
   'run.phase.prep': 'VORLAUF',
   'run.phase.sectionA': 'ABSCHNITT A',
   'run.phase.section': 'ABSCHNITT',

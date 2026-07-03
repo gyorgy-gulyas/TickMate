@@ -118,7 +118,7 @@ export function SectionReorderList({ raceId, sections, onOpen }: SectionReorderL
                 typeIcon={<Icon name={SECTION_TYPE_META[s.type].icon} size={15} color="textSecondary" />}
                 name={s.name}
                 meta={t(typeKey(s.type))}
-                value={`${s.segments.map(g => fmtSec(g.timeSec)).join(' + ')} ${t('unit.sec')}`}
+                value={`${s.segments.map(g => (g.timeSec == null ? '—' : fmtSec(g.timeSec))).join(' + ')} ${t('unit.sec')}`}
                 audioReady={s.audioReady}
                 divider={!dragging && i < last}
                 onPress={() => onOpen(s.id)}

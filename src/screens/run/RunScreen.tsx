@@ -2,10 +2,10 @@
  *  (optional time entry) → finished (save). Maps to the four run views.
  *  RunScreen owns the state/logic; each phase renders via a focused view below. */
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { AppText, BTButton, BigNum, Button, Card, Field, Icon, ProgressTrack, StatCard, StatusView } from '../../components';
-import { SECTION_TYPE_META, fmtSec, toNum, type Section } from '../../data/model';
+import { SECTION_TYPE_META, fmtSec, sectionTimesComplete, toNum, type Section } from '../../data/model';
 import { countdownBeats, gateTimes, isSimultaneous, legWindows, taskDuration } from '../../data/timing';
 import { playTask, sectionSpec, stopAudio } from '../../audio';
 import { useRace, useRunByRace, useSettings, useStore } from '../../store/useStore';
@@ -17,8 +17,8 @@ import type { RootNav, RootStackParamList } from '../../navigation/types';
 type Phase = 'standby' | 'running' | 'done' | 'finished';
 type TypeMeta = (typeof SECTION_TYPE_META)[Section['type']];
 
-const legsOf = (s: Section) => legWindows(s.type, s.prepSec, s.segments.map(g => g.timeSec));
-const durationOf = (s: Section) => taskDuration(s.type, s.prepSec, s.segments.map(g => g.timeSec));
+const legsOf = (s: Section) => legWindows(s.type, s.prepSec, s.segments.map(g => g.timeSec ?? 0));
+const durationOf = (s: Section) => taskDuration(s.type, s.prepSec, s.segments.map(g => g.timeSec ?? 0));
 const legName = (t: TFunc, s: Section, li: number) =>
   s.segments.length > 1 ? t(li === 0 ? 'section.a' : 'section.b') : t('field.time');
 const counter = (v: number) => Math.max(0, v).toFixed(2);
@@ -47,6 +47,9 @@ const styles = StyleSheet.create({
   gateMark: { position: 'absolute', top: -4, bottom: -4, width: 1.5, borderRadius: 1, marginLeft: -0.75 },
   beatMark: { position: 'absolute', top: -2, bottom: -2, width: 0.5, marginLeft: -0.25 },
   legAxis: { flexDirection: 'row', justifyContent: 'space-between', marginLeft: 24, marginTop: 2 },
+  thumb: { width: '100%', height: 150, borderRadius: 12 },
+  viewerBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.92)', alignItems: 'center', justifyContent: 'center', padding: 16 },
+  viewerImg: { width: '100%', height: '85%' },
 });
 
 /** Live full-section timeline (multi-leg): leg bars + a moving playhead. */
@@ -55,7 +58,7 @@ function RunLegsBar({ section, duration, elapsed }: { section: Section; duration
   const tr = useT();
   const sound = useSettings().sound;
   const legs = legsOf(section);
-  const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
+  const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec ?? 0));
   const beats = countdownBeats(gates, sound, false);
   const head = duration > 0 ? Math.min(1, Math.max(0, elapsed / duration)) : 0;
   const headStyle = { left: `${head * 100}%` as const, backgroundColor: theme.colors.textPrimary };
@@ -117,16 +120,21 @@ function StandbyView({
   section,
   si,
   meta,
+  timesComplete,
   onStart,
+  onEdit,
   onBack,
 }: {
   section: Section;
   si: number;
   meta: TypeMeta;
+  timesComplete: boolean;
   onStart: () => void;
+  onEdit?: () => void;
   onBack: () => void;
 }) {
   const t = useT();
+  const [viewer, setViewer] = useState(false);
   return (
     <RunFrame>
       <RunHeader
@@ -138,15 +146,38 @@ function StandbyView({
       <View style={styles.body}>
         <StatCard
           left={{ label: t('run.statPrep'), value: fmtSec(section.prepSec), unit: t('unit.sec') }}
-          right={{ label: t('run.statSection'), value: section.segments.map(g => fmtSec(g.timeSec)).join(' + '), unit: t('unit.sec') }}
+          right={{ label: t('run.statSection'), value: section.segments.map(g => (g.timeSec == null ? '—' : fmtSec(g.timeSec))).join(' + '), unit: t('unit.sec') }}
         />
+        {section.imageUri ? (
+          <Pressable accessibilityRole="imagebutton" accessibilityLabel={t('run.viewPhoto')} onPress={() => setViewer(true)}>
+            <Image source={{ uri: section.imageUri }} style={styles.thumb} resizeMode="cover" />
+          </Pressable>
+        ) : null}
         <View style={styles.center}>
-          <BTButton label={t('run.bt')} onPress={onStart} />
-          <AppText preset="muted" color="textSecondary" style={styles.hint}>
-            {t('run.btHint')}
-          </AppText>
+          {timesComplete ? (
+            <>
+              <BTButton label={t('run.bt')} onPress={onStart} />
+              <AppText preset="muted" color="textSecondary" style={styles.hint}>
+                {t('run.btHint')}
+              </AppText>
+            </>
+          ) : (
+            <>
+              <AppText preset="muted" color="danger" style={styles.hint}>
+                {t('run.needTime')}
+              </AppText>
+              {onEdit ? <Button label={t('run.editTimes')} variant="primary" onPress={onEdit} /> : null}
+            </>
+          )}
         </View>
       </View>
+      {section.imageUri ? (
+        <Modal visible={viewer} transparent animationType="fade" onRequestClose={() => setViewer(false)}>
+          <Pressable style={styles.viewerBackdrop} onPress={() => setViewer(false)}>
+            <Image source={{ uri: section.imageUri }} style={styles.viewerImg} resizeMode="contain" />
+          </Pressable>
+        </Modal>
+      ) : null}
     </RunFrame>
   );
 }
@@ -201,7 +232,7 @@ function RunningView({
   const secHeadStyle = { left: `${progress * 100}%` as const, backgroundColor: theme.colors.textPrimary };
   const tickColor = { backgroundColor: theme.colors.textPrimary };
   // Section boundaries (gate times) marked on the bar.
-  const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec));
+  const gates = gateTimes(section.type, section.prepSec, section.segments.map(g => g.timeSec ?? 0));
   // Accelerating countdown beats (the audio's intermediate clicks into each gate).
   const beats = countdownBeats(gates, sound, false);
   const beatColor = { backgroundColor: theme.colors.textSecondary };
@@ -348,7 +379,7 @@ function DoneRaceView({
         {section.segments.map((g, li) => (
           <Field
             key={li}
-            label={`${legName(t, section, li)} · ${t('result.target', { sec: fmtSec(g.timeSec), u: t('unit.sec') })}`}
+            label={`${legName(t, section, li)} · ${t('result.target', { sec: fmtSec(g.timeSec ?? 0), u: t('unit.sec') })}`}
             value={actuals[`${si}-${li}`] ?? ''}
             onChangeText={v => setActuals(prev => ({ ...prev, [`${si}-${li}`]: v }))}
             unit={t('unit.sec')}
@@ -481,7 +512,18 @@ export function RunScreen() {
 
   const meta = SECTION_TYPE_META[section.type];
 
-  if (phase === 'standby') return <StandbyView section={section} si={si} meta={meta} onStart={start} onBack={abort} />;
+  if (phase === 'standby')
+    return (
+      <StandbyView
+        section={section}
+        si={si}
+        meta={meta}
+        timesComplete={sectionTimesComplete(section)}
+        onStart={start}
+        onEdit={quick ? undefined : () => navigation.navigate('SectionEditor', { raceId: race.id, sectionId: section.id })}
+        onBack={abort}
+      />
+    );
   if (phase === 'running') {
     return <RunningView section={section} si={si} meta={meta} duration={duration} elapsed={elapsed} onBack={abort} />;
   }

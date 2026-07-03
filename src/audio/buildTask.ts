@@ -22,7 +22,7 @@ export type TaskSpec = {
 export const sectionSpec = (s: { type: SectionType; prepSec: number; segments: Segment[] }): TaskSpec => ({
   type: s.type,
   prepSec: s.prepSec,
-  legs: s.segments.map(g => g.timeSec),
+  legs: s.segments.map(g => g.timeSec ?? 0),
 });
 
 const MAX_SEC = 120;

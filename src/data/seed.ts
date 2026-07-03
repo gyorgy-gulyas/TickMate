@@ -42,8 +42,8 @@ export const INITIAL_RUNS: Run[] = [
       name: s.name,
       type: s.type,
       legs: s.segments.map(g => ({
-        targetSec: g.timeSec,
-        actualSec: Math.round((g.timeSec + SEED_OFFS[si % SEED_OFFS.length]) * 10) / 10,
+        targetSec: g.timeSec ?? 0,
+        actualSec: Math.round(((g.timeSec ?? 0) + SEED_OFFS[si % SEED_OFFS.length]) * 10) / 10,
       })),
     })),
   },

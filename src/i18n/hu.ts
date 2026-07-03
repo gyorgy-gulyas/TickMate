@@ -41,6 +41,12 @@ export const hu = {
 
   // stub screens
   'stub.photo': 'Feladat fotóból',
+  'photo.intro': 'Fényképezd le vagy válaszd ki a roadbook oldalt. A szövegből kiolvassuk a szakaszok számát és hosszát (és az időt, ha szerepel); a rajzot nem értelmezzük — a típust te erősíted meg.',
+  'photo.camera': 'Fénykép',
+  'photo.gallery': 'Galéria',
+  'photo.reading': 'Kép beolvasása…',
+  'photo.saved': 'Mentett roadbook kép',
+  'photo.needTime': 'Adj meg minden időt a hang generálásához és a futáshoz',
   'stub.watch': 'Okosóra',
 
   // home
@@ -313,6 +319,9 @@ export const hu = {
   'run.statSection': 'Szakasz',
   'run.bt': 'START',
   'run.btHint': 'Nyomd meg a Bluetooth gombot',
+  'run.needTime': 'Hiányzik egy idő — add meg indítás előtt',
+  'run.editTimes': 'Idők megadása',
+  'run.viewPhoto': 'Roadbook fotó megnézése',
   'run.phase.prep': 'ELŐKÉSZÍTÉS',
   'run.phase.sectionA': 'SZAKASZ A',
   'run.phase.section': 'SZAKASZ',

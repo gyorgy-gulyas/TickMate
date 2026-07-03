@@ -8,8 +8,10 @@ import { DEFAULT_SOUND_PROFILE, type SoundProfile } from './soundProfile';
 
 export type SectionType = 'normal' | 'shared' | 'nested' | 'overlap';
 
-/** A single measured leg: a distance and the time to complete it. */
-export type Segment = { distanceM: number; timeSec: number };
+/** A single measured leg: a distance and the time to complete it. `timeSec` is
+ *  null when not yet known (e.g. imported from a photo without a printed time) —
+ *  it must be filled before the section can run or generate audio. */
+export type Segment = { distanceM: number; timeSec: number | null };
 
 export type Section = {
   id: string;
@@ -21,13 +23,21 @@ export type Section = {
   segments: Segment[];
   /** Whether this section's audio (clicks + countdown) has been generated. */
   audioReady: boolean;
+  /** Local uri of the roadbook photo this section was captured from, if any.
+   *  One image per section; retaking replaces it. */
+  imageUri?: string;
 };
 
 /** Number of measured legs a type uses. */
 export const segmentCount = (type: SectionType): number => (type === 'normal' ? 1 : 2);
 
-/** Total section time = prep + all leg times. */
-export const sectionTotalSec = (s: Section): number => s.prepSec + s.segments.reduce((sum, g) => sum + g.timeSec, 0);
+/** Total section time = prep + all leg times (unknown times count as 0). */
+export const sectionTotalSec = (s: Section): number =>
+  s.prepSec + s.segments.reduce((sum, g) => sum + (g.timeSec ?? 0), 0);
+
+/** True once every leg has a usable time — required before running / audio. */
+export const sectionTimesComplete = (s: Section): boolean =>
+  s.segments.length > 0 && s.segments.every(g => g.timeSec != null && g.timeSec > 0);
 
 export type Race = {
   id: string;
@@ -86,6 +96,14 @@ export const toNum = (s: string): number => {
   return Number.isFinite(n) ? n : 0;
 };
 
+/** Like toNum but empty / invalid → null (for optional times). */
+export const toNumOrNull = (s: string): number | null => {
+  const t = s.trim();
+  if (t === '') return null;
+  const n = parseFloat(t.replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+};
+
 /** Signed delta with a real minus sign, e.g. "+0.3" / "−0.4". */
 export const fmtDelta = (n: number): string => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`;
 
@@ -121,7 +139,7 @@ export function snapshotResults(race: Race, prev?: Run): RunSection[] {
       name: s.name,
       type: s.type,
       legs: s.segments.map((g, li) => ({
-        targetSec: g.timeSec,
+        targetSec: g.timeSec ?? 0,
         actualSec: prevSec?.legs[li]?.actualSec ?? null,
       })),
     };

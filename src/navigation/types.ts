@@ -8,7 +8,7 @@ export type RootStackParamList = {
   RaceDetail: { raceId?: string } | undefined;
   SectionTypes: undefined;
   SectionEditor: { raceId?: string; sectionId?: string } | undefined;
-  SectionFromPhoto: undefined;
+  SectionFromPhoto: { raceId?: string } | undefined;
   QuickTask: undefined;
   Practice: undefined;
   /** Reaction-time practice (a set of rounds: react to a sudden cue). */
