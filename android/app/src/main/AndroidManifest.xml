@@ -1,6 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Read paired/connected devices for the button/earpiece/watch status.
+         We only read (never scan/advertise), so BLUETOOTH_CONNECT is enough on
+         API 31+; the legacy permission covers API ≤ 30. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
 
     <application
       android:name=".MainApplication"

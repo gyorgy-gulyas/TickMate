@@ -6,6 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BrandLockup, Icon, MenuCard, ReadyStatusCard } from '../components';
 import { useTheme } from '../theme';
 import { useT } from '../i18n';
+import { useBluetoothStatus } from '../native/bluetooth';
 import { useRaces } from '../store/useStore';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -22,8 +23,17 @@ export function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const t = useT();
   const races = useRaces();
+  const { status } = useBluetoothStatus();
   const bg = { backgroundColor: theme.colors.bg };
   const headerBorder = { borderBottomColor: theme.colors.divider };
+
+  // Truthful ready summary: list the devices actually paired/connected.
+  const connected = [
+    status.earpiece.paired && t('home.dev.earpiece'),
+    status.button.paired && t('home.dev.button'),
+    status.watch.paired && t('home.dev.watch'),
+  ].filter(Boolean) as string[];
+  const ready = connected.length > 0;
 
   return (
     <View style={[styles.fill, bg]}>
@@ -32,9 +42,10 @@ export function HomeScreen() {
       </View>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ReadyStatusCard
-          icon={<Icon name="bluetooth-connected" size={19} color="accent" />}
-          title={t('home.ready.title')}
-          subtitle={t('home.ready.sub')}
+          icon={<Icon name={ready ? 'bluetooth-connected' : 'bluetooth'} size={19} color="accent" />}
+          title={ready ? t('home.ready.title') : t('home.ready.none')}
+          subtitle={ready ? connected.join(' · ') : t('home.ready.noneSub')}
+          showDot={ready}
         />
         <MenuCard
           icon={<Icon name="flag-checkered" size={22} color="accent" />}

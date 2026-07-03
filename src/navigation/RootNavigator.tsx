@@ -18,6 +18,7 @@ import { LanguageScreen } from '../screens/LanguageScreen';
 import { SoundProfileScreen } from '../screens/SoundProfileScreen';
 import { BluetoothButtonScreen } from '../screens/BluetoothButtonScreen';
 import { EarpieceScreen } from '../screens/EarpieceScreen';
+import { SmartwatchScreen } from '../screens/SmartwatchScreen';
 import { HelpScreen } from '../screens/HelpScreen';
 import { SectionTypesScreen } from '../screens/SectionTypesScreen';
 import { SectionEditorScreen } from '../screens/SectionEditorScreen';
@@ -33,11 +34,9 @@ import type { RootStackParamList } from './types';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 // Stubbed routes (built out screen-by-screen). Titles use the "feladat" wording.
-// Deferred to a later plan (see docs/ROADMAP.md): SectionFromPhoto (OCR),
-// Smartwatch (companion). They stay as "Hamarosan" placeholders for now.
+// Deferred to a later plan (see docs/ROADMAP.md): SectionFromPhoto (OCR).
 const STUBS: ReadonlyArray<{ name: keyof RootStackParamList; titleKey: StringKey }> = [
   { name: 'SectionFromPhoto', titleKey: 'stub.photo' },
-  { name: 'Smartwatch', titleKey: 'stub.watch' },
 ];
 
 function makeStub(titleKey: StringKey) {
@@ -78,6 +77,7 @@ export function RootNavigator() {
         <Stack.Screen name="SoundProfile" component={SoundProfileScreen} />
         <Stack.Screen name="BluetoothButton" component={BluetoothButtonScreen} />
         <Stack.Screen name="Earpiece" component={EarpieceScreen} />
+        <Stack.Screen name="Smartwatch" component={SmartwatchScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="Practice" component={PracticeScreen} />
         <Stack.Screen name="Reaction" component={ReactionScreen} />

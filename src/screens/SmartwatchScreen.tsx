@@ -1,8 +1,8 @@
-/** BT START button (input) latency: time from pressing the button to the app
- *  detecting it. Wired into the run-timeline origin later, together with the
- *  actual BT button. The button is a HID device — paired in the system
- *  Bluetooth settings; here we only show its status + the latency knob.
- *  Maps to "Bluetooth gomb". Persisted as settings.btButtonLatencyMs. */
+/** Smartwatch (companion) status + output latency. The watch pairs to the
+ *  phone in the system Bluetooth / Wear settings, not here — we only report
+ *  whether a wearable is paired. Its latency aligns the vibrating countdown /
+ *  start cue with the audio. Maps to "Okosóra".
+ *  Persisted as settings.watchLatencyMs. */
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -19,17 +19,16 @@ const styles = StyleSheet.create({
   hint: { marginLeft: 2 },
 });
 
-export function BluetoothButtonScreen() {
+export function SmartwatchScreen() {
   const navigation = useNavigation<RootNav>();
-  const saved = useSettings().btButtonLatencyMs;
+  const saved = useSettings().watchLatencyMs;
   const setSetting = useStore(s => s.setSetting);
   const t = useT();
-  const { status } = useBluetoothStatus(true);
-  const button = status.button;
+  const watch = useBluetoothStatus(true).status.watch;
   const [latency, setLatency] = useState(saved);
 
   const save = () => {
-    setSetting('btButtonLatencyMs', latency);
+    setSetting('watchLatencyMs', latency);
     navigation.goBack();
   };
 
@@ -39,21 +38,21 @@ export function BluetoothButtonScreen() {
 
   return (
     <Screen
-      title={t('btn.title')}
+      title={t('watch.title')}
       gap={14}
       rightActions={<Icon name="question" size={19} color="textSecondary" />}
       footer={footer}>
       <AppText preset="listMeta" color="textSecondary" style={styles.intro}>
-        {t('btn.intro')}
+        {t('watch.intro')}
       </AppText>
       <StatCard
         left={{
           label: t('btn.connection'),
-          value: button.paired ? t('btn.paired') : t('btn.notPaired'),
+          value: watch.paired ? t('btn.paired') : t('btn.notPaired'),
           valueSize: 14,
-          valueColor: button.paired ? 'accent' : 'textPrimary',
+          valueColor: watch.paired ? 'accent' : 'textPrimary',
         }}
-        right={{ label: t('btn.device'), value: button.name ?? '—', valueSize: 14, valueColor: 'textPrimary' }}
+        right={{ label: t('btn.device'), value: watch.name ?? '—', valueSize: 14, valueColor: 'textPrimary' }}
       />
       <Button
         label={t('common.btSettings')}
@@ -61,20 +60,17 @@ export function BluetoothButtonScreen() {
         icon={<Icon name="bluetooth" size={15} color="textPrimary" />}
         onPress={openBluetoothSettings}
       />
-      <AppText preset="listMeta" color="textSecondary" style={styles.hint}>
-        {t('btn.hidHint')}
-      </AppText>
       <View style={styles.field}>
         <AppText preset="label" color="textSecondary">
-          {t('btn.latency')}
+          {t('watch.latency')}
         </AppText>
         <Stepper value={latency} onChange={setLatency} step={5} min={0} max={400} unit="ms" />
         <AppText preset="listMeta" color="textSecondary" style={styles.hint}>
-          {t('btn.latencyHint')}
+          {t('watch.latencyHint')}
         </AppText>
       </View>
     </Screen>
   );
 }
 
-export default BluetoothButtonScreen;
+export default SmartwatchScreen;

@@ -45,7 +45,11 @@ export const hu = {
 
   // home
   'home.ready.title': 'Készen állsz',
-  'home.ready.sub': 'Gomb és füles csatlakoztatva',
+  'home.ready.none': 'Nincs eszköz párosítva',
+  'home.ready.noneSub': 'Párosíts eszközt a rendszer Bluetooth-ában',
+  'home.dev.button': 'Gomb',
+  'home.dev.earpiece': 'Füles',
+  'home.dev.watch': 'Óra',
   'home.races': 'Versenyek',
   'home.races.sub': '{n} mentett verseny',
   'home.practice': 'Gyakorló mód',
@@ -200,12 +204,17 @@ export const hu = {
   'btn.title': 'Bluetooth gomb',
   'btn.intro': 'A START gomb megnyomása és érzékelése közti késleltetés. Az egész idővonalat ennyivel korábbra tolja, így a kép és a hang együtt mozog.',
   'btn.connection': 'Kapcsolat',
+  'btn.paired': 'Párosítva',
   'btn.notPaired': 'Nincs párosítva',
+  'btn.device': 'Eszköz',
   'btn.latency': 'Gomb késleltetése',
   'btn.latencyHint': 'Gombnyomás → érzékelés',
-  'btn.pair': 'Párosítás',
-  'btn.soon': 'Hamarosan',
-  'btn.test': 'Teszt',
+  'btn.hidHint': 'A gombot a rendszer Bluetooth-beállításában párosítod (HID eszköz).',
+  'common.btSettings': 'Bluetooth-beállítások',
+  'watch.title': 'Okosóra',
+  'watch.intro': 'Az óra rezgő visszaszámlálást és csuklós vezérlést ad majd. A rendszer Bluetooth-beállításában párosítod — itt csak az állapotát látod.',
+  'watch.latency': 'Óra késleltetése',
+  'watch.latencyHint': 'Kioldás → rezgés',
 
   // help
   'help.title': 'Súgó',

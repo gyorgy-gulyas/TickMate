@@ -155,14 +155,15 @@ export const useStore = create<AppState>()(
       // v4: settings.sound (SoundProfile) replaces secondsTick + soundProfile.
       // v5: btLatencyMs split into btButtonLatencyMs (input) + btAudioLatencyMs
       //     (output); the old single value was the earpiece (audio) latency.
+      // v6: add watchLatencyMs (watch vibration output latency).
       // Non-destructive: keep races/runs; fold the old secondsTick into the profile.
-      version: 5,
+      version: 6,
       storage: createJSONStorage(() => storage),
       migrate: (persisted, version) => {
         const prev = (persisted ?? {}) as {
           races?: Race[];
           runs?: Run[];
-          settings?: Partial<Settings> & { secondsTick?: boolean; soundProfile?: string; btLatencyMs?: number };
+          settings?: Partial<Settings> & { secondsTick?: boolean; soundProfile?: string; btLatencyMs?: number; watchLatencyMs?: number };
         };
         const s = prev.settings ?? {};
         const sound: SoundProfile = s.sound ?? { ...DEFAULT_SOUND_PROFILE, secondsTick: s.secondsTick ?? DEFAULT_SOUND_PROFILE.secondsTick };
@@ -176,6 +177,7 @@ export const useStore = create<AppState>()(
             language: s.language ?? DEFAULT_SETTINGS.language,
             btButtonLatencyMs: s.btButtonLatencyMs ?? DEFAULT_SETTINGS.btButtonLatencyMs,
             btAudioLatencyMs: s.btAudioLatencyMs ?? s.btLatencyMs ?? DEFAULT_SETTINGS.btAudioLatencyMs,
+            watchLatencyMs: s.watchLatencyMs ?? DEFAULT_SETTINGS.watchLatencyMs,
             sound,
           },
         } as unknown as AppState;

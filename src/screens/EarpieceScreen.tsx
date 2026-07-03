@@ -11,6 +11,7 @@ import { StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AppText, Button, Icon, StatCard, Stepper } from '../components';
 import { playLatencyTest, latencyTestEvents, stopAudio } from '../audio';
+import { useBluetoothStatus, openBluetoothSettings } from '../native/bluetooth';
 import { useTheme } from '../theme';
 import { useT } from '../i18n';
 import { useSettings, useStore } from '../store/useStore';
@@ -31,6 +32,7 @@ export function EarpieceScreen() {
   const theme = useTheme();
   const saved = useSettings().btAudioLatencyMs;
   const sound = useSettings().sound;
+  const earpiece = useBluetoothStatus().status.earpiece;
   const setSetting = useStore(s => s.setSetting);
   const t = useT();
 
@@ -107,7 +109,18 @@ export function EarpieceScreen() {
       </AppText>
       <StatCard
         left={{ label: t('bt.measured'), value: String(latency), unit: 'ms' }}
-        right={{ label: t('bt.device'), value: 'AirPods Pro', valueSize: 14, valueColor: 'textPrimary' }}
+        right={{
+          label: t('bt.device'),
+          value: earpiece.name ?? t('btn.notPaired'),
+          valueSize: 14,
+          valueColor: earpiece.paired ? 'accent' : 'textSecondary',
+        }}
+      />
+      <Button
+        label={t('common.btSettings')}
+        variant="secondary"
+        icon={<Icon name="bluetooth" size={15} color="textPrimary" />}
+        onPress={openBluetoothSettings}
       />
       <View style={styles.field}>
         <AppText preset="label" color="textSecondary">

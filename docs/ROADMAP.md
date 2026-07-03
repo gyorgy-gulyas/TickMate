@@ -48,7 +48,9 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - 🟡 **Késleltetés-kompenzáció** — két külön érték (Beállítások → Eszköz):
   - **Füles (kimeneti) késleltetés** ✅ (`btAudioLatencyMs`): a futás-nézet a számlálót/jelzőket ennyivel hátrébb tolja, hogy egyezzen a hallottal; a Fülhallgató képernyőn **kalibráló teszt** (3 sípolás → 10 ritmusos kattanás → 3 sípolás + szinkron villanás).
   - **Gomb (bemeneti) késleltetés** ⬜ (`btButtonLatencyMs`): a teljes futás-idővonal origóját tolja korábbra — a **BT-gombbal** együtt jön (§5). A beállítás-képernyő kész, a hatás még nincs bekötve.
+  - **Óra (kimeneti) késleltetés** ⬜ (`watchLatencyMs`): a rezgő visszaszámlálást / indítást igazítja a hanghoz — az **okosóra-réteggel** együtt jön (§5). A beállítás kész, a hatás még nincs bekötve.
   - ⬜ BT-auto-bemérés (a „Bemérés" gomb még stub) — kézi korrekció működik.
+- ✅ **Eszköz-státusz kijelzés** (`TmBluetooth` Kotlin modul): a gomb (HID) / füles / óra a valós párosított/csatlakozott állapotot mutatja (nincs mock); párosítás a rendszer Bluetooth-beállításában (az app csak olvas). `BLUETOOTH_CONNECT` engedéllyel.
 > A natív lejátszás volt a legnagyobb műszaki kockázat — Androidon megvan, valós eszközön (emulátor) hallhatóan szól.
 
 ## 5. Natív integrációk ⬜

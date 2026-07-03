@@ -6,6 +6,7 @@ import { AppText, Icon, SettingsRow, Toggle } from '../components';
 import { useTheme } from '../theme';
 import { useT, type StringKey } from '../i18n';
 import { matchPreset } from '../data/model';
+import { useBluetoothStatus } from '../native/bluetooth';
 import { useSettings } from '../store/useStore';
 import { Screen } from './Screen';
 import type { RootNav } from '../navigation/types';
@@ -31,6 +32,7 @@ export function SettingsScreen() {
   const navigation = useNavigation<RootNav>();
   const settings = useSettings();
   const t = useT();
+  const { button, earpiece, watch } = useBluetoothStatus().status;
   const presetId = matchPreset(settings.sound);
   const presetName = t(presetId ? (`sound.preset.${presetId}` as StringKey) : 'sound.preset.custom');
 
@@ -39,17 +41,23 @@ export function SettingsScreen() {
       <Category title={t('settings.cat.device')}>
         <SettingsRow
           label={t('settings.btButton')}
-          value={`${settings.btButtonLatencyMs} ms`}
+          value={button.name ?? t('btn.notPaired')}
           chevron
           onPress={() => navigation.navigate('BluetoothButton')}
         />
         <SettingsRow
           label={t('settings.btHeadset')}
-          value={`${settings.btAudioLatencyMs} ms`}
+          value={earpiece.name ?? t('btn.notPaired')}
           chevron
           onPress={() => navigation.navigate('Earpiece')}
         />
-        <SettingsRow label={t('settings.watch')} value="Apple Watch" chevron onPress={() => navigation.navigate('Smartwatch')} divider={false} />
+        <SettingsRow
+          label={t('settings.watch')}
+          value={watch.name ?? t('btn.notPaired')}
+          chevron
+          onPress={() => navigation.navigate('Smartwatch')}
+          divider={false}
+        />
       </Category>
 
       <Category title={t('settings.cat.general')}>

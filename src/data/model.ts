@@ -59,6 +59,9 @@ export type Settings = {
   /** Audio output latency (playback → heard in the earpiece), ms. Used to lag
    *  the on-screen timeline so the picture matches what you hear. */
   btAudioLatencyMs: number;
+  /** Watch output latency (trigger → felt vibration), ms. Aligns the watch's
+   *  vibrating countdown / start cue with the audio. */
+  watchLatencyMs: number;
   /** Audio-cue character (spec §8). Owns the seconds-tick toggle. */
   sound: SoundProfile;
 };
@@ -68,6 +71,7 @@ export const DEFAULT_SETTINGS: Settings = {
   language: 'Magyar',
   btButtonLatencyMs: 20,
   btAudioLatencyMs: 120,
+  watchLatencyMs: 80,
   sound: DEFAULT_SOUND_PROFILE,
 };
 
