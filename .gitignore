@@ -80,3 +80,6 @@ yarn-error.log
 # Vite web build output
 dist/
 .vite/
+
+# Local roadbook scans / test images (personal, not part of the app)
+pictures/
