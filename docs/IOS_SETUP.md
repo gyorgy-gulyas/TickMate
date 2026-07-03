@@ -8,7 +8,50 @@
 2. Az `.ipa` felkerül a telefonodra **TestFlighttel** (OTA) vagy **Ad Hoc** linkről.
 3. A buildet Windowsról indítod (git push vagy „Start new build" a Codemagic UI-ban).
 
-## Mit igényel (fiókok)
+## Ingyenes út (most ezt próbáljuk) — Codemagic + Sideloadly
+
+Így **nem kell fizetős fiók**: a Codemagic aláírás nélküli `.ipa`-t épít (Apple fiók
+nélkül), és a telefonra a **Sideloadly** teszi fel a **saját ingyenes Apple ID**-ddal.
+Korlátok: az app **7 naponta lejár** (újratelepítés), egyszerre max. 3 sideloadolt app.
+
+### 1) Unsigned `.ipa` építése a felhőben (Apple fiók nélkül)
+1. Regisztrálj a **codemagic.io**-n (ingyenes), *Add application* → ez a GitHub repo.
+2. Indítsd az **`ios-unsigned`** workflow-t (a `codemagic.yaml`-ban van; nem kér semmi
+   aláírást/Apple-fiókot).
+3. Ha kész, az *Artifacts*-ból töltsd le a **`TickMate-unsigned.ipa`**-t a Windows gépedre.
+
+### 2) Windows előkészítés
+- Telepítsd az **iTunes**-t és az **iCloud**-ot az **apple.com**-ról (a `.exe` verziót,
+  **NE** a Microsoft Store-ból) — ezek hozzák az iPhone-illesztőt.
+- Töltsd le a **Sideloadly**-t: **sideloadly.io** → telepítsd.
+
+### 3) Telepítés a telefonra (Sideloadly)
+1. Csatlakoztasd az iPhone-t USB-vel, oldd fel, és a telefonon **„Trust / Megbízom"**.
+2. Nyisd meg a Sideloadly-t → húzd rá a `TickMate-unsigned.ipa`-t.
+3. Írd be az **Apple ID**-det (ingyenes is jó). Ha be van kapcsolva a kétlépcsős
+   azonosítás, hozz létre egy **app-specifikus jelszót** (appleid.apple.com → *Sign-In and
+   Security → App-Specific Passwords*), és azt add meg.
+4. **Start** → aláírja + felteszi.
+5. A telefonon: **Beállítások → Általános → VPN és eszközkezelés** → a saját Apple ID
+   fejlesztői profilját **megbízhatóvá** teszed.
+6. Indítsd a **TickMate**-et. 🎉
+
+### 4) 7 nap múlva
+Az ingyenes aláírás lejár → **futtasd újra a Sideloadly-t** ugyanígy (a felhő-buildet nem
+kell újra, elég a meglévő `.ipa`).
+
+> **Auto-frissítés kényelmesen:** a Sideloadly helyett/mellett használhatod az **AltStore**-t
+> (altstore.io): telepíted az **AltServer**-t Windowsra (iTunes+iCloud kell hozzá), a telefonra
+> az AltStore appot, és az **7 naponta magától újrahitelesít**, amíg a gép + telefon egy WiFi-n
+> van. Ugyanazt az `.ipa`-t eszi.
+
+### Ha az app hangos és működik → jöhet a fizetős fiók
+Ha az ingyenes úton minden jó (hang, OCR, futás), akkor éri meg a **$99/év** Apple Developer,
+amivel a lejárat/7-nap gond megszűnik (**TestFlight** vagy **Ad Hoc** — lásd lent).
+
+---
+
+## Mit igényel (fiókok) — a fizetős út
 - **Apple Developer Program — $99/év.** Mac nélkül ez **kell**: mind a TestFlight,
   mind az Ad Hoc aláírás fizetős fiókhoz kötött. (Ingyenes fiók csak Macen, Xcode-ból,
   7 napig telepítene — nálunk nincs Mac.)
