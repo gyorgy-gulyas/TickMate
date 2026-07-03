@@ -1,5 +1,28 @@
 # iOS build & test — Mac nélkül (felhő + valódi iPhone)
 
+> ## ⏸️ HOL TARTUNK (folytatás gép-újraindítás után)
+> - ✅ A **Codemagic `ios-unsigned` build lefutott** → a `TickMate-unsigned.ipa` a
+>   Windows **Letöltések** mappában van. (A kód mind fent van GitHubon, semmi sem veszett el.)
+> - ✅ Fent az **apple.com-os iTunes `.exe`** (a jó verzió). Az „iTunes Store" (`0x80090302`)
+>   és a „Bonjour mdnsNSP.dll" figyelmeztetés **lényegtelen** — bezárva.
+> - 🟡 Az iTunes már **látja a telefont** (a `0xE800000A` csak párosítás/„Trust" akadás —
+>   a kábel jó, az illesztő működik).
+>
+> **A KÖVETKEZŐ LÉPÉSEK (indulj innen):**
+> 1. iPhone feloldva → dugd be újra → a telefonon **Trust/Megbízom** + kód.
+>    (Ha nem jön a kérdés: iPhone → *Beállítások → Általános → iPhone átvitele vagy
+>    visszaállítása → Visszaállítás → „Hely és adatvédelem visszaállítása"*, majd újra be.)
+> 2. Nyisd meg a **Sideloadly**-t → a **Device** legördülőben ott a telefonod?
+> 3. Ha igen: **Apple ID** + húzd rá a **`TickMate-unsigned.ipa`**-t + **Start**
+>    (Apple ID jelszó / 2FA kód; ha elutasítja: app-specifikus jelszó).
+> 4. iPhone → *Beállítások → Általános → **VPN és eszközkezelés*** → a fejlesztői appot
+>    **megbízhatóvá** tenni.
+> 5. Indítsd a **TickMate**-et — **a fő próba: szól-e a HANG?**
+>
+> (A részletes lépések lentebb a „Ingyenes út" szekcióban.)
+
+
+
 > Cél: a TickMate iPhone-on fusson, **Mac nélkül**. A fordítás felhő-Macen
 > (Codemagic) megy, a futás a saját iPhone-odon. Simulator nem kell.
 
