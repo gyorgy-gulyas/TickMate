@@ -1,0 +1,63 @@
+# Codemagic CI — builds the iOS app on a cloud Mac (no local Mac needed) and
+# ships it to your iPhone. Trigger from Windows: push to the repo, or press
+# "Start new build" in the Codemagic UI.
+#
+# ONE-TIME SETUP (see docs/IOS_SETUP.md for the full walkthrough):
+#   1. Codemagic → add this repo.
+#   2. Codemagic → Teams/Integrations → connect an App Store Connect API key
+#      (needs a paid Apple Developer account, $99/yr).
+#   3. Set BUNDLE_ID below to your chosen id (e.g. com.yourname.tickmate) and
+#      register/create the app in App Store Connect with the same id.
+#   4. Put the App Store Connect key + Apple Team ID into a Codemagic group
+#      called "appstore" (referenced under environment.groups).
+#
+# Distribution: this workflow builds an App Store–signed IPA and submits it to
+# TestFlight (install via the TestFlight app on your iPhone). To install WITHOUT
+# TestFlight instead, switch to Ad Hoc — see the commented lines below.
+
+workflows:
+  ios-testflight:
+    name: TickMate iOS → TestFlight
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - appstore            # holds the App Store Connect API key + APPLE_TEAM_ID
+      vars:
+        XCODE_WORKSPACE: "ios/TickMate.xcworkspace"
+        XCODE_SCHEME: "TickMate"
+        BUNDLE_ID: "com.tickmate.app"    # <-- CHANGE to your bundle id
+      node: 22
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install JS dependencies
+        script: npm ci
+      - name: Install CocoaPods
+        script: cd ios && pod install
+      - name: Set up code signing (automatic, via App Store Connect API key)
+        script: |
+          keychain initialize
+          # App Store / TestFlight profile:
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE --create
+          # For Ad Hoc (direct install, no TestFlight) use this line instead and
+          # register your iPhone's UDID in App Store Connect first:
+          #   app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_ADHOC --create
+          keychain add-certificates
+          xcode-project use-profiles
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      # TestFlight: installs on your iPhone via the TestFlight app. Remove this
+      # whole `publishing` block for Ad Hoc — then grab the .ipa from artifacts
+      # and install it directly (link / Apple Configurator / AltStore).
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

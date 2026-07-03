@@ -17,6 +17,9 @@ end
 target 'TickMate' do
   config = use_native_modules!
 
+  # Local native modules (low-latency audio + bluetooth status). See ios/TmNative.
+  pod 'TmNative', :path => './TmNative'
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.

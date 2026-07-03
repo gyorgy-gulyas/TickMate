@@ -43,7 +43,7 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - ✅ PCM-szintézis: 8 ms kattanások, gyorsuló + emelkedő kapu-visszaszámlálás (sor: 3.00→0.00), durva végkattanás, indító hang, másodperc-jelző — `audio/synth.ts` + `audio/buildTask.ts`
 - ✅ Hang **összeállítása** feladatonként (`COUNTDOWN_OFFSETS` közös forrás a vizuális ütem-jelölőkkel)
 - ✅ Web-lejátszás (Web Audio) az előnézethez — `audio/player.web.ts`
-- 🟡 **Natív, alacsony késleltetésű lejátszás** — **Android kész** (`TmAudio` Kotlin modul, `AudioTrack` `PERFORMANCE_MODE_LOW_LATENCY`, ENCODING_PCM_FLOAT mono; a JS-ben renderelt PCM base64-ként megy át, eszközön bemérve szól). **iOS hátravan** (AVAudioEngine, Mac kell). Ha az Android jitter kevés lenne, a JS-interfész változatlanul Oboe-ra cserélhető.
+- 🟡 **Natív, alacsony késleltetésű lejátszás** — **Android kész** (`TmAudio` Kotlin modul, `AudioTrack` `PERFORMANCE_MODE_LOW_LATENCY`, ENCODING_PCM_FLOAT mono; a JS-ben renderelt PCM base64-ként megy át, eszközön bemérve szól). **iOS: a modul megvan** (`ios/TmNative/TmAudio.swift`, `AVAudioEngine`, ugyanaz a `play(base64Pcm, sampleRate)` interfész), de **még nem futott le felhő-buildben** (Mac/CI kell — lásd `docs/IOS_SETUP.md`). Ha az Android jitter kevés lenne, a JS-interfész változatlanul Oboe-ra cserélhető.
 - 🟡 **Késleltetés-kompenzáció** — két külön érték (Beállítások → Eszköz):
   - **Füles (kimeneti) késleltetés** ✅ (`btAudioLatencyMs`): a futás-nézet a számlálót/jelzőket ennyivel hátrébb tolja, hogy egyezzen a hallottal; a Fülhallgató képernyőn **kalibráló teszt** (3 sípolás → 10 ritmusos kattanás → 3 sípolás + szinkron villanás).
   - **Gomb (bemeneti) késleltetés** ⬜ (`btButtonLatencyMs`): a teljes futás-idővonal origóját tolja korábbra — a **BT-gombbal** együtt jön (§5). A beállítás-képernyő kész, a hatás még nincs bekötve.
@@ -63,7 +63,7 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 
 ## 7. Platform / build / kiadás 🟡
 - ✅ **Android környezet**: SDK (C:\Android\Sdk) + a Studio JBR (JDK 21) bekötése → a debug build **megépült és elindult emulátoron** (2026-06-30). Megjegyzés: a `npm run android` Windowson elhasal (`gradlew.bat`), helyette közvetlen `gradlew app:installDebug` — lásd `docs/ANDROID_SETUP.md`.
-- **iOS build**: Mac + Xcode szükséges (CI vagy fizikai Mac)
+- 🟡 **iOS build**: Mac nélkül **felhő-CI-vel** (Codemagic) → TestFlight/Ad Hoc a valódi iPhone-ra. A `codemagic.yaml` + `ios/TmNative` (audio/BT modul, lokális pod) + `Info.plist` engedélyek kész; hátravan: fizetős Apple Developer fiók + első felhő-build (lásd `docs/IOS_SETUP.md`).
 - ✅ **Android app-ikon** (adaptív: sötét háttér + zöld stopperóra) + **cold-start splash** (SplashTheme → AppTheme) bekötve. Hátravan: iOS app-ikon.
 - Onboarding/engedélykérés (Bluetooth, kamera az OCR-hez)
 - **Tesztelés**: unit (időzítés-logika, hangsor), eszköz-QA; opcionálisan E2E (Detox)
