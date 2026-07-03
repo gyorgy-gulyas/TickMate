@@ -215,9 +215,15 @@ export const hu = {
   'help.step3': 'Indítsd a futást a gombbal — figyeld a hangot',
   'help.faq': 'Gyakori kérdések',
   'help.faq1': 'Bluetooth eszközök párosítása',
+  'help.faq1.a': 'A Beállítások → Eszköz alatt külön a „Bluetooth gomb" (START) és a „Fülhallgató" (hang). A gombpárosítás hamarosan érkezik; a fülest a rendszer Bluetooth-beállításában csatlakoztatod, a késleltetését a Fülhallgató képernyőn hangolod.',
   'help.faq2': 'Mit jelentenek a hangjelzések?',
+  'help.faq2.a': 'Induláskor egy jelzőhang szól. Másodpercenként halk kattanás jelzi az időt. Minden kapu előtt gyorsuló, emelkedő visszaszámlálás fut, és a kapu pillanatában egy éles, durva kattanás — erre időzíts.',
   'help.faq3': 'Feladattípusok magyarázata',
+  'help.faq3.a': 'Normál: egy szakasz, egy kapu. Követő: közös kapu (az A vége = a B kezdete). Fonódó: a B az A-n belül (A start → B start → B vége → A vége). Átfedő: a B belóg az A-ba (A → B → A → B).',
   'help.faq4': 'Hang és késleltetés',
+  'help.faq4.a': 'A hang karakterét a Hangprofil állítja (élesség, hangmagasság, ütemszám). Két késleltetés van: a gombé (megnyomás → érzékelés) és a fülesé (lejátszás → hallható). A fülesét a Fülhallgató teszttel hangolod, hogy a kép és a hang ne csússzon szét.',
+  'help.faq5': 'Hogyan rögzítem az eredményt?',
+  'help.faq5.a': 'A verseny lapon az „Eredmények" gombbal pillanatfelvételt készítesz a tervezett időkről, majd beírod a tényleges időket. Az app kiszámolja az eltéréseket (tény − terv) — fülre futsz, a telefon nem mér.',
   'help.contact': 'Kapcsolat',
 
   // practice

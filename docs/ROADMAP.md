@@ -20,7 +20,7 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 **Kész viz-komponensek:** BrandMark, TypeSchematic, OverlapSchematic, Timeline, DivergingBar, BTButton (+ Legend).
 **Kész képernyők:** Főképernyő, Versenyek, Verseny részletei, Feladat típusok (**4 típus**: normál / követő / fonódó / átfedő), Feladat szerkesztő (élő sémával), Gyors feladat, Gyakorló mód, **Reakcióidő** + **Hangritmus** (gyakorlómódok, lásd `REACTION.md` / `RHYTHM.md`), Beállítások, Nyelv, BT késleltetés, Súgó, **Eredmények** (Result: valós idők + elemzés + megjegyzés egy helyen), Idővonal, és a **4 futás-nézet** (készenlét / futás / feladat kész / befejezve).
 > **Összevonás (2026-06-30):** a külön History / History-részletek / Elemzés képernyők megszűntek; az eredmények a verseny alatt, az **Eredmények** képernyőn élnek (idők + élő elemzés + megjegyzés).
-**Hátralévő polish (később):** világos mód finomhangolás minden képernyőn; üres/töltő/hiba állapotok; érintési célok ≥44; akadálymentesítés.
+**Polish:** ✅ üres/töltő/hiba állapotok (`StatusView`, `inline` móddal a listákban is), ✅ **Súgó FAQ** tartalom (lenyíló Q&A, 4 nyelven). Hátravan: világos mód finomhangolás minden képernyőn; érintési célok ≥44; akadálymentesítés.
 
 ### Halasztva — későbbi terv (döntés: 2026-06-29) ⏸️
 - **Feladat fotóból (OCR)** — a `ScanView` viz + a képernyő + az on-device OCR (lásd §5). Most „Hamarosan" placeholder.
@@ -57,13 +57,13 @@ Jelölés: ✅ kész · 🟡 részben · ⬜ hátravan
 - **Képfelismerés / OCR** (ML Kit / Vision) a „Feladat fotóból"-hoz — roadbook-számok, mindig szerkeszthető
 
 ## 6. Lokalizáció ⬜
-- i18n keret (i18next), minden felirat HU/EN/DE/SK/IT
+- i18n keret (i18next), minden felirat HU/EN/DE/ES
 - A hangjelzések nyelvfüggetlenek maradnak
 
 ## 7. Platform / build / kiadás 🟡
 - ✅ **Android környezet**: SDK (C:\Android\Sdk) + a Studio JBR (JDK 21) bekötése → a debug build **megépült és elindult emulátoron** (2026-06-30). Megjegyzés: a `npm run android` Windowson elhasal (`gradlew.bat`), helyette közvetlen `gradlew app:installDebug` — lásd `docs/ANDROID_SETUP.md`.
 - **iOS build**: Mac + Xcode szükséges (CI vagy fizikai Mac)
-- **App-ikonok** bekötése (PNG-k megvannak): iOS app-ikon + Android adaptív ikon + splash
+- ✅ **Android app-ikon** (adaptív: sötét háttér + zöld stopperóra) + **cold-start splash** (SplashTheme → AppTheme) bekötve. Hátravan: iOS app-ikon.
 - Onboarding/engedélykérés (Bluetooth, kamera az OCR-hez)
 - **Tesztelés**: unit (időzítés-logika, hangsor), eszköz-QA; opcionálisan E2E (Detox)
 - Aláírás, store-metaadatok, adatvédelem; CI/CD

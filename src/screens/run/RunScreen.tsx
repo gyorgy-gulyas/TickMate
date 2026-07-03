@@ -428,7 +428,7 @@ export function RunScreen() {
       } else {
         setElapsed(e);
       }
-    }, 80);
+    }, 50);
     return () => clearInterval(id);
   }, [phase, section, duration, audioLatencyMs]);
 

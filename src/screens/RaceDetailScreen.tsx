@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
-import { AppText, Button, ConfirmDialog, Field, Icon, Pill } from '../components';
+import { AppText, Button, ConfirmDialog, Field, Icon, Pill, StatusView } from '../components';
 import { sectionTotalSec } from '../data/model';
 import { useT } from '../i18n';
 import { prewarmTask, sectionSpec } from '../audio';
@@ -14,7 +14,6 @@ import type { RootNav, RootStackParamList } from '../navigation/types';
 const styles = StyleSheet.create({
   header: { gap: 11 },
   thead: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 1, marginTop: 2 },
-  empty: { paddingVertical: 18 },
 });
 
 export function RaceDetailScreen() {
@@ -119,9 +118,7 @@ export function RaceDetailScreen() {
           />
         </View>
       ) : (
-        <AppText preset="muted" color="textSecondary" style={styles.empty}>
-          {t('race.empty')}
-        </AppText>
+        <StatusView inline icon="timer" title={t('race.empty')} />
       )}
 
       <Button
