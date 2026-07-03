@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/gyorgy-gulyas/TickMate"
   s.license      = { :type => "MIT" }
   s.author       = { "TickMate" => "noreply@tickmate.app" }
-  s.platform     = :ios, "15.1"
+  s.platform     = :ios, "15.5"
   s.source       = { :path => "." }
   s.source_files = "*.{h,m,mm,swift}"
   s.swift_version = "5.0"
