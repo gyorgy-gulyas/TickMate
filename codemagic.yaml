@@ -97,6 +97,11 @@ workflows:
       # TestFlight: installs on your iPhone via the TestFlight app. Remove this
       # whole `publishing` block for Ad Hoc — then grab the .ipa from artifacts
       # and install it directly (link / Apple Configurator / AltStore).
+      # Uses App Store Connect API key env vars (put them in the `appstore`
+      # group). This validates without a preconfigured integration — unlike
+      # `auth: integration`, which requires one to exist first.
       app_store_connect:
-        auth: integration
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
