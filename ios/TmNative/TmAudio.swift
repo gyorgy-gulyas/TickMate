@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import React // for RCTPromiseResolveBlock / RCTPromiseRejectBlock (getOutputLatency)
 
 /// Low-latency PCM playback — the iOS counterpart of the Android `TmAudio`
 /// Kotlin module. The whole task is pre-rendered in JS into one mono Float32
