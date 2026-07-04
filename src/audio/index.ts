@@ -1,9 +1,9 @@
 export * from './synth';
 export * from './buildTask';
-export { playPcm, stopAudio } from './player';
+export { playPcm, stopAudio, getOutputLatency } from './player';
 
 import { SAMPLE_RATE } from './synth';
-import { buildTaskPCM, buildCountdownPCM, buildLatencyTestPCM, type TaskSpec } from './buildTask';
+import { buildTaskPCM, buildCountdownPCM, buildLatencyTestPCM, buildTapBeatPCM, type TaskSpec } from './buildTask';
 import { playPcm } from './player';
 import type { SoundProfile } from '../data/model';
 
@@ -46,4 +46,9 @@ export function playRhythm(targetSec: number, profile: SoundProfile, muteFinal =
 /** Play the earpiece-latency calibration pattern (beeps + click train). */
 export function playLatencyTest(profile: SoundProfile): void {
   playPcm(buildLatencyTestPCM(profile), SAMPLE_RATE);
+}
+
+/** Play the steady tap-to-beat calibration track (even clicks to tap along to). */
+export function playTapBeat(profile: SoundProfile): void {
+  playPcm(buildTapBeatPCM(profile), SAMPLE_RATE);
 }

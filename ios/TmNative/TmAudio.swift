@@ -67,6 +67,18 @@ class TmAudio: NSObject {
     player.stop()
   }
 
+  /// Current output-route latency in milliseconds (playback → ear). On a BT
+  /// earpiece this reflects the codec/transport delay and updates with the
+  /// active route, so it's a strong starting value for the earpiece-latency
+  /// calibration. Only meaningful while the audio session is active.
+  @objc(getOutputLatency:rejecter:)
+  func getOutputLatency(_ resolve: @escaping RCTPromiseResolveBlock,
+                        rejecter reject: @escaping RCTPromiseRejectBlock) {
+    let session = AVAudioSession.sharedInstance()
+    try? session.setActive(true)
+    resolve(session.outputLatency * 1000.0)
+  }
+
   // Parity with the Android module so a JS NativeEventEmitter never warns.
   @objc func addListener(_ eventName: String) {}
   @objc func removeListeners(_ count: NSNumber) {}

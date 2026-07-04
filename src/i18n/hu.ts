@@ -206,6 +206,12 @@ export const hu = {
   'bt.auto': 'Automatikus mérés',
   'bt.test': 'Teszt indítása',
   'bt.testHint': 'Indítsd el (3 sípszó → 10 kattanás → 3 sípszó), és állítsd a késleltetést, amíg a villanások egybeesnek a hallott hangokkal.',
+  'bt.tap': 'Ütemre hangolás',
+  'bt.tapActive': 'Koppints minden dobbanásra, ahogy hallod',
+  'bt.autoUnavailable': 'Az eszköz nem adja meg a késleltetést — használd az ütemre hangolást.',
+  'bt.autoDone': 'Rendszer szerint: {n} ms',
+  'bt.tapDone': 'Ütemre hangolva: {n} ms',
+  'bt.tapTooFew': 'Kevés koppintás — próbáld újra.',
   // bluetooth button (input) latency
   'btn.title': 'Bluetooth gomb',
   'btn.intro': 'A START gomb megnyomása és érzékelése közti késleltetés. Az egész idővonalat ennyivel korábbra tolja, így a kép és a hang együtt mozog.',

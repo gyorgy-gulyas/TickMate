@@ -6,7 +6,7 @@
 import { NativeModules } from 'react-native';
 
 const TmAudio = NativeModules.TmAudio as
-  | { play(base64Pcm: string, sampleRate: number): void; stop(): void }
+  | { play(base64Pcm: string, sampleRate: number): void; stop(): void; getOutputLatency?(): Promise<number> }
   | undefined;
 
 const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -46,5 +46,19 @@ export function stopAudio(): void {
     TmAudio.stop();
   } catch {
     /* ignore */
+  }
+}
+
+/** The device's current audio-output latency in ms (play → ear), as reported by
+ *  the OS for the active route (incl. a BT earpiece). Null when the platform
+ *  can't provide it (Android, web, or module unavailable) — callers then fall
+ *  back to the tap-to-beat / manual calibration. */
+export async function getOutputLatency(): Promise<number | null> {
+  if (!TmAudio?.getOutputLatency) return null;
+  try {
+    const ms = await TmAudio.getOutputLatency();
+    return typeof ms === 'number' && ms >= 0 ? Math.round(ms) : null;
+  } catch {
+    return null;
   }
 }

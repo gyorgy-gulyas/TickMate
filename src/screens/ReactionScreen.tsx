@@ -9,6 +9,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AppText, BigNum, Button, Chip, Icon, NavBar, StatCard } from '../components';
 import { SAMPLE_RATE, playPcm, renderClick, renderFinalClick, renderStart, stopAudio } from '../audio';
+import { useSettings } from '../store/useStore';
 import { useTheme, type ColorTokens } from '../theme';
 import { useT } from '../i18n';
 import type { RootNav } from '../navigation/types';
@@ -37,6 +38,13 @@ export function ReactionScreen() {
   const navigation = useNavigation<RootNav>();
   const theme = useTheme();
   const t = useT();
+  // Earpiece (audio output) latency. The cue is an audio click, but it reaches
+  // the ear this much later than playPcm() is called — so when sound is on, the
+  // cue timestamp is shifted forward to the ear-arrival moment, otherwise a BT
+  // earpiece would inflate every reaction by the output-path delay. Sound off =
+  // reacting to the on-screen flash, which has no such delay, so no shift.
+  const { btAudioLatencyMs, sound } = useSettings();
+  const cueDelayMs = sound ? btAudioLatencyMs : 0;
 
   const [phase, setPhase] = useState<Phase>('ready');
   const [round, setRound] = useState(0); // 0-based index of the current round
@@ -68,7 +76,8 @@ export function ReactionScreen() {
     playPcm(renderStart(), SAMPLE_RATE);
     const delay = DELAY_MIN + Math.random() * (DELAY_MAX - DELAY_MIN);
     timerRef.current = setTimeout(() => {
-      cueAtRef.current = Date.now();
+      // Measure from when the cue reaches the ear, not when playback is requested.
+      cueAtRef.current = Date.now() + cueDelayMs;
       playPcm(renderFinalClick(), SAMPLE_RATE);
       setPhase('go');
     }, delay);

@@ -6,6 +6,7 @@ import android.media.AudioTrack
 import android.os.Build
 import android.util.Base64
 import android.util.Log
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -105,6 +106,14 @@ class TmAudioModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun stop() {
     stopInternal()
+  }
+
+  // iOS reports the BT output-route latency; Android exposes no reliable public
+  // API for it, so report unavailable (-1) and let JS fall back to the
+  // tap-to-beat / manual calibration. Kept for cross-platform bridge parity.
+  @ReactMethod
+  fun getOutputLatency(promise: Promise) {
+    promise.resolve(-1.0)
   }
 
   private fun stopInternal() {

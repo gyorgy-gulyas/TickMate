@@ -31,3 +31,8 @@ export function stopAudio(): void {
   }
   current = null;
 }
+
+/** Web can't report an output-route latency; callers fall back to calibration. */
+export async function getOutputLatency(): Promise<number | null> {
+  return null;
+}

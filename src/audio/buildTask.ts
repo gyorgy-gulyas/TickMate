@@ -172,6 +172,25 @@ export function latencyTestEvents(): LatencyEvent[] {
   return ev;
 }
 
+// --- Tap-to-beat calibration ---
+// A steady beat the user taps along with. Because they lock onto the beat they
+// *hear* — which lags playback by exactly the output latency — the average of
+// (tap − scheduled-beat-time) is that latency. The period sits well above any
+// realistic BT latency so every tap maps unambiguously to its nearest beat.
+export const TAP_PERIOD_MS = 750;
+export const TAP_BEATS = 16;
+
+/** Build the steady click track for tap-to-beat calibration. */
+export function buildTapBeatPCM(p: SoundProfile): Float32Array {
+  const totalSec = ((TAP_BEATS - 1) * TAP_PERIOD_MS) / 1000 + 0.4;
+  const out = new Float32Array(Math.ceil(totalSec * SAMPLE_RATE) + SAMPLE_RATE);
+  const place = makePlace(out);
+  const click = renderClickEx(p.basePitch, Math.max(p.harshness, 0.7), 10, 0.95);
+  for (let i = 0; i < TAP_BEATS; i++) place(click, (i * TAP_PERIOD_MS) / 1000);
+  clampInPlace(out);
+  return out;
+}
+
 /** Build the earpiece-latency test audio from the shared event timeline. */
 export function buildLatencyTestPCM(p: SoundProfile): Float32Array {
   const ev = latencyTestEvents();
